@@ -2,94 +2,106 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NVO LINK | Pro SaaS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NVO LINK | Mobil Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Google Sans', sans-serif; background-color: #f8fafd; color: #1f1f1f; }
-        .gemini-card { background: #fff; border-radius: 28px; border: 1px solid #e3e3e3; }
-        .modal-backdrop { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); }
-        .task-locked { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-        .progress-bar { transition: width 1s linear; height: 100%; background: #1a73e8; }
-        .btn-edit { color: #1a73e8; background: #e8f0fe; }
-        .btn-delete { color: #d93025; background: #fce8e6; }
+        .gemini-card { background: #ffffff; border-radius: 24px; border: 1px solid #e3e3e3; }
+        .btn-main { background: #1a73e8; color: white; border-radius: 14px; font-weight: 500; }
+        .update-overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 1000; }
+        .task-input { background: #f1f3f4; border: 1px solid transparent; border-radius: 12px; transition: 0.2s; }
+        .task-input:focus { background: #fff; border-color: #1a73e8; }
+        .task-locked { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <div id="updateModal" class="hidden fixed inset-0 z-[100] modal-backdrop flex items-center justify-center p-6">
-        <div class="gemini-card max-w-md w-full p-8 shadow-2xl scale-up-center">
-            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
-                <i class="fa-solid fa-rocket text-xl"></i>
+    <div id="updateModal" class="fixed inset-0 update-overlay flex items-end sm:items-center justify-center p-4">
+        <div class="gemini-card w-full max-w-sm p-8 animate-slide-up shadow-2xl">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                <i class="fa-solid fa-sync fa-spin text-2xl"></i>
             </div>
-            <h2 class="text-2xl font-bold mb-2">NVO LINK v2.0</h2>
-            <div class="text-gray-600 text-sm space-y-3 mb-6">
-                <p>• <b>Düzenle & Sil:</b> Artık bağlantılarınızı güncelleyebilirsiniz.</p>
-                <p>• <b>Sıralı Görevler:</b> Görevler artık 20sn bekleme ile sırayla yapılır.</p>
-                <p>• <b>Akıllı Gateway:</b> Görev yoksa 10sn otomatik bekleme eklendi.</p>
+            <h2 class="text-2xl font-bold mb-2">Sistem Güncel</h2>
+            <div class="text-sm text-gray-500 space-y-3 mb-8">
+                <p>• <b>Her Girişte Bildirim:</b> Güncellemeleri artık her açılışta göreceksiniz.</p>
+                <p>• <b>Mobil Düzenleme:</b> Telefon üzerinden linkleri silip düzenlemek artık daha kolay.</p>
+                <p>• <b>Hızlı Giriş:</b> Google Auth altyapısı stabilize edildi.</p>
             </div>
-            <button onclick="closeUpdateModal()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition">Anladım</button>
+            <button onclick="document.getElementById('updateModal').classList.add('hidden')" class="w-full py-4 btn-main shadow-lg">PANELİ AÇ</button>
         </div>
     </div>
 
-    <nav class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <span class="text-2xl font-bold tracking-tighter text-blue-600">NVO LINK</span>
-        <div id="authArea">
-            <button id="loginBtn" class="bg-blue-600 text-white px-6 py-2 rounded-full font-medium">Giriş</button>
-            <div id="userArea" class="hidden flex items-center gap-4">
-                <img id="userImg" class="w-9 h-9 rounded-full border border-blue-200">
-                <button onclick="auth.signOut().then(()=>location.reload())" class="text-xs text-red-500 font-bold uppercase">Çıkış</button>
-            </div>
+    <nav class="sticky top-0 bg-white/90 backdrop-blur-md border-b p-4 flex justify-between items-center z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-500 rounded-lg"></div>
+            <span class="font-bold text-lg">NVO LINK</span>
+        </div>
+        <div id="userProfile" class="hidden flex items-center gap-3">
+            <img id="userAvatar" class="w-8 h-8 rounded-full border">
+            <button onclick="auth.signOut().then(()=>location.reload())" class="text-gray-400"><i class="fa-solid fa-power-off"></i></button>
         </div>
     </nav>
 
-    <main id="app" class="max-w-6xl mx-auto p-6 grid lg:grid-cols-12 gap-8">
-        <div class="lg:col-span-5">
-            <div class="gemini-card p-8 shadow-sm">
-                <h3 id="formTitle" class="text-lg font-bold mb-6 italic">Yeni Bağlantı</h3>
-                <input type="hidden" id="editingId">
-                <div class="space-y-4">
-                    <input type="text" id="linkTitle" placeholder="İçerik Başlığı" class="w-full p-4 rounded-xl bg-gray-50 border-none outline-none focus:ring-2 ring-blue-100">
-                    <input type="url" id="targetUrl" placeholder="Hedef Link" class="w-full p-4 rounded-xl bg-gray-50 border-none outline-none focus:ring-2 ring-blue-100">
+    <main class="p-4 max-w-md mx-auto space-y-6">
+        
+        <div id="loginSection" class="hidden py-10 text-center space-y-6">
+            <div class="py-10">
+                <i class="fa-solid fa-user-shield text-6xl text-blue-100"></i>
+            </div>
+            <h1 class="text-2xl font-bold">Paylaşmak İçin Giriş Yap</h1>
+            <p class="text-gray-400 text-sm">Sadece Google hesabınızla hızlıca bağlanın.</p>
+            <button onclick="login()" class="w-full py-4 border rounded-2xl flex items-center justify-center gap-3 bg-white font-medium shadow-sm active:scale-95 transition">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+                Google ile Giriş Yap
+            </button>
+        </div>
+
+        <div id="dashboardSection" class="hidden space-y-6">
+            <div class="gemini-card p-6">
+                <h3 id="formTitle" class="font-bold mb-4">Link Oluştur</h3>
+                <input type="hidden" id="editId">
+                <div class="space-y-3">
+                    <input type="text" id="linkTitle" placeholder="Dosya Adı" class="w-full p-4 rounded-xl bg-gray-50 outline-none focus:ring-2 ring-blue-100">
+                    <input type="url" id="targetUrl" placeholder="Hedef Link" class="w-full p-4 rounded-xl bg-gray-50 outline-none focus:ring-2 ring-blue-100">
                     
                     <div class="p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
-                        <p class="text-[10px] font-bold text-blue-400 uppercase mb-3 tracking-widest">Görev Yönetimi (Sıralı)</p>
-                        <div id="taskDisplay" class="space-y-2 mb-3"></div>
+                        <p class="text-[10px] font-bold text-blue-500 mb-2 uppercase">Görev Ekle (Max 10)</p>
+                        <div id="adminTaskList" class="space-y-2 mb-3"></div>
                         <div class="flex gap-2">
-                            <input type="text" id="tName" placeholder="Görev Adı" class="flex-1 p-2 rounded-lg text-sm border-none shadow-inner">
-                            <input type="url" id="tLink" placeholder="Link" class="flex-1 p-2 rounded-lg text-sm border-none shadow-inner">
-                            <button onclick="addTask()" class="bg-blue-600 text-white px-3 rounded-lg text-sm"><i class="fa-solid fa-plus"></i></button>
+                            <input type="text" id="tn" placeholder="Görev" class="flex-1 p-2 text-xs rounded-lg border bg-white outline-none">
+                            <input type="url" id="tl" placeholder="Link" class="flex-1 p-2 text-xs rounded-lg border bg-white outline-none">
+                            <button onclick="addTask()" class="bg-blue-600 text-white px-3 rounded-lg"><i class="fa-solid fa-plus text-xs"></i></button>
                         </div>
                     </div>
-                    <button id="saveBtn" onclick="saveLink()" class="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:scale-[1.02] transition">YAYINLA</button>
+                    <button onclick="save()" class="w-full py-4 btn-main shadow-blue-100 shadow-lg">YAYINLA</button>
                 </div>
+            </div>
+
+            <div id="myLinks" class="space-y-3 pb-10">
+                <p class="text-xs font-bold text-gray-400 uppercase ml-2">Linklerim</p>
+                <div id="linksBox" class="space-y-3"></div>
             </div>
         </div>
 
-        <div class="lg:col-span-7">
-            <h3 class="font-bold text-gray-400 text-xs uppercase mb-4 tracking-widest">Bağlantıların</h3>
-            <div id="linkContainer" class="space-y-4"></div>
+        <div id="visitorSection" class="hidden py-10">
+            <div class="gemini-card p-8 text-center space-y-6">
+                <h2 id="vTitle" class="text-xl font-bold">...</h2>
+                <div id="vTasks" class="space-y-3 text-left"></div>
+                <button id="vUnlock" disabled class="w-full py-4 rounded-2xl bg-gray-100 text-gray-400 font-bold">GÖREVLERİ YAPIN</button>
+            </div>
         </div>
     </main>
-
-    <div id="visitor" class="hidden max-w-lg mx-auto py-20 px-6">
-        <div class="gemini-card p-10 text-center shadow-2xl">
-            <h1 id="vTitle" class="text-2xl font-bold mb-8">...</h1>
-            <div id="vTasks" class="space-y-4 text-left"></div>
-            <button id="vUnlock" disabled class="w-full mt-10 py-5 rounded-3xl bg-gray-100 text-gray-400 font-bold transition-all duration-700">LİNK KİLİTLİ</button>
-        </div>
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // FIREBASE CONFIG - BURAYA KENDİ BİLGİLERİNİ KOY
         const firebaseConfig = {
-            apiKey: "AIzaSy...", 
+            apiKey: "AIzaSy...", // Kendi API Key'ini buraya koy
             authDomain: "nvo-link.firebaseapp.com",
             projectId: "nvo-link",
             storageBucket: "nvo-link.firebasestorage.app",
@@ -99,195 +111,160 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);
+        window.auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
         let tasks = [];
         const urlParams = new URLSearchParams(window.location.search);
         const linkId = urlParams.get('id');
 
-        // GÜNCELLEME PENCERESİ KONTROLÜ
-        if(!localStorage.getItem('nvo_v2_seen') && !linkId) {
-            document.getElementById('updateModal').classList.remove('hidden');
-        }
-        window.closeUpdateModal = () => {
-            localStorage.setItem('nvo_v2_seen', 'true');
-            document.getElementById('updateModal').classList.add('hidden');
-        };
-
-        // GÖREV YÖNETİMİ
-        window.addTask = () => {
-            const n = document.getElementById('tName').value;
-            const l = document.getElementById('tLink').value;
-            if(!n || !l || tasks.length >= 10) return;
-            tasks.push({ name: n, link: l });
-            renderTasks();
-            document.getElementById('tName').value = ""; document.getElementById('tLink').value = "";
-        };
-        window.removeTask = (i) => { tasks.splice(i, 1); renderTasks(); };
-        function renderTasks() {
-            document.getElementById('taskDisplay').innerHTML = tasks.map((t, i) => `
-                <div class="flex justify-between bg-white p-2 rounded-lg text-[11px] border border-blue-50 shadow-sm">
-                    <span>${i+1}. ${t.name}</span>
-                    <button onclick="removeTask(${i})" class="text-red-400"><i class="fa-solid fa-xmark"></i></button>
-                </div>`).join('');
-        }
-
-        // AUTH & DASHBOARD
         onAuthStateChanged(auth, user => {
             if(linkId) {
-                document.getElementById('app').remove();
-                document.getElementById('visitor').classList.remove('hidden');
-                loadGateway();
+                document.getElementById('visitorSection').classList.remove('hidden');
+                loadVisitor();
             } else if(user) {
-                document.getElementById('loginBtn').classList.add('hidden');
-                document.getElementById('userArea').classList.remove('hidden');
-                document.getElementById('userImg').src = user.photoURL;
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                document.getElementById('userProfile').classList.remove('hidden');
+                document.getElementById('userAvatar').src = user.photoURL;
                 loadLinks(user.uid);
+            } else {
+                document.getElementById('loginSection').classList.remove('hidden');
             }
         });
 
-        document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
+        window.login = () => signInWithPopup(auth, provider);
 
-        // LİNK KAYDET (CREATE & UPDATE)
-        window.saveLink = async () => {
+        window.addTask = () => {
+            const n = document.getElementById('tn').value;
+            const l = document.getElementById('tl').value;
+            if(n && l && tasks.length < 10) {
+                tasks.push({name: n, link: l});
+                renderAdminTasks();
+                document.getElementById('tn').value=""; document.getElementById('tl').value="";
+            }
+        };
+
+        window.renderAdminTasks = () => {
+            document.getElementById('adminTaskList').innerHTML = tasks.map((t, i) => `
+                <div class="flex justify-between items-center bg-white p-2 rounded-lg border text-[11px]">
+                    <span>${i+1}. ${t.name}</span>
+                    <button onclick="tasks.splice(${i},1);renderAdminTasks()" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
+                </div>`).join('');
+        };
+
+        window.save = async () => {
             const title = document.getElementById('linkTitle').value;
             const target = document.getElementById('targetUrl').value;
-            const editId = document.getElementById('editingId').value;
+            const editId = document.getElementById('editId').value;
             if(!title || !target) return alert("Hata!");
 
             const data = { title, target, tasks, uid: auth.currentUser.uid, updatedAt: serverTimestamp() };
-            
-            if(editId) {
-                await updateDoc(doc(db, "links", editId), data);
-                alert("Bağlantı Güncellendi!");
-            } else {
-                data.createdAt = serverTimestamp();
-                await addDoc(collection(db, "links"), data);
-                alert("Yeni Bağlantı Oluşturuldu!");
-            }
+            if(editId) await updateDoc(doc(db, "links", editId), data);
+            else { data.createdAt = serverTimestamp(); await addDoc(collection(db, "links"), data); }
             location.reload();
         };
 
-        // LİSTELEME
         async function loadLinks(uid) {
             const q = query(collection(db, "links"), where("uid", "==", uid));
             const snap = await getDocs(q);
-            const cont = document.getElementById('linkContainer');
-            cont.innerHTML = "";
+            const box = document.getElementById('linksBox');
+            box.innerHTML = "";
             snap.forEach(d => {
-                const data = d.data();
                 const url = `${window.location.origin}${window.location.pathname}?id=${d.id}`;
-                cont.innerHTML += `
-                    <div class="gemini-card p-5 flex justify-between items-center group">
-                        <div class="flex-1">
-                            <h4 class="font-bold text-sm text-gray-800">${data.title}</h4>
-                            <p class="text-[10px] text-blue-500 font-mono truncate w-64">${url}</p>
+                box.innerHTML += `
+                    <div class="gemini-card p-4 flex justify-between items-center">
+                        <div class="truncate flex-1 pr-4">
+                            <p class="font-bold text-sm">${d.data().title}</p>
+                            <p class="text-[10px] text-blue-500 truncate">${url}</p>
                         </div>
-                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition">
-                            <button onclick="editLink('${d.id}')" class="btn-edit p-2 rounded-lg text-xs font-bold">DÜZENLE</button>
-                            <button onclick="deleteLink('${d.id}')" class="btn-delete p-2 rounded-lg text-xs font-bold">SİL</button>
+                        <div class="flex gap-2">
+                            <button onclick="edit('${d.id}')" class="text-blue-600 p-2 rounded-lg bg-blue-50 text-xs"><i class="fa-solid fa-edit"></i></button>
+                            <button onclick="del('${d.id}')" class="text-red-600 p-2 rounded-lg bg-red-50 text-xs"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="navigator.clipboard.writeText('${url}');alert('Kopyalandı')" class="text-gray-400 p-2 rounded-lg bg-gray-50 text-xs"><i class="fa-solid fa-copy"></i></button>
                         </div>
                     </div>`;
             });
         }
 
-        window.editLink = async (id) => {
-            const snap = await getDoc(doc(db, "links", id));
-            const data = snap.data();
+        window.edit = async (id) => {
+            const d = await getDoc(doc(db, "links", id));
+            const data = d.data();
             document.getElementById('linkTitle').value = data.title;
             document.getElementById('targetUrl').value = data.target;
-            document.getElementById('editingId').value = id;
-            document.getElementById('formTitle').innerText = "Bağlantıyı Düzenle";
-            document.getElementById('saveBtn').innerText = "GÜNCELLEMEYİ KAYDET";
+            document.getElementById('editId').value = id;
             tasks = data.tasks || [];
-            renderTasks();
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            renderAdminTasks();
+            window.scrollTo(0,0);
         };
 
-        window.deleteLink = async (id) => {
-            if(confirm("Bu bağlantıyı silmek istediğine emin misin?")) {
-                await deleteDoc(doc(db, "links", id));
-                location.reload();
-            }
-        };
+        window.del = async (id) => { if(confirm("Sil?")) { await deleteDoc(doc(db, "links", id)); location.reload(); }};
 
-        // GATEWAY LOGIC (Ziyaretçi)
+        // ZİYARETÇİ VE SIRALI GÖREV
         let v_tasks = [];
         let v_idx = 0;
-        async function loadGateway() {
-            const snap = await getDoc(doc(db, "links", linkId));
-            const data = snap.data();
+        async function loadVisitor() {
+            const d = await getDoc(doc(db, "links", linkId));
+            if(!d.exists()) return;
+            const data = d.data();
             document.getElementById('vTitle').innerText = data.title;
             v_tasks = data.tasks || [];
-
             if(v_tasks.length === 0) {
-                let sec = 10;
-                const timer = setInterval(() => {
-                    document.getElementById('vUnlock').innerText = `GÖREV YOK: ${sec--}sn BEKLEYİN`;
-                    if(sec < 0) { clearInterval(timer); unlock(data.target); }
+                let s = 10;
+                const it = setInterval(() => {
+                    document.getElementById('vUnlock').innerText = `BEKLEYİN: ${s--}s`;
+                    if(s<0) { clearInterval(it); unlock(data.target); }
                 }, 1000);
-            } else {
-                renderGatewayTasks();
-            }
+            } else { renderVTasks(); }
         }
 
-        function renderGatewayTasks() {
+        function renderVTasks() {
             document.getElementById('vTasks').innerHTML = v_tasks.map((t, i) => `
-                <div id="vCard-${i}" class="p-5 gemini-card ${i===0?'':'task-locked'} flex flex-col gap-3">
-                    <div class="flex justify-between items-center font-bold text-sm">
-                        <span>GÖREV ${i+1}: ${t.name}</span>
-                        <i id="vIcon-${i}" class="fa-solid fa-lock text-gray-200"></i>
+                <div id="vCard-${i}" class="p-4 rounded-xl border ${i===0?'border-blue-500 bg-blue-50/50':'task-locked'}">
+                    <div class="flex justify-between items-center text-sm font-bold mb-2">
+                        <span>${i+1}. ${t.name}</span>
+                        <i id="vIcon-${i}" class="fa-solid ${i===0?'fa-play':'fa-lock'} text-blue-500"></i>
                     </div>
-                    <div id="vProg-${i}" class="hidden w-full h-1 bg-gray-100 rounded-full overflow-hidden">
-                        <div id="vBar-${i}" class="progress-bar" style="width:0%"></div>
+                    <div id="vProg-${i}" class="hidden h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="vBar-${i}" class="h-full bg-blue-600 w-0 transition-all duration-1000"></div>
                     </div>
-                    <button id="vBtn-${i}" onclick="startVTask(${i}, '${t.link}')" class="text-xs text-blue-600 font-bold text-left uppercase">BAŞLAT <i class="fa-solid fa-arrow-right"></i></button>
+                    <button id="vBtn-${i}" onclick="startT(${i}, '${t.link}')" class="${i===0?'':'hidden'} text-xs font-bold text-blue-600">BAŞLAT <i class="fa-solid fa-chevron-right"></i></button>
                 </div>`).join('');
         }
 
-        window.startVTask = (i, link) => {
+        window.startT = (i, link) => {
             window.open(link, '_blank');
             document.getElementById(`vBtn-${i}`).remove();
             document.getElementById(`vProg-${i}`).classList.remove('hidden');
-            document.getElementById(`vIcon-${i}`).className = "fa-solid fa-spinner animate-spin text-blue-500";
-            
             let p = 0;
-            const int = setInterval(() => {
-                p += 5; // 20 saniye için %5
-                document.getElementById(`vBar-${i}`).style.width = p+"%";
-                if(p >= 100) {
-                    clearInterval(int);
-                    finishVTask(i);
-                }
+            const t = setInterval(() => {
+                p += 5;
+                document.getElementById(`vBar-${i}`).style.width = p + "%";
+                if(p >= 100) { clearInterval(t); finishT(i); }
             }, 1000);
         };
 
-        function finishVTask(i) {
-            document.getElementById(`vCard-${i}`).style.borderColor = "#34a853";
-            document.getElementById(`vIcon-${i}`).className = "fa-solid fa-circle-check text-green-500";
+        function finishT(i) {
+            document.getElementById(`vIcon-${i}`).className = "fa-solid fa-check text-green-500";
             v_idx++;
             if(v_idx < v_tasks.length) {
-                document.getElementById(`vCard-${v_idx}`).classList.remove('task-locked');
-                document.getElementById(`vCard-${v_idx}`).style.borderColor = "#1a73e8";
-            } else {
-                unlock();
-            }
+                const next = document.getElementById(`vCard-${v_idx}`);
+                next.classList.remove('task-locked');
+                next.classList.add('border-blue-500', 'bg-blue-50/50');
+                document.getElementById(`vBtn-${v_idx}`).classList.remove('hidden');
+            } else { unlock(); }
         }
 
         function unlock(direct = null) {
-            const btn = document.getElementById('vUnlock');
-            btn.disabled = false;
-            btn.innerText = "İÇERİĞİ AÇ";
-            btn.className = "w-full mt-10 py-5 rounded-3xl bg-blue-600 text-white font-bold shadow-xl shadow-blue-200";
-            btn.onclick = async () => {
+            const b = document.getElementById('vUnlock');
+            b.disabled = false;
+            b.className = "w-full py-4 btn-main shadow-xl";
+            b.innerText = "İÇERİĞE GİT";
+            b.onclick = async () => {
                 if(direct) window.location.href = direct;
-                else {
-                    const s = await getDoc(doc(db, "links", linkId));
-                    window.location.href = s.data().target;
-                }
+                else { const s = await getDoc(doc(db, "links", linkId)); window.location.href = s.data().target; }
             };
         }
     </script>
 </body>
 </html>
+
