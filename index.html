@@ -1,81 +1,90 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NVO LINK | Para Kazan & Link Kısalt</title>
+    <title>NVO LINK | Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: white; }
-        .nvo-card { background: rgba(20, 20, 20, 0.8); border: 1px solid #222; backdrop-filter: blur(10px); }
-        .accent-red { color: #ff3e3e; }
-        .bg-accent-red { background: #ff3e3e; }
-        .task-item { transition: 0.3s; border: 1px solid #222; cursor: pointer; }
-        .task-done { border-color: #ff3e3e; background: rgba(255, 62, 62, 0.05); }
+        body { font-family: 'Google Sans', sans-serif; background-color: #f8fafd; color: #1f1f1f; margin: 0; }
+        .gemini-card { background: #ffffff; border-radius: 24px; border: 1px solid #e3e3e3; transition: all 0.3s ease; }
+        .gemini-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .gemini-input { background: #f0f4f9; border: 2px solid transparent; border-radius: 12px; padding: 12px 16px; outline: none; transition: all 0.2s; }
+        .gemini-input:focus { background: #ffffff; border-color: #4285f4; }
+        .gemini-btn-primary { background: #1a73e8; color: white; border-radius: 50px; padding: 12px 24px; font-weight: 500; transition: 0.3s; }
+        .gemini-btn-primary:hover { background: #1557b0; box-shadow: 0 1px 3px rgba(60,64,67,0.3); }
+        .task-step { border-radius: 16px; background: #ffffff; border: 1px solid #e3e3e3; transition: 0.2s; cursor: pointer; }
+        .task-step:hover { background: #f1f3f4; }
+        .task-done { background: #e8f0fe !important; border-color: #1a73e8 !important; }
+        .loading-shimmer { background: linear-gradient(90deg, #f0f4f9 25%, #e1e4e8 50%, #f0f4f9 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col items-center">
+<body class="min-h-screen flex flex-col">
 
-    <header class="w-full max-w-5xl flex justify-between items-center py-6 mb-8">
-        <h1 class="text-2xl font-bold tracking-tighter">NVO <span class="accent-red">LINK</span></h1>
-        <div id="user-info" class="hidden flex items-center gap-4">
-            <span id="userEmail" class="text-xs text-zinc-500"></span>
-            <button id="logoutBtn" class="bg-zinc-900 px-4 py-2 rounded-lg text-xs hover:text-red-500 transition">Çıkış</button>
+    <nav class="w-full px-8 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full"></div>
+            <span class="text-xl font-medium tracking-tight">NVO <span class="text-blue-600">LINK</span></span>
         </div>
-    </header>
+        <div id="auth-section" class="flex items-center gap-4">
+            <button id="loginBtn" class="gemini-btn-primary text-sm">Giriş Yap</button>
+            <div id="userInfo" class="hidden flex items-center gap-3">
+                <img id="userAvatar" class="w-8 h-8 rounded-full border border-gray-200">
+                <button id="logoutBtn" class="text-gray-500 hover:text-red-500 text-sm">Çıkış</button>
+            </div>
+        </div>
+    </nav>
 
-    <div id="login-view" class="hidden w-full max-w-md nvo-card p-10 rounded-3xl text-center shadow-2xl mt-10">
-        <h2 class="text-3xl font-bold mb-4">Hoş Geldiniz</h2>
-        <p class="text-zinc-500 text-sm mb-8">Hemen giriş yap ve linklerini kısaltarak görevler ekle.</p>
-        <button id="googleLoginBtn" class="w-full flex items-center justify-center gap-3 bg-white text-black py-4 rounded-xl font-bold hover:bg-zinc-200 transition">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-            Google ile Hemen Başla
-        </button>
-    </div>
+    <main class="max-w-6xl mx-auto w-full p-6 space-y-8">
+        
+        <div id="dashboard" class="hidden grid md:grid-cols-12 gap-8">
+            <div class="md:col-span-5 space-y-6">
+                <div class="gemini-card p-8">
+                    <h2 class="text-xl font-medium mb-6">Yeni İçerik Kilitle</h2>
+                    <div class="flex flex-col gap-4">
+                        <input type="text" id="linkTitle" placeholder="İçerik Başlığı" class="gemini-input">
+                        <input type="url" id="targetUrl" placeholder="Asıl Dosya Linki (Destination)" class="gemini-input">
+                        
+                        <div class="p-4 bg-gray-50 rounded-xl space-y-4">
+                            <p class="text-xs font-bold text-gray-500 uppercase">Özel Görev Ekle</p>
+                            <input type="text" id="taskName" placeholder="Görev Adı (Örn: Kanala Abone Ol)" class="gemini-input w-full text-sm">
+                            <input type="url" id="taskLink" placeholder="Görev Linki" class="gemini-input w-full text-sm">
+                        </div>
 
-    <div id="dashboard-view" class="hidden w-full max-w-5xl space-y-6">
-        <div class="grid md:grid-cols-3 gap-6">
-            <div class="md:col-span-1 nvo-card p-6 rounded-3xl h-fit">
-                <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-plus accent-red"></i> Yeni Link</h3>
-                <div class="space-y-4">
-                    <input type="text" id="linkTitle" placeholder="İçerik Başlığı" class="w-full bg-black border border-zinc-800 p-3 rounded-xl outline-none focus:border-red-500 text-sm">
-                    <input type="url" id="targetUrl" placeholder="Hedef Link (Mediafire vb.)" class="w-full bg-black border border-zinc-800 p-3 rounded-xl outline-none focus:border-red-500 text-sm">
-                    
-                    <div class="p-4 bg-zinc-900/50 rounded-xl space-y-2">
-                        <p class="text-[10px] font-bold text-zinc-500 uppercase">Görevler</p>
-                        <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" id="task_ads" checked class="accent-red"> Reklam Sayfası</label>
-                        <label class="flex items-center gap-2 text-xs cursor-pointer"><input type="checkbox" id="task_wait" class="accent-red"> 10sn Bekleme</label>
+                        <button id="createBtn" class="gemini-btn-primary mt-2">Bağlantıyı Oluştur</button>
                     </div>
-                    
-                    <button id="createBtn" class="w-full bg-accent-red py-3 rounded-xl font-bold text-sm hover:bg-red-700 transition">OLUŞTUR</button>
                 </div>
             </div>
 
-            <div class="md:col-span-2 nvo-card p-6 rounded-3xl">
-                <h3 class="text-lg font-bold mb-4 tracking-tight">Bağlantılarım</h3>
-                <div id="links-container" class="space-y-3 overflow-y-auto max-h-[500px] pr-2">
-                    <p id="no-links" class="text-zinc-600 text-sm italic">Henüz bir link oluşturmadınız.</p>
-                </div>
+            <div class="md:col-span-7">
+                <h3 class="text-lg font-medium mb-4">Bağlantıların</h3>
+                <div id="linkList" class="space-y-4">
+                    </div>
             </div>
         </div>
-    </div>
 
-    <div id="visitor-view" class="hidden w-full max-w-md nvo-card rounded-3xl shadow-2xl overflow-hidden mt-10">
-        <div class="p-8 text-center border-b border-zinc-900 bg-gradient-to-b from-red-950/10 to-transparent">
-            <h1 id="vTitle" class="text-2xl font-bold mb-1">...</h1>
-            <p class="text-zinc-500 text-[10px] tracking-[0.3em] uppercase">Powered by NVO LINK</p>
+        <div id="gateway" class="hidden max-w-lg mx-auto mt-12">
+            <div class="gemini-card p-10 text-center shadow-xl">
+                <h1 id="vTitle" class="text-2xl font-bold mb-2">Dosya Kilidi</h1>
+                <p class="text-gray-500 text-sm mb-8">Devam etmek için aşağıdaki görevleri tamamlayın.</p>
+                
+                <div id="vTasks" class="space-y-4 text-left">
+                    </div>
+
+                <button id="unlockBtn" disabled class="w-full mt-8 py-4 rounded-2xl bg-gray-100 text-gray-400 font-bold transition-all">
+                    LÜTFEN BEKLEYİN
+                </button>
+            </div>
         </div>
-        <div id="taskList" class="p-6 space-y-3"></div>
-        <div class="p-6 pt-0">
-            <button id="unlockBtn" disabled class="w-full bg-zinc-800 text-zinc-500 py-4 rounded-2xl font-bold">LİNK KİLİTLİ</button>
-        </div>
-    </div>
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -95,130 +104,104 @@
         const urlParams = new URLSearchParams(window.location.search);
         const linkId = urlParams.get('id');
 
-        // GÖRÜNÜM KONTROLÜ
-        if (linkId) {
-            document.getElementById('visitor-view').classList.remove('hidden');
-            loadVisitorView(linkId);
-        } else {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    showDashboard(user);
-                } else {
-                    document.getElementById('login-view').classList.remove('hidden');
-                }
-            });
-        }
+        // AUTH KONTROL
+        onAuthStateChanged(auth, (user) => {
+            if (linkId) {
+                showGateway(linkId);
+            } else if (user) {
+                document.getElementById('loginBtn').classList.add('hidden');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userAvatar').src = user.photoURL;
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadUserLinks(user.uid);
+            } else {
+                document.getElementById('loginBtn').classList.remove('hidden');
+            }
+        });
 
-        // GOOGLE GİRİŞ
-        document.getElementById('googleLoginBtn').onclick = () => signInWithPopup(auth, provider);
+        document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
         document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
 
-        async function showDashboard(user) {
-            document.getElementById('login-view').classList.add('hidden');
-            document.getElementById('user-info').classList.remove('hidden');
-            document.getElementById('dashboard-view').classList.remove('hidden');
-            document.getElementById('userEmail').innerText = user.email;
-            loadUserLinks(user.uid);
-        }
-
-        // LİNK OLUŞTURMA
+        // LİNK OLUŞTURMA (Hata düzeltilmiş versiyon)
         document.getElementById('createBtn').onclick = async () => {
+            const user = auth.currentUser;
             const title = document.getElementById('linkTitle').value;
             const target = document.getElementById('targetUrl').value;
-            const user = auth.currentUser;
+            const tName = document.getElementById('taskName').value;
+            const tLink = document.getElementById('taskLink').value;
 
-            if(!title || !target || !user) return alert("Lütfen alanları doldurun!");
+            if (!user || !title || !target) return alert("Başlık ve Hedef Link zorunludur!");
 
-            await addDoc(collection(db, "links"), {
-                uid: user.uid,
-                title,
-                target,
-                tasks: {
-                    ads: document.getElementById('task_ads').checked,
-                    wait: document.getElementById('task_wait').checked
-                },
-                createdAt: new Date()
-            });
-            
-            alert("Link oluşturuldu!");
-            location.reload();
+            try {
+                const docRef = await addDoc(collection(db, "links"), {
+                    uid: user.uid,
+                    title: title,
+                    target: target,
+                    customTask: { name: tName, link: tLink },
+                    createdAt: serverTimestamp()
+                });
+                alert("Bağlantı Başarıyla Oluşturuldu!");
+                location.reload();
+            } catch (e) {
+                console.error("Hata:", e);
+                alert("Bağlantı oluşturulamadı. Firestore kurallarını kontrol edin.");
+            }
         };
 
-        // KULLANICI LİNKLERİNİ YÜKLE
+        // LİNKLERİ LİSTELE
         async function loadUserLinks(uid) {
             const q = query(collection(db, "links"), where("uid", "==", uid));
-            const querySnapshot = await getDocs(q);
-            const container = document.getElementById('links-container');
+            const snap = await getDocs(q);
+            const container = document.getElementById('linkList');
+            container.innerHTML = "";
             
-            if (!querySnapshot.empty) {
-                document.getElementById('no-links').classList.add('hidden');
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const shortUrl = `${window.location.origin}${window.location.pathname}?id=${doc.id}`;
-                    container.innerHTML += `
-                        <div class="bg-black p-4 rounded-2xl border border-zinc-900 flex flex-col gap-2">
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-sm">${data.title}</span>
-                                <span class="text-[10px] text-zinc-600">${new Date(data.createdAt.seconds*1000).toLocaleDateString()}</span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-zinc-900 p-2 rounded-lg">
-                                <input readonly value="${shortUrl}" class="bg-transparent text-[10px] w-full text-zinc-400 outline-none">
-                                <button onclick="navigator.clipboard.writeText('${shortUrl}');alert('Kopyalandı')" class="text-accent-red text-xs hover:text-white"><i class="fa-regular fa-copy"></i></button>
-                            </div>
-                        </div>`;
-                });
+            snap.forEach((d) => {
+                const data = d.data();
+                const url = `${window.location.origin}${window.location.pathname}?id=${d.id}`;
+                container.innerHTML += `
+                    <div class="gemini-card p-4 flex justify-between items-center">
+                        <div>
+                            <p class="font-medium">${data.title}</p>
+                            <p class="text-[10px] text-blue-500 truncate w-48">${url}</p>
+                        </div>
+                        <button onclick="navigator.clipboard.writeText('${url}');alert('Kopyalandı!')" class="text-gray-400 hover:text-blue-600"><i class="fa-regular fa-copy"></i></button>
+                    </div>`;
+            });
+        }
+
+        // GATEWAY (Ziyaretçi)
+        async function showGateway(id) {
+            document.getElementById('gateway').classList.remove('hidden');
+            const d = await getDoc(doc(db, "links", id));
+            if (!d.exists()) return alert("Link bulunamadı.");
+            
+            const data = d.data();
+            document.getElementById('vTitle').innerText = data.title;
+            const taskArea = document.getElementById('vTasks');
+
+            if (data.customTask && data.customTask.name) {
+                taskArea.innerHTML += `
+                    <div onclick="doTask(this, '${data.customTask.link}')" class="task-step p-5 flex justify-between items-center">
+                        <span class="text-sm font-medium"><i class="fa-solid fa-star mr-3 text-yellow-500"></i> ${data.customTask.name}</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-300"></i>
+                    </div>`;
             }
         }
 
-        // ZİYARETÇİ EKRANI (LootLabs Mantığı)
-        async function loadVisitorView(id) {
-            const snap = await getDoc(doc(db, "links", id));
-            if(snap.exists()) {
-                const data = snap.data();
-                document.getElementById('vTitle').innerText = data.title;
-                const taskContainer = document.getElementById('taskList');
-
-                if(data.tasks.ads) taskContainer.innerHTML += createVisitorTask('ads', 'Reklam Sayfasını Ziyaret Et');
-                if(data.tasks.wait) taskContainer.innerHTML += createVisitorTask('wait', 'Güvenlik Taramasını Bekle');
-            }
-        }
-
-        function createVisitorTask(type, label) {
-            return `<div onclick="handleTask(this, '${type}')" class="task-item bg-black p-5 rounded-2xl flex justify-between items-center transition">
-                <span class="text-sm"><i class="fa-solid fa-circle-notch mr-3 text-zinc-700"></i> ${label}</span>
-                <i class="fa-solid fa-chevron-right text-zinc-800 text-xs"></i>
-            </div>`;
-        }
-
-        window.handleTask = (el, type) => {
-            if(el.classList.contains('task-done')) return;
-            window.open('https://google.com', '_blank');
-
-            if(type === 'wait') {
-                el.innerHTML = `<span class="text-sm"><i class="fa-solid fa-spinner animate-spin mr-3 text-red-500"></i> Bekleniyor...</span>`;
-                setTimeout(() => markDone(el), 10000);
-            } else {
-                markDone(el);
-            }
-        };
-
-        function markDone(el) {
+        window.doTask = (el, link) => {
+            window.open(link, '_blank');
             el.classList.add('task-done');
-            el.innerHTML = `<span class="text-sm"><i class="fa-solid fa-circle-check mr-3 text-green-500"></i> Tamamlandı</span>`;
+            el.innerHTML = `<span class="text-sm font-medium"><i class="fa-solid fa-circle-check mr-3 text-blue-600"></i> Görev Tamamlandı</span>`;
             
-            const total = document.querySelectorAll('.task-item').length;
-            const done = document.querySelectorAll('.task-done').length;
-            if(total === done) {
-                const btn = document.getElementById('unlockBtn');
-                btn.disabled = false;
-                btn.classList.replace('bg-zinc-800', 'bg-accent-red');
-                btn.classList.replace('text-zinc-500', 'text-white');
-                btn.innerText = "İÇERİĞE ERİŞ";
-                btn.onclick = () => {
-                    getDoc(doc(db, "links", linkId)).then(s => window.location.href = s.data().target);
-                };
-            }
-        }
+            const btn = document.getElementById('unlockBtn');
+            btn.disabled = false;
+            btn.innerText = "İÇERİĞE GİT";
+            btn.classList.replace('bg-gray-100', 'bg-blue-600');
+            btn.classList.replace('text-gray-400', 'text-white');
+            btn.onclick = () => {
+                getDoc(doc(db, "links", linkId)).then(s => window.location.href = s.data().target);
+            };
+        };
     </script>
 </body>
 </html>
