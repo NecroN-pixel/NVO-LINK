@@ -4,99 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NVO LINK v5.2</title>
+    <title>NVO LINK v6.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Tam mobil sığma için kritik ayarlar */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { overflow-x: hidden; width: 100%; position: relative; }
-        .app-container { width: 100vw; max-width: 100%; padding-left: 15px; padding-right: 15px; margin: 0 auto; }
-        
-        /* Modern Input & Butonlar */
-        input, button { font-size: 16px !important; width: 100%; }
-        
-        /* Güncelleme Notu Modalı */
-        .modal-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
-            backdrop-filter: blur(8px); z-index: 9999; display: none; 
-            align-items: center; justify-content: center; padding: 20px;
-        }
+        body { overflow-x: hidden; width: 100%; transition: 0.3s; }
+        .app-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 100vh; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.9); }
+        input { border: 2px solid #e2e8f0 !important; border-radius: 12px !important; padding: 12px !important; width: 100%; outline: none; background: transparent; }
+        .dark input { border-color: #334155 !important; color: white; }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
 
-    <div id="updateModal" class="modal-overlay">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-[32px] p-8 text-center border dark:border-slate-700 shadow-2xl">
-            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                <i class="fa-solid fa-rocket text-2xl"></i>
-            </div>
-            <h2 class="text-xl font-black mb-3">Sürüm v5.2 Yayında!</h2>
-            <div class="text-left space-y-3 mb-8 text-sm text-slate-500 dark:text-slate-400">
-                <p>• <b>Mobil Fix:</b> Ekran sığmama sorunu tamamen çözüldü.</p>
-                <p>• <b>Auto-HTTPS:</b> Artık linklerin başına https:// eklemenize gerek yok.</p>
-                <p>• <b>Çoklu Dil:</b> TR/EN desteği eklendi.</p>
-                <p>• <b>Karanlık Mod:</b> Gece kullanımı için Dark Mode aktif.</p>
-            </div>
-            <button onclick="closeModal()" class="w-full p-4 bg-indigo-600 text-white rounded-2xl font-black">TAMAMDIR</button>
+    <div id="uModal" class="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-6 hidden">
+        <div class="bg-white dark:bg-slate-900 w-full rounded-[32px] p-8 text-center border dark:border-slate-800">
+            <h2 class="text-2xl font-black mb-4">v6.0 Fixed!</h2>
+            <ul class="text-left text-sm space-y-2 mb-6 text-slate-500">
+                <li>✅ <b>Silme & Kopyalama:</b> Tamamen düzeltildi.</li>
+                <li>✅ <b>Çıkış Yap:</b> Profil yanına eklendi.</li>
+                <li>✅ <b>Görevler:</b> Görünmeme sorunu giderildi.</li>
+                <li>✅ <b>Mobil:</b> Taşma ve sığmama hataları bitti.</li>
+            </ul>
+            <button onclick="document.getElementById('uModal').classList.add('hidden')" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-bold">BAŞLAT</button>
         </div>
     </div>
 
-    <div class="app-container">
-        <header class="py-5 flex justify-between items-center sticky top-0 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md z-[50]">
+    <div class="app-container flex flex-col">
+        <header class="p-4 glass-nav sticky top-0 z-50 flex justify-between items-center border-b dark:border-slate-800">
+            <h1 class="font-black text-xl italic text-blue-600">NVO LINK</h1>
             <div class="flex items-center gap-2">
-                <span class="font-black text-xl text-indigo-600 italic">NVO LINK</span>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <button onclick="toggleLang()" class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-[10px] font-bold" id="langBtn">EN</button>
-                <button onclick="toggleDark()" class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs"><i class="fa-solid fa-moon"></i></button>
-                <div id="authSlot">
-                    <button id="loginBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">GİRİŞ</button>
-                    <div id="userProfile" class="hidden flex items-center">
-                        <img id="uAvatar" class="w-8 h-8 rounded-full border-2 border-indigo-500">
+                <button onclick="document.documentElement.classList.toggle('dark')" class="w-9 h-9 bg-slate-100 dark:bg-slate-800 rounded-xl"><i class="fa-solid fa-moon"></i></button>
+                <div id="authWrap">
+                    <button id="loginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold">GİRİŞ</button>
+                    <div id="userWrap" class="hidden flex items-center gap-3">
+                        <img id="uAvatar" class="w-9 h-9 rounded-full border-2 border-blue-600">
+                        <button onclick="logout()" class="text-red-500 text-lg"><i class="fa-solid fa-power-off"></i></button>
                     </div>
                 </div>
             </div>
         </header>
 
-        <main id="adminMain" class="hidden pb-24 space-y-6">
-            <div class="p-6 rounded-[32px] bg-white dark:bg-slate-800 border dark:border-slate-700 shadow-sm space-y-4">
-                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest" data-tr="YENİ LİNK" data-en="NEW LINK">YENİ LİNK</h3>
-                <input type="text" id="lTitle" placeholder="Dosya Adı / File Name" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border-none outline-none ring-2 ring-transparent focus:ring-indigo-500">
-                <input type="text" id="lTarget" placeholder="İndirme Linki" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border-none outline-none ring-2 ring-transparent focus:ring-indigo-500">
+        <main id="adminSection" class="hidden p-4 space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-[28px] border dark:border-slate-800 space-y-4 shadow-sm">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Yeni Link Oluştur</h3>
+                <input type="text" id="lTitle" placeholder="Dosya Başlığı">
+                <input type="text" id="lTarget" placeholder="İndirme Linki">
                 
-                <div class="p-4 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl border-2 border-dashed border-indigo-200 dark:border-indigo-900">
-                    <p class="text-[10px] font-bold text-indigo-600 mb-3" data-tr="GÖREVLER" data-en="TASKS">GÖREVLER</p>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border-2 border-dashed dark:border-slate-700">
+                    <p class="text-[10px] font-bold text-blue-600 mb-3">GÖREV EKLE</p>
                     <div id="taskList" class="space-y-2 mb-4"></div>
                     <div class="flex gap-2">
-                        <input type="text" id="tn" placeholder="Ad" class="!p-2 !text-xs">
+                        <input type="text" id="tn" placeholder="Görev Adı" class="!p-2 !text-xs">
                         <input type="text" id="tl" placeholder="URL" class="!p-2 !text-xs">
-                        <button onclick="addNewTask()" class="w-12 bg-indigo-600 text-white rounded-xl">+</button>
+                        <button onclick="addTask()" class="bg-blue-600 text-white px-4 rounded-xl">+</button>
                     </div>
                 </div>
-                <button onclick="publish()" class="w-full p-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-600/20" data-tr="ŞİMDİ YAYINLA" data-en="PUBLISH NOW">ŞİMDİ YAYINLA</button>
+                <button onclick="publish()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-600/20">YAYINLA</button>
             </div>
 
-            <div class="space-y-3">
-                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2" data-tr="AKTİF LİNKLERİM" data-en="MY ACTIVE LINKS">AKTİF LİNKLERİM</h3>
+            <div class="space-y-3 pb-24">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Linklerim</h3>
                 <div id="myLinks" class="space-y-3"></div>
             </div>
         </main>
 
-        <main id="visitorMain" class="hidden py-10 flex flex-col items-center text-center">
-            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-[28px] flex items-center justify-center mb-6">
-                <i class="fa-solid fa-cloud-arrow-down text-3xl"></i>
-            </div>
-            <h2 id="vTitle" class="text-2xl font-black mb-2">...</h2>
-            <div id="vTasks" class="w-full space-y-4 text-left mt-8"></div>
-            <button id="vUnlock" disabled class="w-full mt-10 p-5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-400 font-black">KİLİTLİ</button>
+        <main id="visitorSection" class="hidden p-6 text-center flex-1 flex flex-col justify-center">
+            <h2 id="vTitle" class="text-2xl font-black mb-6">...</h2>
+            <div id="vTasks" class="w-full space-y-4 text-left"></div>
+            <button id="vUnlock" disabled class="w-full mt-10 p-5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-400 font-black">LOCKED</button>
         </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, getDoc, getDocs, query, where, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, getDoc, getDocs, deleteDoc, query, where, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -114,30 +98,17 @@
         const provider = new GoogleAuthProvider();
 
         let tasks = [];
-        let isTR = true;
         const lid = new URLSearchParams(window.location.search).get('id');
-
-        // Dark & Lang
-        window.toggleDark = () => document.documentElement.classList.toggle('dark');
-        window.toggleLang = () => {
-            isTR = !isTR;
-            document.getElementById('langBtn').innerText = isTR ? 'EN' : 'TR';
-            document.querySelectorAll('[data-tr]').forEach(el => {
-                el.innerText = isTR ? el.getAttribute('data-tr') : el.getAttribute('data-en');
-            });
-        };
-        window.closeModal = () => document.getElementById('updateModal').style.display = 'none';
 
         onAuthStateChanged(auth, user => {
             if (lid) {
-                document.getElementById('visitorMain').classList.remove('hidden');
-                document.getElementById('loginBtn').onclick = () => window.location.href = window.location.origin + window.location.pathname;
+                document.getElementById('visitorSection').classList.remove('hidden');
                 loadVisitor();
             } else if (user) {
-                document.getElementById('updateModal').style.display = 'flex';
-                document.getElementById('adminMain').classList.remove('hidden');
+                document.getElementById('uModal').classList.remove('hidden');
+                document.getElementById('adminSection').classList.remove('hidden');
                 document.getElementById('loginBtn').classList.add('hidden');
-                document.getElementById('userProfile').classList.remove('hidden');
+                document.getElementById('userWrap').classList.remove('hidden');
                 document.getElementById('uAvatar').src = user.photoURL;
                 loadMyLinks(user.uid);
             } else {
@@ -145,30 +116,33 @@
             }
         });
 
-        const safeUrl = (u) => u.startsWith('http') ? u : 'https://' + u;
+        window.logout = () => signOut(auth).then(() => location.reload());
 
-        window.addNewTask = () => {
+        const fixUrl = (u) => u.startsWith('http') ? u : 'https://' + u;
+
+        window.addTask = () => {
             const n = document.getElementById('tn').value;
             const l = document.getElementById('tl').value;
             if(n && l) {
-                tasks.push({ name: n, link: safeUrl(l) });
-                renderTasks();
+                tasks.push({ name: n, link: fixUrl(l) });
+                renderLocalTasks();
                 document.getElementById('tn').value = ""; document.getElementById('tl').value = "";
             }
         };
 
-        function renderTasks() {
+        function renderLocalTasks() {
             document.getElementById('taskList').innerHTML = tasks.map((t, i) => `
-                <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-3 rounded-xl border dark:border-slate-700 text-xs font-bold">
+                <div class="flex justify-between items-center bg-white dark:bg-slate-800 p-3 rounded-xl border dark:border-slate-700 text-xs font-bold">
                     <span class="truncate">${t.name}</span>
-                    <button onclick="tasks.splice(${i},1);renderTasks()" class="text-red-400 ml-2">SİL</button>
+                    <button onclick="removeLocalTask(${i})" class="text-red-500">SİL</button>
                 </div>`).join('');
         }
+        window.removeLocalTask = (i) => { tasks.splice(i, 1); renderLocalTasks(); };
 
         window.publish = async () => {
             const title = document.getElementById('lTitle').value;
-            const target = safeUrl(document.getElementById('lTarget').value);
-            if(!title || !target) return alert("Hata: Eksik bilgi!");
+            const target = fixUrl(document.getElementById('lTarget').value);
+            if(!title || !target) return alert("Hata: Link veya Başlık boş!");
 
             const dRef = await addDoc(collection(db, "links"), { 
                 title, target, uid: auth.currentUser.uid, createdAt: serverTimestamp() 
@@ -191,17 +165,21 @@
             snap.forEach(d => {
                 const url = window.location.origin + window.location.pathname + "?id=" + d.id;
                 box.innerHTML += `
-                    <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border dark:border-slate-700 flex justify-between items-center">
-                        <div class="truncate mr-4 flex-1">
-                            <p class="font-bold text-sm truncate">${d.data().title}</p>
-                            <p class="text-[9px] text-indigo-500 font-mono truncate">${url}</p>
+                    <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border dark:border-slate-800 flex justify-between items-center shadow-sm">
+                        <div class="truncate flex-1 mr-4">
+                            <p class="font-bold text-sm">${d.data().title}</p>
+                            <p class="text-[9px] text-blue-500 truncate">${url}</p>
                         </div>
-                        <button onclick="navigator.clipboard.writeText('${url}');alert('Kopyalandı')" class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-400">
-                            <i class="fa-solid fa-copy text-sm"></i>
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="copyLink('${url}')" class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500"><i class="fa-solid fa-copy text-xs"></i></button>
+                            <button onclick="delLink('${d.id}')" class="w-9 h-9 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
                     </div>`;
             });
         }
+
+        window.copyLink = (u) => { navigator.clipboard.writeText(u); alert("Link Kopyalandı!"); };
+        window.delLink = async (id) => { if(confirm("Emin misin?")) { await deleteDoc(doc(db, "links", id)); location.reload(); }};
 
         async function loadVisitor() {
             const d = await getDoc(doc(db, "links", lid));
@@ -212,10 +190,10 @@
             tSnap.forEach(t => vTasks.push(t.data()));
 
             document.getElementById('vTasks').innerHTML = vTasks.map((t, i) => `
-                <div id="vStep-${i}" class="p-5 rounded-2xl bg-white dark:bg-slate-800 border dark:border-slate-700 ${i===0?'ring-2 ring-indigo-500':''}">
-                    <p class="text-[10px] font-black text-indigo-600 mb-1">ADIM ${i+1}</p>
+                <div id="vStep-${i}" class="p-5 rounded-2xl bg-white dark:bg-slate-900 border dark:border-slate-800 ${i===0?'ring-2 ring-blue-600':''}">
+                    <p class="text-[10px] font-black text-blue-600 mb-1">GÖREV ${i+1}</p>
                     <p class="font-bold text-sm mb-4">${t.name}</p>
-                    <button id="vBtn-${i}" onclick="runStep(${i}, '${t.link}')" class="${i===0?'':'hidden'} w-full py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black">BAŞLAT / START</button>
+                    <button id="vBtn-${i}" onclick="runStep(${i}, '${t.link}')" class="${i===0?'':'hidden'} w-full py-3 bg-blue-600 text-white rounded-xl text-[10px] font-black">SİTEYE GİT</button>
                 </div>`).join('');
             
             window.runStep = (i, url) => {
@@ -223,19 +201,19 @@
                 let s = 10;
                 const btn = document.getElementById(`vBtn-${i}`);
                 const itv = setInterval(() => {
-                    btn.innerText = (isTR ? 'BEKLEYİN ' : 'WAIT ') + s + 's';
+                    btn.innerText = 'BEKLEYİN ' + s + 's';
                     if(s <= 0) {
                         clearInterval(itv);
-                        btn.innerText = (isTR ? 'TAMAMLANDI' : 'COMPLETED');
+                        btn.innerText = 'TAMAMLANDI';
                         btn.disabled = true;
                         if(i + 1 < vTasks.length) {
-                            document.getElementById(`vStep-${i+1}`).classList.add('ring-2', 'ring-indigo-500');
+                            document.getElementById(`vStep-${i+1}`).classList.add('ring-2', 'ring-blue-600');
                             document.getElementById(`vBtn-${i+1}`).classList.remove('hidden');
                         } else {
                             const unlock = document.getElementById('vUnlock');
                             unlock.disabled = false;
-                            unlock.className = "w-full mt-10 p-5 rounded-2xl bg-indigo-600 text-white font-black animate-bounce shadow-xl shadow-indigo-500/20";
-                            unlock.innerText = (isTR ? 'DOSYAYI İNDİR' : 'DOWNLOAD FILE');
+                            unlock.className = "w-full mt-10 p-5 rounded-2xl bg-blue-600 text-white font-black animate-bounce";
+                            unlock.innerText = 'DOSYAYI İNDİR';
                             unlock.onclick = () => window.location.href = d.data().target;
                         }
                     }
