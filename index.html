@@ -1,159 +1,85 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Link | Secure Gateway</title>
+    <title>NVO LINK | Secure File Gateway</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Rajdhani', 'sans-serif'] },
-                    colors: {
-                        neonBlue: '#00f3ff',
-                        neonPurple: '#bc13fe',
-                        darkBg: '#050b14'
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'spin-slow': 'spin 3s linear infinite',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #050b14; background-image: radial-gradient(circle at 50% 50%, #1a233a 0%, #050b14 70%); color: white; overflow-x: hidden; }
-        .glass-card {
-            background: rgba(16, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 40px rgba(0, 243, 255, 0.05);
-        }
-        .neon-border:focus-within { border-color: #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
-        .cyber-btn {
-            background: linear-gradient(45deg, #00f3ff, #0066ff);
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-            transition: all 0.3s ease;
-        }
-        .cyber-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
-        .cyber-btn:disabled { background: #334155; cursor: not-allowed; box-shadow: none; }
-        
-        /* Terminal Text Effect */
-        .terminal-line { overflow: hidden; white-space: nowrap; animation: typing 1s steps(40, end); }
-        @keyframes typing { from { width: 0 } to { width: 100% } }
+        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: white; }
+        .nvo-card { background: rgba(20, 20, 20, 0.8); border: 1px solid #222; backdrop-filter: blur(10px); }
+        .accent-red { color: #ff3e3e; }
+        .bg-accent-red { background: #ff3e3e; }
+        .task-item { transition: 0.3s; border-left: 3px solid transparent; cursor: pointer; }
+        .task-done { border-left-color: #ff3e3e; background: rgba(255, 62, 62, 0.05); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 relative">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="absolute inset-0 overflow-hidden -z-10">
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-    </div>
-
-    <div class="mb-10 text-center relative group">
-        <h1 class="text-5xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-neonBlue to-purple-500 drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">
-            NEXUS
-        </h1>
-        <div class="h-1 w-24 bg-neonBlue mx-auto mt-2 rounded-full shadow-[0_0_10px_#00f3ff]"></div>
-    </div>
-
-    <div id="creator-panel" class="hidden w-full max-w-lg glass-card rounded-2xl p-8 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neonBlue to-transparent"></div>
+    <div id="login-view" class="hidden w-full max-w-sm nvo-card p-10 rounded-3xl shadow-2xl text-center">
+        <h2 class="text-3xl font-bold mb-2 tracking-tighter uppercase">NVO <span class="accent-red">LINK</span></h2>
+        <p class="text-gray-500 text-xs mb-8 tracking-widest">ADMIN PANEL ACCESS</p>
         
-        <h2 class="text-2xl font-bold mb-6 text-gray-100 flex items-center gap-3">
-            <i class="fa-solid fa-bolt text-neonBlue"></i> Hızlı Link Oluşturucu
-        </h2>
+        <button id="googleBtn" class="w-full flex items-center justify-center gap-3 bg-white text-black py-4 rounded-xl font-bold hover:bg-gray-200 transition">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+            Google ile Giriş Yap
+        </button>
+        <p id="errorMsg" class="text-red-500 text-xs mt-4 hidden">Yetkisiz e-posta adresi!</p>
+    </div>
 
-        <div class="space-y-6">
+    <div id="dashboard-view" class="hidden w-full max-w-4xl nvo-card p-8 rounded-3xl">
+        <div class="flex justify-between items-center mb-8 pb-4 border-b border-zinc-900">
             <div>
-                <label class="text-xs text-neonBlue uppercase tracking-wider mb-2 block font-bold">İçerik Başlığı</label>
-                <div class="relative">
-                    <i class="fa-solid fa-heading absolute left-4 top-4 text-gray-500"></i>
-                    <input type="text" id="linkTitle" placeholder="Örn: Minecraft Shader Pack v2" 
-                        class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 pl-10 text-white outline-none neon-border transition-all">
-                </div>
+                <h2 class="text-xl font-bold uppercase tracking-widest">NVO <span class="accent-red">DASHBOARD</span></h2>
+                <p id="userEmail" class="text-[10px] text-zinc-500"></p>
             </div>
-
-            <div>
-                <label class="text-xs text-neonBlue uppercase tracking-wider mb-2 block font-bold">Hedef URL</label>
-                <div class="relative">
-                    <i class="fa-solid fa-link absolute left-4 top-4 text-gray-500"></i>
-                    <input type="url" id="targetUrl" placeholder="https://mediafire.com/..." 
-                        class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 pl-10 text-white outline-none neon-border transition-all">
-                </div>
-            </div>
-
-            <button onclick="generateLink()" class="cyber-btn w-full py-4 font-bold text-black uppercase tracking-widest text-lg">
-                Link Kısalt & Oluştur
+            <button id="logoutBtn" class="text-zinc-500 hover:text-red-500 transition text-sm flex items-center gap-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
             </button>
         </div>
-
-        <div id="resultBox" class="mt-8 hidden animate-[fadeIn_0.5s_ease-out]">
-            <div class="bg-slate-900/80 border border-green-500/30 p-4 rounded-xl">
-                <p class="text-green-400 text-sm mb-2 font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-check-circle"></i> Link Hazır!
-                </p>
-                <div class="flex items-center gap-2 bg-black/40 p-2 rounded-lg border border-slate-700">
-                    <input type="text" id="generatedUrl" readonly class="bg-transparent text-gray-300 w-full text-sm outline-none font-mono">
-                    <button onclick="copyToClipboard()" class="text-neonBlue hover:text-white px-3 py-1 rounded transition hover:bg-neonBlue/20">
-                        <i class="fa-regular fa-copy"></i>
-                    </button>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <label class="block text-[10px] text-zinc-500 font-bold uppercase">İçerik Bilgileri</label>
+                <input type="text" id="linkTitle" placeholder="Dosya Adı (Örn: GTA 5 Mod)" class="w-full bg-black border border-zinc-800 p-4 rounded-xl outline-none focus:border-red-500">
+                <input type="url" id="targetUrl" placeholder="Asıl Link (Mediafire/Mega)" class="w-full bg-black border border-zinc-800 p-4 rounded-xl outline-none focus:border-red-500">
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-2xl border border-zinc-800">
+                <label class="block text-[10px] text-zinc-500 font-bold uppercase mb-4">Görevleri Seç (LootLabs Style)</label>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" id="task_ads" checked class="accent-red w-4 h-4"> 
+                        <span class="text-sm group-hover:text-red-400">Reklam Sayfası Ziyareti</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" id="task_wait" class="accent-red w-4 h-4"> 
+                        <span class="text-sm group-hover:text-red-400">10 Saniye Bekleme Süresi</span>
+                    </label>
                 </div>
             </div>
+        </div>
+        
+        <button id="createBtn" class="w-full bg-accent-red mt-8 py-4 rounded-xl font-bold text-lg tracking-widest hover:bg-red-700 transition">BAĞLANTIYI OLUŞTUR</button>
+        
+        <div id="resultArea" class="hidden mt-6 p-4 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center justify-between">
+            <span id="finalUrl" class="text-xs font-mono text-green-400 truncate mr-4"></span>
+            <button id="copyBtn" class="bg-green-600 text-white px-6 py-2 rounded-lg text-xs font-bold whitespace-nowrap">KOPYALA</button>
         </div>
     </div>
 
-    <div id="visitor-panel" class="hidden w-full max-w-md relative">
-        
-        <div class="glass-card rounded-2xl p-6 mb-6 text-center border-b-4 border-neonBlue">
-            <div class="w-20 h-20 bg-slate-800 rounded-full mx-auto mb-4 flex items-center justify-center border border-slate-600 shadow-[0_0_20px_rgba(0,243,255,0.2)]">
-                <i class="fa-solid fa-cloud-arrow-down text-3xl text-neonBlue animate-pulse-slow"></i>
+    <div id="visitor-view" class="hidden w-full max-w-md">
+        <div class="nvo-card rounded-3xl overflow-hidden shadow-2xl">
+            <div class="p-8 text-center border-b border-zinc-900 bg-gradient-to-b from-red-950/20 to-transparent">
+                <h1 id="vTitle" class="text-2xl font-bold mb-1">...</h1>
+                <p class="text-zinc-500 text-[10px] uppercase tracking-widest">Protected by NVO LINK</p>
             </div>
-            <h2 id="displayTitle" class="text-2xl font-bold text-white mb-2">Dosya Yükleniyor...</h2>
-            <div class="flex items-center justify-center gap-2 text-xs text-gray-400 uppercase tracking-widest">
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Güvenli Sunucu
-            </div>
-        </div>
-
-        <div class="glass-card rounded-2xl p-1 overflow-hidden">
-            <div class="bg-black/40 p-2 flex items-center gap-2 border-b border-white/5">
-                <div class="flex gap-1.5 ml-2">
-                    <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
-                </div>
-                <span class="text-xs text-gray-500 font-mono ml-auto mr-2">system_check.exe</span>
-            </div>
-            
-            <div class="p-6 space-y-4">
-                
-                <div id="step1" class="relative group cursor-pointer" onclick="handleStep1()">
-                    <div class="absolute inset-0 bg-neonBlue/5 rounded-xl opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                    <div class="border border-slate-700 bg-slate-900/50 p-4 rounded-xl flex items-center gap-4 relative z-10 transition group-hover:border-neonBlue/50">
-                        <div id="icon1" class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-600">
-                            <i class="fa-regular fa-eye text-neonBlue"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-bold text-gray-200 text-sm">Adım 1: Siteyi Ziyaret Et</h3>
-                            <p class="text-xs text-gray-500">Devam etmek için pencereyi açın.</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-600"></i>
-                    </div>
-                </div>
-
-                <div id="console-logs" class="hidden bg-black/60 rounded-lg p-3 font-mono text-xs text-green-400 space-y-1 h-24 overflow-y-auto border border-green-900/50 shadow-inner">
-                    </div>
-
-                <button id="unlockBtn" onclick="goToDestination()" disabled 
-                    class="w-full bg-slate-800 text-gray-500 font-bold py-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-3 transition-all duration-300 border border-slate-700">
-                    <i class="fa-solid fa-lock"></i>
-                    <span id="btnText">KİLİTLİ</span>
-                </button>
+            <div id="taskList" class="p-6 space-y-3"></div>
+            <div class="p-6 pt-0">
+                <button id="unlockBtn" disabled class="w-full bg-zinc-800 text-zinc-600 py-4 rounded-2xl font-bold tracking-widest">LİNK KİLİTLİ</button>
             </div>
         </div>
     </div>
@@ -161,137 +87,131 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
             authDomain: "nvo-link.firebaseapp.com",
             projectId: "nvo-link",
             storageBucket: "nvo-link.firebasestorage.app",
             messagingSenderId: "256153773846",
-            appId: "1:256153773846:web:6d51174db82ccccf119237",
-            measurementId: "G-PCHVCNWZHT"
+            appId: "1:256153773846:web:6d51174db82ccccf119237"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // BURAYI KENDİ GMAIL ADRESİNLE DEĞİŞTİR
+        const YETKILI_EMAIL = "senin_epostan@gmail.com"; 
 
         const urlParams = new URLSearchParams(window.location.search);
         const linkId = urlParams.get('id');
-        let destinationUrl = "";
-        let isStep1Done = false;
 
-        // INIT
+        // GÖRÜNÜM YÖNETİMİ
         if (linkId) {
-            loadVisitorView(linkId);
+            document.getElementById('visitor-view').classList.remove('hidden');
+            loadVisitorContent(linkId);
         } else {
-            document.getElementById('creator-panel').classList.remove('hidden');
+            // Admin Giriş Kontrolü
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    if (user.email === YETKILI_EMAIL) {
+                        showDashboard(user);
+                    } else {
+                        signOut(auth);
+                        document.getElementById('errorMsg').classList.remove('hidden');
+                        document.getElementById('login-view').classList.remove('hidden');
+                    }
+                } else {
+                    document.getElementById('login-view').classList.remove('hidden');
+                }
+            });
         }
 
-        // --- CREATOR ---
-        window.generateLink = async () => {
-            const title = document.getElementById('linkTitle').value.trim();
-            const target = document.getElementById('targetUrl').value.trim();
+        // GOOGLE GİRİŞ
+        document.getElementById('googleBtn').onclick = () => {
+            signInWithPopup(auth, provider).catch(err => console.error(err));
+        };
 
-            if(!title || !target) return alert("Hata: Başlık ve Link boş olamaz.");
-            
-            // Basit URL kontrolü
-            if(!target.startsWith('http')) return alert("Lütfen geçerli bir URL girin (https://...)");
+        // ÇIKIŞ
+        document.getElementById('logoutBtn').onclick = () => {
+            signOut(auth).then(() => location.reload());
+        };
 
-            try {
-                const docRef = await addDoc(collection(db, "links"), {
-                    title: title,
-                    destination: target,
-                    createdAt: new Date(),
-                    active: true
-                });
+        function showDashboard(user) {
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('dashboard-view').classList.remove('hidden');
+            document.getElementById('userEmail').innerText = "Hoş geldin, " + user.email;
+        }
 
-                const shortUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
-                document.getElementById('generatedUrl').value = shortUrl;
-                document.getElementById('resultBox').classList.remove('hidden');
-            } catch (error) {
-                console.error("Firebase Hatası:", error);
-                alert("Veritabanı bağlantı hatası. Kuralları kontrol edin.");
+        // LİNK OLUŞTURMA
+        document.getElementById('createBtn').onclick = async () => {
+            const title = document.getElementById('linkTitle').value;
+            const target = document.getElementById('targetUrl').value;
+            const tasks = {
+                ads: document.getElementById('task_ads').checked,
+                wait: document.getElementById('task_wait').checked
+            };
+
+            if(!title || !target) return alert("Boş alan bırakma!");
+
+            const docRef = await addDoc(collection(db, "links"), { title, target, tasks, createdAt: new Date() });
+            const finalUrl = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
+            document.getElementById('finalUrl').innerText = finalUrl;
+            document.getElementById('resultArea').classList.remove('hidden');
+        };
+
+        // KOPYALAMA
+        document.getElementById('copyBtn').onclick = () => {
+            navigator.clipboard.writeText(document.getElementById('finalUrl').innerText);
+            alert("Kopyalandı!");
+        };
+
+        // ZİYARETÇİ İŞLEMLERİ (Önceki mantıkla aynı)
+        async function loadVisitorContent(id) {
+            const snap = await getDoc(doc(db, "links", id));
+            if(snap.exists()) {
+                const data = snap.data();
+                document.getElementById('vTitle').innerText = data.title;
+                const container = document.getElementById('taskList');
+                
+                if(data.tasks.ads) container.innerHTML += `<div onclick="completeTask(this)" class="task-item bg-black p-5 rounded-2xl border border-zinc-900 flex justify-between items-center"><span><i class="fa-solid fa-rectangle-ad mr-3 accent-red"></i> Reklam Sayfasını Gör</span><i class="fa-solid fa-chevron-right text-zinc-800"></i></div>`;
+                if(data.tasks.wait) container.innerHTML += `<div onclick="completeTask(this, true)" class="task-item bg-black p-5 rounded-2xl border border-zinc-900 flex justify-between items-center"><span><i class="fa-solid fa-hourglass mr-3 accent-red"></i> 10 Saniye Bekle</span><i class="fa-solid fa-chevron-right text-zinc-800"></i></div>`;
             }
         }
 
-        window.copyToClipboard = () => {
-            const copyText = document.getElementById("generatedUrl");
-            copyText.select();
-            document.execCommand("copy");
-        }
-
-        // --- VISITOR ---
-        async function loadVisitorView(id) {
-            try {
-                const docSnap = await getDoc(doc(db, "links", id));
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    destinationUrl = data.destination;
-                    document.getElementById('displayTitle').innerText = data.title;
-                    document.getElementById('visitor-panel').classList.remove('hidden');
-                } else {
-                    document.body.innerHTML = "<h1 class='text-white text-center mt-20'>404 - Link Bulunamadı</h1>";
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        window.handleStep1 = () => {
-            if(isStep1Done) return;
-            isStep1Done = true;
-
-            // 1. Yeni sekme aç (Reklam simülasyonu)
-            window.open('https://google.com/search?q=interesting+technology', '_blank');
-
-            // UI Güncelleme
-            const icon1 = document.getElementById('icon1');
-            icon1.innerHTML = '<i class="fa-solid fa-check text-green-400"></i>';
-            icon1.classList.replace('border-slate-600', 'border-green-500');
-
-            // Konsol Loglarını Başlat
-            startFakeConsole();
-        }
-
-        function startFakeConsole() {
-            const consoleBox = document.getElementById('console-logs');
-            consoleBox.classList.remove('hidden');
+        window.completeTask = (el, wait = false) => {
+            if(el.classList.contains('task-done')) return;
+            window.open('https://google.com', '_blank');
             
-            const logs = [
-                "Connection established...",
-                "Verifying user token...",
-                "Scanning for bots...",
-                "Token validated: OK",
-                "Decrypting destination URL...",
-                "ACCESS GRANTED."
-            ];
+            if(wait) {
+                el.innerHTML = "Lütfen Bekleyin...";
+                setTimeout(() => finishTask(el), 10000);
+            } else {
+                finishTask(el);
+            }
+        };
 
-            let i = 0;
-            const interval = setInterval(() => {
-                if(i < logs.length) {
-                    const p = document.createElement('p');
-                    p.innerText = `> ${logs[i]}`;
-                    p.classList.add('terminal-line');
-                    consoleBox.appendChild(p);
-                    consoleBox.scrollTop = consoleBox.scrollHeight;
-                    i++;
-                } else {
-                    clearInterval(interval);
-                    unlockButton();
-                }
-            }, 800); // Her 0.8 saniyede bir log yaz
+        function finishTask(el) {
+            el.classList.add('task-done');
+            el.innerHTML = `<span><i class="fa-solid fa-check mr-3 text-green-500"></i> Görev Tamamlandı</span>`;
+            checkAll();
         }
 
-        function unlockButton() {
-            const btn = document.getElementById('unlockBtn');
-            btn.disabled = false;
-            btn.classList.remove('bg-slate-800', 'text-gray-500', 'cursor-not-allowed', 'border-slate-700');
-            btn.classList.add('cyber-btn', 'text-black', 'border-transparent', 'shadow-[0_0_20px_#00f3ff]');
-            
-            document.getElementById('btnText').innerText = "DOSYAYA GİT";
-            btn.innerHTML = '<i class="fa-solid fa-unlock"></i> <span id="btnText">DOSYAYA GİT</span>';
-        }
-
-        window.goToDestination = () => {
-            if(destinationUrl) window.location.href = destinationUrl;
+        function checkAll() {
+            if(document.querySelectorAll('.task-item').length === document.querySelectorAll('.task-done').length) {
+                const btn = document.getElementById('unlockBtn');
+                btn.disabled = false;
+                btn.classList.replace('bg-zinc-800', 'bg-accent-red');
+                btn.classList.replace('text-zinc-600', 'text-white');
+                btn.innerText = "İÇERİĞİ AÇ";
+                btn.onclick = () => {
+                    getDoc(doc(db, "links", linkId)).then(s => window.location.href = s.data().target);
+                };
+            }
         }
     </script>
 </body>
