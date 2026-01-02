@@ -1,123 +1,106 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NVO LINK | Pro Dashboard</title>
+    <title>NVO LINK v4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0061ff; --secondary: #60efff; --dark: #0f172a; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; color: var(--dark); margin: 0; }
+        :root { --p: #4f46e5; --s: #06b6d4; }
+        body { font-family: sans-serif; background: #f9fafb; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
         
-        /* Mobil Sığma Çözümü */
-        .app-container { min-height: 100vh; display: flex; flex-direction: column; width: 100%; max-width: 600px; margin: 0 auto; background: white; }
+        /* Ekranı Tam Kaplayan Yapı */
+        .mobile-view { min-height: 100vh; width: 100%; display: flex; flex-direction: column; background: white; }
         
-        /* Gelişmiş Kart Yapısı */
-        .glass-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        
-        /* Input & Button Modernize */
-        input { font-size: 16px !important; transition: all 0.3s ease; }
-        input:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 4px rgba(0, 97, 255, 0.1); }
-        .btn-grad { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 16px; font-weight: 600; }
-        
-        /* Animasyonlu Modal */
-        .modal-overlay { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); z-index: 1000; display: none; }
-        .modal-active { display: flex !important; }
+        /* Modern Inputlar */
+        input { border: 2px solid #f3f4f6 !important; border-radius: 16px !important; padding: 16px !important; font-size: 16px !important; width: 100%; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--p) !important; background: white; }
 
-        /* Görev Çizgisi */
-        .step-line { border-left: 2px dashed #e2e8f0; margin-left: 1rem; padding-left: 1.5rem; }
+        /* Devasa Butonlar */
+        .btn-xl { width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, var(--p), var(--s)); color: white; shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4); }
+        .btn-primary:active { transform: scale(0.96); }
+
+        /* Puanlama Yıldızları */
+        .star-rating { display: flex; gap: 8px; justify-content: center; font-size: 32px; color: #d1d5db; }
+        .star-rating i.active { color: #f59e0b; }
+        
+        /* 404 ve Boşluk Engelleme */
+        .admin-card { margin: 12px; padding: 20px; border-radius: 28px; background: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     </style>
 </head>
 <body>
 
-    <div class="app-container shadow-2xl">
-        <div id="updateModal" class="fixed inset-0 modal-overlay items-center justify-center p-6">
-            <div class="bg-white w-full rounded-[32px] p-8 animate-bounce-in max-w-sm">
-                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                    <i class="fa-solid fa-rocket text-3xl"></i>
-                </div>
-                <h2 class="text-2xl font-bold mb-2">v3.0 Ultra Aktif!</h2>
-                <p class="text-slate-500 text-sm mb-6 leading-relaxed">
-                    • <b>Geniş Ekran:</b> Mobil sığma hatası giderildi.<br>
-                    • <b>Hızlı Erişim:</b> Düzenleme ve silme butonları büyütüldü.<br>
-                    • <b>Güvenlik:</b> Ziyaretçiler artık bu ekranı görmüyor.
-                </p>
-                <button onclick="closeModal()" class="w-full py-4 btn-grad shadow-lg shadow-blue-200 uppercase tracking-wider">PANELİ YÖNET</button>
-            </div>
-        </div>
-
-        <header class="p-6 flex justify-between items-center border-b sticky top-0 bg-white/80 backdrop-blur-md z-40">
-            <div>
-                <h1 class="font-extrabold text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">NVO LINK</h1>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Profesyonel Dosya Kilitleyici</p>
-            </div>
-            <div id="authSlot">
-                <button id="loginBtn" class="bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-semibold">Giriş</button>
-                <div id="userInfo" class="hidden flex items-center gap-3">
-                    <img id="uPhoto" class="w-9 h-9 rounded-full ring-2 ring-blue-50">
-                    <button onclick="logout()" class="text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-power-off"></i></button>
+    <div class="mobile-view">
+        <header class="p-6 flex justify-between items-center border-b bg-white/80 backdrop-blur-xl sticky top-0 z-[100]">
+            <h1 class="text-2xl font-black italic tracking-tighter text-indigo-600">NVO LINK</h1>
+            <div id="authArea">
+                <button id="loginBtn" class="px-6 py-2 bg-indigo-50 text-indigo-600 rounded-full font-bold text-sm">Giriş</button>
+                <div id="userProfile" class="hidden flex items-center gap-3">
+                    <img id="uImg" class="w-10 h-10 rounded-full border-2 border-indigo-100">
+                    <button onclick="logout()" class="text-gray-300"><i class="fa-solid fa-power-off"></i></button>
                 </div>
             </div>
         </header>
 
-        <main class="flex-1 p-6 space-y-8">
-            <div id="adminPanel" class="hidden space-y-8">
-                <div class="glass-card">
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="w-2 h-6 bg-blue-600 rounded-full"></div>
-                        <h3 id="formTitle" class="font-bold text-slate-800">Bağlantı Oluştur</h3>
+        <main id="adminMain" class="hidden p-3 space-y-6">
+            <div class="admin-card">
+                <h3 class="text-gray-400 text-[10px] font-black uppercase mb-4 tracking-widest">Yeni İçerik Kilitle</h3>
+                <input type="hidden" id="editId">
+                <div class="space-y-4">
+                    <input type="text" id="lTitle" placeholder="Dosya Adı (Örn: Premium Config)">
+                    <input type="url" id="lTarget" placeholder="İndirme Linki (Mediafire/Drive)">
+                    
+                    <div class="p-5 bg-indigo-50/50 rounded-[24px] border border-indigo-100">
+                        <p class="text-[10px] font-bold text-indigo-600 mb-3 uppercase">Görev Listesi</p>
+                        <div id="taskList" class="space-y-2 mb-4"></div>
+                        <div class="flex gap-2">
+                            <input type="text" id="tn" placeholder="Kanal/Site Adı" class="!p-3 !text-sm">
+                            <input type="url" id="tl" placeholder="https://..." class="!p-3 !text-sm">
+                            <button onclick="addTask()" class="bg-indigo-600 text-white px-5 rounded-2xl"><i class="fa-solid fa-plus"></i></button>
+                        </div>
                     </div>
-                    <input type="hidden" id="editId">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 ml-1">İÇERİK ADI</label>
-                            <input type="text" id="lTitle" placeholder="Örn: PUBG Config" class="w-full p-4 bg-slate-50 border-none rounded-2xl outline-none">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 ml-1">HEDEF DOSYA LINKI</label>
-                            <input type="url" id="lTarget" placeholder="https://..." class="w-full p-4 bg-slate-50 border-none rounded-2xl outline-none">
-                        </div>
-                        
-                        <div class="bg-blue-50/50 p-5 rounded-[24px] border border-blue-100">
-                            <h4 class="text-xs font-bold text-blue-600 mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-list-check"></i> SIRALI GÖREVLER
-                            </h4>
-                            <div id="taskQueue" class="space-y-2 mb-4"></div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="tn" placeholder="Görev Adı" class="p-3 text-xs rounded-xl bg-white border-none shadow-sm">
-                                <input type="url" id="tl" placeholder="Link" class="p-3 text-xs rounded-xl bg-white border-none shadow-sm">
-                            </div>
-                            <button onclick="addTask()" class="w-full mt-2 py-2 bg-white text-blue-600 rounded-xl text-xs font-bold border border-blue-100">+ GÖREV EKLE</button>
-                        </div>
-                        
-                        <button id="mainAction" onclick="saveLink()" class="w-full py-5 btn-grad shadow-xl shadow-blue-100 active:scale-95 transition-all">SİSTEME KAYDET VE YAYINLA</button>
-                    </div>
-                </div>
-
-                <div class="space-y-4 pb-12">
-                    <h3 class="font-bold text-slate-400 text-xs tracking-widest uppercase ml-2">Linklerim</h3>
-                    <div id="linkGrid" class="space-y-4"></div>
+                    <button onclick="saveLink()" class="btn-xl btn-primary">Bağlantıyı Oluştur</button>
                 </div>
             </div>
 
-            <div id="visitorPanel" class="hidden pt-4 animate-in fade-in slide-in-from-bottom-4">
-                <div class="glass-card text-center relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-cyan-500"></div>
-                    <h2 id="vTitle" class="text-2xl font-bold text-slate-800 mt-4">...</h2>
-                    <p class="text-sm text-slate-400 mb-8">İçeriğe ulaşmak için görevleri tamamla</p>
-                    <div id="vFlow" class="text-left space-y-4"></div>
-                    <button id="vFinalBtn" disabled class="w-full mt-8 py-5 rounded-3xl bg-slate-100 text-slate-400 font-bold transition-all">DOSYAYI İNDİR</button>
+            <div class="px-3 space-y-4 pb-20">
+                <h3 class="text-gray-400 text-[10px] font-black uppercase tracking-widest">Aktif Linklerin</h3>
+                <div id="myLinks" class="space-y-3"></div>
+            </div>
+        </main>
+
+        <main id="visitorMain" class="hidden p-6 text-center animate-in fade-in duration-500">
+            <div class="py-10">
+                <div class="w-24 h-24 bg-indigo-100 text-indigo-600 rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-xl">
+                    <i class="fa-solid fa-file-arrow-down text-4xl"></i>
                 </div>
+                <h2 id="vTitle" class="text-3xl font-black text-gray-900 mb-2">...</h2>
+                <p class="text-gray-400 font-medium mb-10">Devam etmek için aşağıdaki adımları takip edin.</p>
+                
+                <div id="vTasks" class="space-y-4 text-left"></div>
+
+                <button id="vUnlock" disabled class="btn-xl bg-gray-100 text-gray-400 mt-10">Kilitli</button>
+            </div>
+
+            <div id="ratingArea" class="hidden mt-10 p-8 bg-white rounded-[32px] border-2 border-dashed border-indigo-100">
+                <h4 class="font-bold text-lg mb-4 text-gray-800">Dosyayı Puanla</h4>
+                <div class="star-rating mb-6">
+                    <i class="fa-solid fa-star" onclick="rate(1)"></i>
+                    <i class="fa-solid fa-star" onclick="rate(2)"></i>
+                    <i class="fa-solid fa-star" onclick="rate(3)"></i>
+                    <i class="fa-solid fa-star" onclick="rate(4)"></i>
+                    <i class="fa-solid fa-star" onclick="rate(5)"></i>
+                </div>
+                <p class="text-xs text-gray-400">Puanınız diğer kullanıcılara yardımcı olacaktır.</p>
             </div>
         </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, query, where, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -134,170 +117,165 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        let currentTasks = [];
-        const urlParams = new URLSearchParams(window.location.search);
-        const activeLinkId = urlParams.get('id');
+        let tasks = [];
+        let userRating = 0;
+        const params = new URLSearchParams(window.location.search);
+        const lid = params.get('id');
 
-        onAuthStateChanged(auth, user => {
-            if (activeLinkId) {
-                document.getElementById('visitorPanel').classList.remove('hidden');
-                loadVisitorFlow();
+        onAuthStateChanged(auth, (user) => {
+            if (lid) {
+                document.getElementById('visitorMain').classList.remove('hidden');
+                loadVisitor();
             } else if (user) {
-                document.getElementById('updateModal').classList.add('modal-active');
-                document.getElementById('adminPanel').classList.remove('hidden');
-                document.getElementById('authSlot').children[0].classList.add('hidden');
-                document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('uPhoto').src = user.photoURL;
-                loadAdminLinks(user.uid);
+                document.getElementById('adminMain').classList.remove('hidden');
+                document.getElementById('loginBtn').classList.add('hidden');
+                document.getElementById('userProfile').classList.remove('hidden');
+                document.getElementById('uImg').src = user.photoURL;
+                loadMyLinks(user.uid);
             } else {
                 document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
             }
         });
 
-        window.closeModal = () => document.getElementById('updateModal').classList.remove('modal-active');
         window.logout = () => signOut(auth).then(() => location.reload());
 
-        // Görev Ekleme
+        // GÖREV SİSTEMİ
         window.addTask = () => {
             const n = document.getElementById('tn').value;
             const l = document.getElementById('tl').value;
             if(n && l) {
-                currentTasks.push({name: n, link: l});
-                renderAdminTasks();
+                tasks.push({ name: n, link: l });
+                renderTasks();
                 document.getElementById('tn').value = ""; document.getElementById('tl').value = "";
             }
         };
 
-        function renderAdminTasks() {
-            document.getElementById('taskQueue').innerHTML = currentTasks.map((t, i) => `
-                <div class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm text-xs border border-blue-100">
-                    <span class="font-bold text-slate-600">${i+1}. ${t.name}</span>
-                    <button onclick="removeTask(${i})" class="text-red-400 p-1"><i class="fa-solid fa-trash-can"></i></button>
+        function renderTasks() {
+            document.getElementById('taskList').innerHTML = tasks.map((t, i) => `
+                <div class="flex justify-between items-center bg-white p-3 rounded-xl border text-xs font-bold shadow-sm">
+                    <span>${i+1}. ${t.name}</span>
+                    <button onclick="removeTask(${i})" class="text-red-400"><i class="fa-solid fa-xmark"></i></button>
                 </div>`).join('');
         }
-        window.removeTask = (i) => { currentTasks.splice(i,1); renderAdminTasks(); };
+        window.removeTask = (i) => { tasks.splice(i, 1); renderTasks(); };
 
-        // Kaydetme
+        // KAYDET & GÜNCELLE
         window.saveLink = async () => {
             const title = document.getElementById('lTitle').value;
             const target = document.getElementById('lTarget').value;
-            const editId = document.getElementById('editId').value;
-            if(!title || !target) return alert("Hata: Başlık ve Link boş bırakılamaz!");
+            const eid = document.getElementById('editId').value;
+            if(!title || !target) return alert("Eksik bilgi!");
 
-            const data = { title, target, tasks: currentTasks, uid: auth.currentUser.uid, updatedAt: serverTimestamp() };
-            try {
-                if(editId) await updateDoc(doc(db, "links", editId), data);
-                else { data.createdAt = serverTimestamp(); await addDoc(collection(db, "links"), data); }
-                location.reload();
-            } catch(e) { alert("Veritabanı hatası!"); }
+            const data = { title, target, tasks, uid: auth.currentUser.uid, rating: 0, raters: 0, updatedAt: serverTimestamp() };
+            if(eid) await updateDoc(doc(db, "links", eid), data);
+            else { data.createdAt = serverTimestamp(); await addDoc(collection(db, "links"), data); }
+            location.reload();
         };
 
-        async function loadAdminLinks(uid) {
+        async function loadMyLinks(uid) {
             const q = query(collection(db, "links"), where("uid", "==", uid));
             const snap = await getDocs(q);
-            const grid = document.getElementById('linkGrid');
-            grid.innerHTML = "";
+            const box = document.getElementById('myLinks');
+            box.innerHTML = "";
             snap.forEach(d => {
                 const url = `${window.location.origin}${window.location.pathname}?id=${d.id}`;
-                grid.innerHTML += `
-                    <div class="glass-card flex justify-between items-center p-5 group hover:border-blue-200 transition-all">
+                const avg = d.data().raters > 0 ? (d.data().rating / d.data().raters).toFixed(1) : "0";
+                box.innerHTML += `
+                    <div class="admin-card !m-0 !mb-3 flex justify-between items-center">
                         <div class="truncate flex-1">
-                            <h4 class="font-bold text-slate-800 text-sm mb-1">${d.data().title}</h4>
-                            <p class="text-[10px] text-blue-500 truncate font-mono">${url}</p>
+                            <h4 class="font-black text-sm text-gray-800">${d.data().title}</h4>
+                            <p class="text-[10px] text-indigo-500 font-bold mb-1">${avg} <i class="fa-solid fa-star text-[8px]"></i> • ${d.data().tasks.length} Görev</p>
+                            <p class="text-[9px] text-gray-300 truncate">${url}</p>
                         </div>
                         <div class="flex gap-2 ml-4">
-                            <button onclick="editLink('${d.id}')" class="p-3 bg-blue-50 text-blue-600 rounded-2xl active:bg-blue-100"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deleteLink('${d.id}')" class="p-3 bg-red-50 text-red-500 rounded-2xl active:bg-red-100"><i class="fa-solid fa-trash"></i></button>
-                            <button onclick="navigator.clipboard.writeText('${url}');alert('Bağlantı Kopyalandı!')" class="p-3 bg-slate-50 text-slate-400 rounded-2xl active:bg-slate-200"><i class="fa-solid fa-copy"></i></button>
+                            <button onclick="editL('${d.id}')" class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl text-xs"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="delL('${d.id}')" class="w-10 h-10 bg-red-50 text-red-400 rounded-xl text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                            <button onclick="navigator.clipboard.writeText('${url}');alert('Kopyalandı')" class="w-10 h-10 bg-gray-50 text-gray-400 rounded-xl text-xs"><i class="fa-solid fa-link"></i></button>
                         </div>
                     </div>`;
             });
         }
 
-        window.editLink = async (id) => {
+        window.editL = async (id) => {
             const d = await getDoc(doc(db, "links", id));
             const data = d.data();
             document.getElementById('lTitle').value = data.title;
             document.getElementById('lTarget').value = data.target;
             document.getElementById('editId').value = id;
-            document.getElementById('formTitle').innerText = "Bağlantıyı Güncelle";
-            document.getElementById('mainAction').innerText = "GÜNCELLEMEYİ KAYDET";
-            currentTasks = data.tasks || [];
-            renderAdminTasks();
+            tasks = data.tasks || [];
+            renderTasks();
             window.scrollTo({top: 0, behavior: 'smooth'});
         };
 
-        window.deleteLink = async (id) => { if(confirm("Bu bağlantı kalıcı olarak silinecek?")) { await deleteDoc(doc(db, "links", id)); location.reload(); }};
+        window.delL = async (id) => { if(confirm("Silmek istiyor musun?")) { await deleteDoc(doc(db, "links", id)); location.reload(); }};
 
         // ZİYARETÇİ AKIŞI
         let v_tasks = [];
         let v_idx = 0;
-        async function loadVisitorFlow() {
-            const d = await getDoc(doc(db, "links", activeLinkId));
+        async function loadVisitor() {
+            const d = await getDoc(doc(db, "links", lid));
             if(!d.exists()) return;
             const data = d.data();
             document.getElementById('vTitle').innerText = data.title;
             v_tasks = data.tasks || [];
-            if(v_tasks.length === 0) startDirectTimer(data.target);
-            else renderVisitorFlow();
+            renderVisitorTasks();
         }
 
-        function renderVisitorFlow() {
-            document.getElementById('vFlow').innerHTML = v_tasks.map((t, i) => `
-                <div id="vStep-${i}" class="p-5 rounded-3xl border ${i===0?'border-blue-500 bg-blue-50/20 shadow-sm shadow-blue-50':'opacity-30 grayscale pointer-events-none'} transition-all duration-500">
-                    <div class="flex justify-between items-center font-bold text-sm">
-                        <span class="text-slate-700">${i+1}. ${t.name}</span>
-                        <i id="vIcon-${i}" class="fa-solid ${i===0?'fa-circle-play text-blue-500':'fa-lock text-slate-300'}"></i>
+        function renderVisitorTasks() {
+            document.getElementById('vTasks').innerHTML = v_tasks.map((t, i) => `
+                <div id="vCard-${i}" class="p-5 rounded-[24px] border-2 ${i===0?'border-indigo-500 bg-indigo-50/30':'border-gray-100 opacity-40 grayscale pointer-events-none'} transition-all">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-black text-gray-800 text-sm italic">ADIM ${i+1}</span>
+                        <i id="vIcon-${i}" class="fa-solid ${i===0?'fa-circle-play text-indigo-500':'fa-lock text-gray-300'} text-xl"></i>
                     </div>
-                    <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
-                        <div id="vBar-${i}" class="h-full bg-blue-600 w-0 transition-all duration-[1000ms]"></div>
-                    </div>
-                    <button id="vGo-${i}" onclick="startVisitorStep(${i}, '${t.link}')" class="${i===0?'':'hidden'} mt-4 w-full py-3 bg-white border border-blue-200 text-blue-600 rounded-2xl text-[10px] font-black tracking-widest uppercase">ADIMI BAŞLAT</button>
+                    <p class="text-xs font-bold text-gray-500 mb-4">${t.name} adresine git.</p>
+                    <button id="vBtn-${i}" onclick="runStep(${i}, '${t.link}')" class="${i===0?'':'hidden'} w-full py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">SİTEYE GİT</button>
                 </div>`).join('');
         }
 
-        window.startVisitorStep = (i, link) => {
-            window.open(link, '_blank');
-            document.getElementById(`vGo-${i}`).classList.add('hidden');
-            let p = 0;
+        window.runStep = (i, link) => {
+            window.open(link, '_blank'); // Direkt siteye gider
+            document.getElementById(`vBtn-${i}`).innerText = "LÜTFEN BEKLEYİN...";
+            let s = 10;
             const t = setInterval(() => {
-                p += 5;
-                document.getElementById(`vBar-${i}`).style.width = p + "%";
-                if(p >= 100) { clearInterval(t); finishStep(i); }
+                s--;
+                if(s <= 0) { clearInterval(t); finishStep(i); }
             }, 1000);
         };
 
         function finishStep(i) {
-            document.getElementById(`vIcon-${i}`).className = "fa-solid fa-circle-check text-green-500";
-            document.getElementById(`vStep-${i}`).classList.remove('border-blue-500', 'bg-blue-50/20');
+            document.getElementById(`vIcon-${i}`).className = "fa-solid fa-circle-check text-green-500 text-xl";
             v_idx++;
             if(v_idx < v_tasks.length) {
-                const next = document.getElementById(`vStep-${v_idx}`);
-                next.classList.remove('opacity-30', 'grayscale', 'pointer-events-none');
-                next.classList.add('border-blue-500', 'bg-blue-50/20');
-                document.getElementById(`vIcon-${v_idx}`).className = "fa-solid fa-circle-play text-blue-500";
-                document.getElementById(`vGo-${v_idx}`).classList.remove('hidden');
-            } else { unlockFinal(); }
+                const next = document.getElementById(`vCard-${v_idx}`);
+                next.classList.remove('opacity-40', 'grayscale', 'pointer-events-none');
+                next.classList.add('border-indigo-500', 'bg-indigo-50/30');
+                document.getElementById(`vIcon-${v_idx}`).className = "fa-solid fa-circle-play text-indigo-500 text-xl";
+                document.getElementById(`vBtn-${v_idx}`).classList.remove('hidden');
+            } else { unlock(); }
         }
 
-        function unlockFinal(direct = null) {
-            const b = document.getElementById('vFinalBtn');
+        function unlock() {
+            const b = document.getElementById('vUnlock');
             b.disabled = false;
-            b.className = "w-full mt-8 py-5 btn-grad shadow-xl shadow-blue-200 animate-pulse";
-            b.innerText = "İÇERİĞE ERİŞİM SAĞLA";
+            b.innerText = "DOSYAYI İNDİR";
+            b.className = "btn-xl btn-primary mt-10 shadow-2xl animate-bounce";
             b.onclick = async () => {
-                if(direct) window.location.href = direct;
-                else { const s = await getDoc(doc(db, "links", activeLinkId)); window.location.href = s.data().target; }
+                const s = await getDoc(doc(db, "links", lid));
+                window.open(s.data().target, '_blank');
+                document.getElementById('ratingArea').classList.remove('hidden');
+                window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
             };
         }
 
-        function startDirectTimer(target) {
-            let s = 10;
-            const it = setInterval(() => {
-                document.getElementById('vFinalBtn').innerText = `BEKLEYİN: ${s--}s`;
-                if(s<0) { clearInterval(it); unlockFinal(target); }
-            }, 1000);
-        }
+        window.rate = async (val) => {
+            const stars = document.querySelectorAll('.star-rating i');
+            stars.forEach((s, i) => s.classList.toggle('active', i < val));
+            await updateDoc(doc(db, "links", lid), { rating: increment(val), raters: increment(1) });
+            alert("Puanınız kaydedildi, teşekkürler!");
+            document.getElementById('ratingArea').innerHTML = "<p class='font-bold text-green-600'>Geri bildiriminiz için teşekkürler! ❤️</p>";
+        };
     </script>
 </body>
 </html>
+
