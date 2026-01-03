@@ -3,134 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NVO LINK v11.1 | Professional SaaS</title>
+    <title>NVO LINK v12.0 | Ultimate Social Gateway</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        :root { --primary: #6366f1; --accent: #06b6d4; --bg-dark: #0b0f1a; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: #f8fafc; }
-        .saas-gradient { background: linear-gradient(135deg, var(--primary), var(--accent)); }
-        .glass-panel { background: rgba(21, 27, 44, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        
-        /* URL TAŞMA ÇÖZÜMÜ */
-        .url-truncate { 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            max-width: 140px; /* Mobilde taşmayı önleyen kritik ayar */
+        :root {
+            --p: #6366f1; --p-light: #818cf8; --s: #06b6d4; --bg: #030712; --card: #111827;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: #f3f4f6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
-        /* GÜNCELLEME MODALI ANIMASYONU */
-        @keyframes modalShow { from { opacity: 0; scale: 0.9; } to { opacity: 1; scale: 1; } }
-        .modal-active { animation: modalShow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        /* SaaS Glassmorphism & UI Effects */
+        .glass { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .saas-border { border: 1px solid rgba(99, 102, 241, 0.2); }
+        .saas-gradient { background: linear-gradient(135deg, var(--p), var(--s)); }
+        .saas-text-gradient { background: linear-gradient(135deg, #fff, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--p); border-radius: 10px; }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .animate-float { animation: float 4s infinite ease-in-out; }
+        .page-entry { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Input & UI Components */
+        input, select { 
+            background: rgba(31, 41, 55, 0.5) !important; 
+            border: 1px solid rgba(255,255,255,0.1) !important; 
+            border-radius: 14px !important; 
+            color: white !important;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--p) !important; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
+
+        /* URL Truncate Fix */
+        .url-box { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+
+        /* Notification Toast */
+        #toast { position: fixed; top: 20px; right: 20px; z-index: 999; transform: translateX(150%); transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #toast.active { transform: translateX(0); }
     </style>
 </head>
-<body class="antialiased overflow-x-hidden">
+<body class="pb-28">
 
-    <div id="updateModal" class="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-6 backdrop-blur-md hidden">
-        <div class="glass-panel w-full max-w-sm rounded-[3rem] p-8 text-center modal-active relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 saas-gradient"></div>
-            <div class="w-20 h-20 saas-gradient rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-2xl rotate-6">
-                <i class="fa-solid fa-wand-magic-sparkles text-3xl text-white"></i>
+    <div id="toast" class="glass px-6 py-4 rounded-2xl flex items-center gap-4 shadow-2xl border-l-4 border-indigo-500">
+        <div class="w-8 h-8 saas-gradient rounded-full flex items-center justify-center"><i class="fa-solid fa-bell text-xs"></i></div>
+        <p id="toastMsg" class="text-sm font-bold uppercase tracking-wider"></p>
+    </div>
+
+    <div id="updateScreen" class="fixed inset-0 z-[1000] bg-slate-950/95 flex items-center justify-center p-4 backdrop-blur-xl hidden">
+        <div class="glass max-w-lg w-full rounded-[3rem] p-10 saas-border relative overflow-hidden text-center page-entry">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/20 blur-[80px]"></div>
+            <div class="w-24 h-24 saas-gradient rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-2xl animate-float">
+                <i class="fa-solid fa-rocket text-4xl text-white"></i>
             </div>
-            <h2 class="text-2xl font-black mb-2">v11.1 MEGA UPDATE</h2>
-            <p class="text-slate-400 text-sm mb-6">SaaS altyapısı optimize edildi, taşma hataları giderildi ve sistem hızlandırıldı.</p>
-            <div class="text-left space-y-3 mb-8">
-                <div class="flex items-center gap-3 text-xs font-bold text-slate-300">
-                    <i class="fa-solid fa-check text-green-500"></i> URL Taşma Sorunu Çözüldü
+            <h2 class="text-3xl font-black mb-4 saas-text-gradient">v12.0 ULTIMATE</h2>
+            <div class="grid grid-cols-2 gap-4 text-left mb-8">
+                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <p class="text-indigo-400 font-bold text-xs mb-1">DATA ANALYSIS</p>
+                    <p class="text-[10px] text-slate-400">Gelişmiş tıklama ve dönüşüm takibi.</p>
                 </div>
-                <div class="flex items-center gap-3 text-xs font-bold text-slate-300">
-                    <i class="fa-solid fa-check text-green-500"></i> Görev Yönetimi İyileştirildi
+                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <p class="text-indigo-400 font-bold text-xs mb-1">NO LIMITS</p>
+                    <p class="text-[10px] text-slate-400">Sınırsız görev ve kampanya ekleme.</p>
                 </div>
-                <div class="flex items-center gap-3 text-xs font-bold text-slate-300">
-                    <i class="fa-solid fa-check text-green-500"></i> Dinamik QR Kod Desteği
+                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <p class="text-indigo-400 font-bold text-xs mb-1">SMART QR</p>
+                    <p class="text-[10px] text-slate-400">Dinamik QR kod ve hızlı paylaşım.</p>
+                </div>
+                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <p class="text-indigo-400 font-bold text-xs mb-1">FIX OVERFLOW</p>
+                    <p class="text-[10px] text-slate-400">Taşma ve UI hataları tamamen giderildi.</p>
                 </div>
             </div>
-            <button onclick="closeUpdate()" class="w-full py-4 saas-gradient rounded-2xl font-extrabold text-white shadow-lg">ANLAŞILDI</button>
+            <button onclick="closeUpdate()" class="w-full py-5 saas-gradient rounded-[2rem] font-black text-white shadow-xl shadow-indigo-500/30 hover:scale-105 transition">KEŞFETMEYE BAŞLA</button>
         </div>
     </div>
 
-    <nav class="sticky top-0 z-50 glass-panel px-4 py-3 flex justify-between items-center border-b border-white/5">
-        <div class="flex items-center gap-2">
-            <div class="w-9 h-9 saas-gradient rounded-xl flex items-center justify-center shadow-lg">
-                <i class="fa-solid fa-bolt text-white text-sm"></i>
+    <nav class="sticky top-0 z-[100] glass px-6 py-4 flex justify-between items-center border-b border-white/5">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 saas-gradient rounded-2xl flex items-center justify-center shadow-lg rotate-3">
+                <i class="fa-solid fa-infinity text-white"></i>
             </div>
-            <span class="font-extrabold text-lg">NVO<span class="text-indigo-400">LINK</span></span>
+            <div class="flex flex-col">
+                <span class="font-black text-xl leading-none tracking-tighter">NVO<span class="text-indigo-500">LINK</span></span>
+                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Enterprise SaaS</span>
+            </div>
         </div>
-        <div id="navActions"></div>
+        <div id="authProfile" class="flex items-center gap-4">
+            <button onclick="login()" id="loginBtn" class="bg-white text-black px-6 py-2.5 rounded-full font-black text-xs shadow-xl transition active:scale-90">GİRİŞ</button>
+        </div>
     </nav>
 
-    <main class="max-w-xl mx-auto px-4 pt-6 pb-24">
+    <main class="max-w-xl mx-auto px-4 mt-8">
         
-        <section id="adminDashboard" class="hidden space-y-6">
+        <section id="adminPanel" class="hidden space-y-8 page-entry">
+            
             <div class="grid grid-cols-2 gap-4">
-                <div class="glass-panel p-4 rounded-2xl">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase">Total Links</p>
-                    <h2 id="statTotalLinks" class="text-2xl font-black">0</h2>
+                <div class="glass p-6 rounded-[2rem] border-b-4 border-indigo-500">
+                    <div class="flex justify-between items-start mb-2">
+                        <i class="fa-solid fa-link text-indigo-400 text-xl"></i>
+                        <span class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-1 rounded-lg font-bold">LIVE</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-500 uppercase">Toplam Link</p>
+                    <h2 id="totalLinks" class="text-3xl font-black mt-1">0</h2>
                 </div>
-                <div class="glass-panel p-4 rounded-2xl">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase">Global Views</p>
-                    <h2 id="statTotalViews" class="text-2xl font-black">0</h2>
+                <div class="glass p-6 rounded-[2rem] border-b-4 border-cyan-500">
+                    <div class="flex justify-between items-start mb-2">
+                        <i class="fa-solid fa-chart-line text-cyan-400 text-xl"></i>
+                        <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded-lg font-bold">+2.4%</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-500 uppercase">Tıklanma</p>
+                    <h2 id="totalViews" class="text-3xl font-black mt-1">0</h2>
                 </div>
             </div>
 
-            <div class="glass-panel p-6 rounded-[2.5rem] border-t-2 border-indigo-500/30">
-                <h3 class="font-bold mb-4">Campaign Builder</h3>
-                <div class="space-y-4">
-                    <input type="text" id="lTitle" placeholder="Campaign Title" class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-sm outline-none">
-                    <input type="text" id="lTarget" placeholder="Final Target URL" class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-sm outline-none">
+            <div class="glass p-8 rounded-[3rem] relative">
+                <div class="flex items-center gap-2 mb-6">
+                    <span class="w-2 h-6 saas-gradient rounded-full"></span>
+                    <h3 class="font-black text-xl">Kampanya Oluştur</h3>
+                </div>
 
-                    <div class="bg-black/20 p-4 rounded-2xl border border-white/5">
-                        <p class="text-[10px] font-bold text-slate-500 mb-3 uppercase tracking-widest">Add Tasks</p>
-                        <div id="taskBuilderList" class="space-y-2 mb-4"></div>
-                        <div class="flex flex-wrap gap-2">
-                            <select id="taskType" class="flex-1 min-w-[80px] bg-slate-800 border-none rounded-lg text-[10px] px-2 text-white h-10 outline-none">
-                                <option value="youtube">YouTube</option>
-                                <option value="discord">Discord</option>
-                                <option value="instagram">Instagram</option>
-                                <option value="other">Link</option>
-                            </select>
-                            <input type="text" id="tName" placeholder="Task Name" class="flex-[2] min-w-[120px] bg-slate-800 border-none rounded-lg p-2 text-[10px] text-white h-10">
-                            <input type="text" id="tLink" placeholder="Task URL" class="flex-[2] min-w-[120px] bg-slate-800 border-none rounded-lg p-2 text-[10px] text-white h-10">
-                            <button onclick="addTaskToBuilder()" class="w-full sm:w-10 h-10 saas-gradient rounded-lg flex items-center justify-center text-white">
-                                <i class="fa-solid fa-plus"></i>
+                <div class="space-y-5">
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 ml-2 mb-2 block uppercase">BAŞLIK & İSİM</label>
+                        <input type="text" id="lTitle" placeholder="Örn: Minecraft Hile Dosyası v2" class="w-full p-4 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-500 ml-2 mb-2 block uppercase">HEDEF URL (KİLİTLİ İÇERİK)</label>
+                        <input type="text" id="lTarget" placeholder="https://google-drive.com/file..." class="w-full p-4 outline-none">
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-[2rem] border border-white/5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Görev Listesi</h4>
+                            <span id="taskCount" class="text-[10px] bg-indigo-500 px-2 py-0.5 rounded-full font-bold">0</span>
+                        </div>
+                        
+                        <div id="builderTasks" class="space-y-3 mb-6">
+                            </div>
+
+                        <div class="flex flex-col gap-3">
+                            <div class="grid grid-cols-2 gap-2">
+                                <select id="tType" class="p-3 text-xs">
+                                    <option value="youtube">YouTube</option>
+                                    <option value="discord">Discord</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="tiktok">TikTok</option>
+                                    <option value="twitter">X / Twitter</option>
+                                    <option value="link">Özel Link</option>
+                                </select>
+                                <input type="text" id="tName" placeholder="Görev İsmi" class="p-3 text-xs">
+                            </div>
+                            <input type="text" id="tLink" placeholder="Görev Linki (Kanal, Sunucu vb.)" class="w-full p-3 text-xs">
+                            <button onclick="addTask()" class="w-full py-3 bg-white/5 rounded-xl text-xs font-bold hover:bg-white/10 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus-circle"></i> GÖREVİ LİSTEYE EKLE
                             </button>
                         </div>
                     </div>
 
-                    <button onclick="publishCampaign()" class="w-full py-4 saas-gradient rounded-2xl font-extrabold text-white shadow-xl shadow-indigo-500/20">
-                        PUBLISH SMART LINK
+                    <button onclick="publish()" class="w-full py-5 saas-gradient rounded-[2rem] font-black text-white shadow-2xl shadow-indigo-500/20 active:scale-95 transition">
+                        KAMPANYAYI YAYINLA
                     </button>
                 </div>
             </div>
 
-            <div id="campaignList" class="space-y-3"></div>
+            <div class="space-y-4">
+                <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-2">Aktif Kampanyalarım</h3>
+                <div id="myCampaigns" class="space-y-4 pb-20">
+                    </div>
+            </div>
         </section>
 
-        <section id="visitorGateway" class="hidden text-center pt-8">
-            <h1 id="vTitle" class="text-3xl font-black mb-2 tracking-tight">...</h1>
-            <p class="text-slate-400 text-sm mb-10">Follow the steps below to access content.</p>
-            <div id="vTaskList" class="space-y-3 text-left"></div>
-            <button id="vUnlockBtn" disabled class="w-full mt-10 py-5 rounded-[2rem] bg-slate-800 text-slate-500 font-black tracking-widest border border-white/5 opacity-50">
-                <i class="fa-solid fa-lock mr-2"></i> KİLİTLİ
+        <section id="visitorPanel" class="hidden text-center py-12 page-entry">
+            <div class="w-24 h-24 saas-gradient rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-2xl rotate-6 animate-float">
+                <i class="fa-solid fa-shield-halved text-4xl text-white"></i>
+            </div>
+            <h1 id="vTitle" class="text-3xl font-black mb-3 tracking-tight">Bağlantı Kontrol Ediliyor</h1>
+            <p class="text-slate-400 text-sm mb-12 px-10">Hedef dosyaya erişmek için sosyal medya görevlerini tamamlayın.</p>
+
+            <div id="vTasks" class="space-y-4 text-left">
+                </div>
+
+            <button id="vUnlock" disabled class="w-full mt-12 py-6 rounded-[2.5rem] bg-slate-900 text-slate-600 font-black tracking-widest border border-white/5 opacity-50 transition-all duration-500 flex items-center justify-center gap-4">
+                <i class="fa-solid fa-lock text-xl"></i> HENÜZ KİLİTLİ
             </button>
         </section>
+
     </main>
 
-    <div id="adminNav" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 glass-panel px-6 py-4 rounded-full flex items-center gap-10 shadow-2xl z-[100]">
-        <button onclick="location.reload()" class="text-indigo-400"><i class="fa-solid fa-house-chimney text-lg"></i></button>
-        <button onclick="alert('Analysis Pro is Active')" class="text-slate-500"><i class="fa-solid fa-chart-pie text-lg"></i></button>
-        <button onclick="userLogout()" class="text-red-500"><i class="fa-solid fa-power-off text-lg"></i></button>
+    <div id="qrModal" class="fixed inset-0 z-[2000] bg-black/95 hidden flex items-center justify-center p-6" onclick="this.classList.add('hidden')">
+        <div class="glass p-10 rounded-[4rem] text-center w-full max-w-sm saas-border" onclick="event.stopPropagation()">
+            <h3 class="font-black text-xl mb-6">Kampanya QR Kodu</h3>
+            <div class="bg-white p-4 rounded-3xl mb-8">
+                <img id="qrImg" src="" class="w-full">
+            </div>
+            <button onclick="document.getElementById('qrModal').classList.add('hidden')" class="w-full py-4 bg-white/5 rounded-2xl font-bold uppercase text-xs">Pencereyi Kapat</button>
+        </div>
     </div>
 
-    <div id="qrModal" class="fixed inset-0 z-[300] bg-black/95 hidden flex items-center justify-center p-6" onclick="this.classList.add('hidden')">
-        <div class="glass-panel p-8 rounded-[3rem] text-center w-full max-w-xs" onclick="event.stopPropagation()">
-            <h3 class="font-bold mb-4">Smart QR Code</h3>
-            <img id="qrImage" src="" class="w-full rounded-2xl border-8 border-white mb-6">
-            <button onclick="document.getElementById('qrModal').classList.add('hidden')" class="w-full py-3 bg-white/10 rounded-xl font-bold uppercase text-xs">Kapat</button>
-        </div>
+    <div id="adminNav" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 glass px-10 py-5 rounded-full flex items-center gap-12 shadow-2xl z-[500] saas-border">
+        <button onclick="location.reload()" class="text-indigo-400 transition hover:scale-110"><i class="fa-solid fa-house-user text-xl"></i></button>
+        <button onclick="showTost('İstatistikler Yakında!', 'info')" class="text-slate-500 transition hover:scale-110"><i class="fa-solid fa-chart-pie text-xl"></i></button>
+        <button onclick="logout()" class="text-red-500/70 transition hover:scale-110"><i class="fa-solid fa-power-off text-xl"></i></button>
     </div>
 
     <script type="module">
@@ -152,177 +240,224 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        let builderTasks = [];
-        const lid = new URLSearchParams(window.location.search).get('id');
+        let tasks = [];
+        const cid = new URLSearchParams(window.location.search).get('id');
 
-        // GÜNCELLEME NOTU MANTIĞI
-        if(!lid && localStorage.getItem('v11.1_seen') !== 'true') {
-            document.getElementById('updateModal').classList.remove('hidden');
-        }
-        window.closeUpdate = () => {
-            localStorage.setItem('v11.1_seen', 'true');
-            document.getElementById('updateModal').classList.add('hidden');
+        // --- CORE UI FUNCTIONS ---
+        window.showTost = (msg, type = 'success') => {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.add('active');
+            setTimeout(() => t.classList.remove('active'), 3000);
         };
 
-        // AUTH & DASHBOARD
+        if(!cid && localStorage.getItem('v12_seen') !== 'true') {
+            document.getElementById('updateScreen').classList.remove('hidden');
+        }
+        window.closeUpdate = () => {
+            localStorage.setItem('v12_seen', 'true');
+            document.getElementById('updateScreen').classList.add('hidden');
+        };
+
+        // --- AUTH & ROUTING ---
         onAuthStateChanged(auth, user => {
-            if(lid) {
-                document.getElementById('visitorGateway').classList.remove('hidden');
+            if(cid) {
+                document.getElementById('visitorPanel').classList.remove('hidden');
                 loadVisitor();
             } else if(user) {
-                document.getElementById('adminDashboard').classList.remove('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
                 document.getElementById('adminNav').classList.remove('hidden');
-                document.getElementById('navActions').innerHTML = `<img src="${user.photoURL}" class="w-9 h-9 rounded-full ring-2 ring-indigo-500/20">`;
+                document.getElementById('authProfile').innerHTML = `<img src="${user.photoURL}" class="w-10 h-10 rounded-2xl ring-2 ring-indigo-500/30">`;
                 loadAdmin(user.uid);
             } else {
-                renderLogin();
+                renderLanding();
             }
         });
 
-        function renderLogin() {
-            document.getElementById('adminDashboard').classList.remove('hidden');
-            document.getElementById('adminDashboard').innerHTML = `
-                <div class="text-center py-20">
-                    <h2 class="text-2xl font-extrabold mb-8">NVO LINK SaaS Giriş</h2>
-                    <button id="gLogin" class="w-full py-4 bg-white text-black font-black rounded-2xl shadow-xl">GOOGLE İLE GİRİŞ YAP</button>
+        window.login = () => signInWithPopup(auth, provider);
+        window.logout = () => signOut(auth).then(() => location.reload());
+
+        function renderLanding() {
+            document.getElementById('adminPanel').classList.remove('hidden');
+            document.getElementById('adminPanel').innerHTML = `
+                <div class="text-center py-24 page-entry">
+                    <div class="w-24 h-24 saas-gradient rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-2xl rotate-12">
+                        <i class="fa-solid fa-fingerprint text-4xl text-white"></i>
+                    </div>
+                    <h1 class="text-4xl font-black mb-4 saas-text-gradient leading-tight">İçeriğini Kilitle,<br>Kitleni Büyüt.</h1>
+                    <p class="text-slate-500 text-sm mb-12 px-12">Rekonise'den daha hızlı, daha şık ve tamamen ücretsiz profesyonel gateway sistemi.</p>
+                    <button onclick="login()" class="w-full py-5 bg-white text-black font-black rounded-[2rem] shadow-2xl hover:bg-slate-100 transition">GOOGLE İLE HEMEN BAŞLA</button>
                 </div>
             `;
-            document.getElementById('gLogin').onclick = () => signInWithPopup(auth, provider);
         }
 
-        window.userLogout = () => signOut(auth).then(() => location.reload());
-
-        // ADMIN: TASK MANAGEMENT (TAŞMA FİX)
-        window.addTaskToBuilder = () => {
-            const type = document.getElementById('taskType').value;
+        // --- ADMIN: CAMPAIGN ENGINE ---
+        window.addTask = () => {
+            const type = document.getElementById('tType').value;
             const name = document.getElementById('tName').value;
             const link = document.getElementById('tLink').value;
-            if (name && link) {
-                builderTasks.push({ type, name, link: link.includes('://') ? link : 'https://' + link });
-                renderBuilderList();
+            if(name && link) {
+                tasks.push({ type, name, link: link.includes('://') ? link : 'https://' + link });
+                renderTasks();
                 document.getElementById('tName').value = ""; document.getElementById('tLink').value = "";
+                showTost("Görev listeye eklendi.");
+            } else {
+                showTost("Lütfen tüm alanları doldurun!", "error");
             }
         };
 
-        function renderBuilderList() {
-            document.getElementById('taskBuilderList').innerHTML = builderTasks.map((t, i) => `
-                <div class="flex items-center justify-between bg-slate-800/80 p-3 rounded-xl border border-white/5 overflow-hidden">
+        function renderTasks() {
+            document.getElementById('taskCount').innerText = tasks.length;
+            document.getElementById('builderTasks').innerHTML = tasks.map((t, i) => `
+                <div class="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 group">
                     <div class="flex items-center gap-3 overflow-hidden">
-                        <i class="fa-brands fa-${t.type==='other'?'link':t.type} text-indigo-400"></i>
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0">
+                            <i class="fa-brands fa-${t.type==='link'?'link':t.type} text-xs"></i>
+                        </div>
                         <div class="overflow-hidden">
-                            <p class="text-[9px] font-bold text-white truncate">${t.name}</p>
-                            <p class="text-[8px] text-slate-500 truncate url-truncate">${t.link}</p>
+                            <p class="text-[10px] font-black uppercase text-slate-400">${t.type}</p>
+                            <h5 class="text-xs font-bold text-white truncate">${t.name}</h5>
+                            <p class="text-[8px] text-slate-600 truncate url-box">${t.link}</p>
                         </div>
                     </div>
-                    <button onclick="builderTasks.splice(${i},1);renderBuilderList()" class="text-red-400 shrink-0 ml-2"><i class="fa-solid fa-circle-minus"></i></button>
+                    <button onclick="tasks.splice(${i},1);renderTasks()" class="text-red-500/50 hover:text-red-500 transition ml-2 shrink-0">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
                 </div>
             `).join('');
         }
 
-        window.publishCampaign = async () => {
+        window.publish = async () => {
             const title = document.getElementById('lTitle').value;
             const target = document.getElementById('lTarget').value;
-            if(!title || !target) return alert("Hatalı Giriş!");
-            const docRef = await addDoc(collection(db, "links"), {
-                title, target: target.includes('://') ? target : 'https://' + target, uid: auth.currentUser.uid, views: 0, createdAt: serverTimestamp()
-            });
-            const batch = writeBatch(db);
-            builderTasks.forEach((t, i) => {
-                batch.set(doc(collection(db, "links", docRef.id, "tasks")), { ...t, order: i });
-            });
-            await batch.commit();
-            location.reload();
+            if(!title || !target || tasks.length === 0) return showTost("Eksik bilgi veya görev!", "error");
+
+            try {
+                const docRef = await addDoc(collection(db, "links"), {
+                    title, target: target.includes('://') ? target : 'https://' + target,
+                    uid: auth.currentUser.uid, views: 0, createdAt: serverTimestamp()
+                });
+                const batch = writeBatch(db);
+                tasks.forEach((t, i) => {
+                    batch.set(doc(collection(db, "links", docRef.id, "tasks")), { ...t, order: i });
+                });
+                await batch.commit();
+                showTost("Kampanya Başarıyla Yayınlandı!");
+                setTimeout(() => location.reload(), 1500);
+            } catch (e) { showTost("Veritabanı hatası!", "error"); }
         };
 
         async function loadAdmin(uid) {
             const q = query(collection(db, "links"), where("uid", "==", uid));
             const snap = await getDocs(q);
-            const list = document.getElementById('campaignList');
-            let views = 0;
-            document.getElementById('statTotalLinks').innerText = snap.size;
+            const list = document.getElementById('myCampaigns');
+            let totalV = 0;
+            document.getElementById('totalLinks').innerText = snap.size;
             list.innerHTML = "";
             snap.forEach(d => {
-                const data = d.data(); views += (data.views || 0);
+                const data = d.data(); totalV += (data.views || 0);
                 const url = window.location.origin + window.location.pathname + "?id=" + d.id;
                 list.innerHTML += `
-                    <div class="glass-panel p-4 rounded-2xl flex items-center justify-between transition group hover:border-indigo-500/50">
+                    <div class="glass p-5 rounded-[2.5rem] flex items-center justify-between saas-border group hover:bg-white/5 transition">
                         <div class="overflow-hidden">
-                            <h4 class="font-bold text-sm truncate">${data.title}</h4>
-                            <p class="text-[9px] text-slate-500"><i class="fa-solid fa-eye mr-1"></i>${data.views || 0} Görüntülenme</p>
+                            <h4 class="font-black text-sm truncate">${data.title}</h4>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[9px] font-bold text-slate-500 uppercase"><i class="fa-solid fa-eye mr-1"></i> ${data.views || 0}</span>
+                                <span class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest"><i class="fa-solid fa-check-circle mr-1"></i> AKTİF</span>
+                            </div>
                         </div>
-                        <div class="flex gap-1">
-                            <button onclick="showQR('${url}')" class="w-8 h-8 rounded-lg bg-white/5 text-slate-400"><i class="fa-solid fa-qrcode text-xs"></i></button>
-                            <button onclick="navigator.clipboard.writeText('${url}');alert('Kopyalandı!')" class="w-8 h-8 rounded-lg bg-white/5 text-slate-400"><i class="fa-solid fa-copy text-xs"></i></button>
-                            <button onclick="deleteCampaign('${d.id}')" class="w-8 h-8 rounded-lg bg-white/5 text-red-500/50"><i class="fa-solid fa-trash text-xs"></i></button>
+                        <div class="flex gap-2 shrink-0">
+                            <button onclick="openQR('${url}')" class="w-10 h-10 rounded-xl bg-white/5 text-slate-400 flex items-center justify-center hover:text-indigo-400 transition"><i class="fa-solid fa-qrcode text-sm"></i></button>
+                            <button onclick="navigator.clipboard.writeText('${url}');showTost('Kopyalandı!')" class="w-10 h-10 rounded-xl bg-white/5 text-slate-400 flex items-center justify-center hover:text-indigo-400 transition"><i class="fa-solid fa-share-nodes text-sm"></i></button>
+                            <button onclick="delCamp('${d.id}')" class="w-10 h-10 rounded-xl bg-white/5 text-red-500/50 flex items-center justify-center hover:bg-red-500/10 transition"><i class="fa-solid fa-trash-can text-sm"></i></button>
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('statTotalViews').innerText = views;
+            document.getElementById('totalViews').innerText = totalV;
         }
 
-        window.showQR = (url) => {
-            document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+        window.openQR = (url) => {
+            document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(url)}`;
             document.getElementById('qrModal').classList.remove('hidden');
         };
 
-        window.deleteCampaign = async (id) => { if(confirm("Emin misin?")) { await deleteDoc(doc(db, "links", id)); location.reload(); }};
+        window.delCamp = async (id) => { if(confirm("Bu kampanya silinsin mi?")) { await deleteDoc(doc(db, "links", id)); location.reload(); }};
 
-        // VISITOR LOGIC
+        // --- VISITOR: GATEWAY LOGIC ---
         async function loadVisitor() {
-            const dRef = doc(db, "links", lid);
+            const dRef = doc(db, "links", cid);
             const dSnap = await getDoc(dRef);
-            if(!dSnap.exists()) return;
+            if(!dSnap.exists()) return document.getElementById('visitorPanel').innerHTML = "<h1>Bağlantı Geçersiz</h1>";
+            
             updateDoc(dRef, { views: increment(1) });
             document.getElementById('vTitle').innerText = dSnap.data().title;
-            const tSnap = await getDocs(collection(db, "links", lid, "tasks"));
-            const tasks = []; tSnap.forEach(t => tasks.push(t.data()));
-            if(tasks.length === 0) return unlockNow(dSnap.data().target);
+            const tSnap = await getDocs(collection(db, "links", cid, "tasks"));
+            const tData = []; tSnap.forEach(t => tData.push(t.data()));
 
-            document.getElementById('vTaskList').innerHTML = tasks.map((t, i) => `
-                <div id="vStep-${i}" class="glass-panel p-5 rounded-2xl flex items-center justify-between border-l-4 ${i===0 ? 'border-indigo-400' : 'opacity-30 pointer-events-none'}">
-                    <div class="flex items-center gap-4">
-                        <i class="fa-brands fa-${t.type==='other'?'link':t.type} text-indigo-400 text-xl"></i>
+            if(tData.length === 0) return finalUnlock(dSnap.data().target);
+
+            document.getElementById('vTasks').innerHTML = tData.map((t, i) => `
+                <div id="vStep-${i}" class="glass p-6 rounded-[2rem] flex items-center justify-between border-l-4 ${i===0 ? 'border-indigo-500 bg-indigo-500/5' : 'opacity-30 pointer-events-none border-transparent'} transition-all duration-500">
+                    <div class="flex items-center gap-5">
+                        <div id="vIcon-${i}" class="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-xl text-indigo-400">
+                            <i class="fa-brands fa-${t.type==='link'?'link':t.type}"></i>
+                        </div>
                         <div>
-                            <p class="text-[9px] text-slate-500 font-bold uppercase">${t.type}</p>
-                            <h4 class="font-bold text-sm text-white">${t.name}</h4>
+                            <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">${t.type}</p>
+                            <h4 class="font-bold text-white text-base">${t.name}</h4>
                         </div>
                     </div>
-                    <button id="vBtn-${i}" onclick="startVer(${i}, '${t.link}', ${tasks.length}, '${dSnap.data().target}')" class="px-5 py-2 saas-gradient text-white text-[10px] font-black rounded-xl ${i===0?'':'hidden'}">GO</button>
+                    <button id="vBtn-${i}" onclick="verify(${i}, '${t.link}', ${tData.length}, '${dSnap.data().target}')" class="px-6 py-3 saas-gradient text-white text-xs font-black rounded-2xl shadow-lg ${i===0?'':'hidden'}">BAŞLA</button>
                 </div>
             `).join('');
         }
 
-        window.startVer = (i, url, total, target) => {
+        window.verify = (i, url, total, target) => {
             window.open(url, '_blank');
             const btn = document.getElementById(`vBtn-${i}`);
-            let timer = 8;
+            let timer = 10;
             const itv = setInterval(() => {
-                btn.disabled = true; btn.innerText = `${timer}S`; timer--;
-                if(timer < 0) { clearInterval(itv); completeVer(i, total, target); }
+                btn.disabled = true; btn.innerText = `${timer}s`;
+                btn.classList.add('opacity-70');
+                timer--;
+                if(timer < 0) {
+                    clearInterval(itv);
+                    completeStep(i, total, target);
+                }
             }, 1000);
         };
 
-        function completeVer(i, total, target) {
-            document.getElementById(`vStep-${i}`).classList.remove('border-indigo-400');
-            document.getElementById(`vStep-${i}`).classList.add('border-green-500/50');
+        function completeStep(i, total, target) {
+            const card = document.getElementById(`vStep-${i}`);
+            const icon = document.getElementById(`vIcon-${i}`);
             document.getElementById(`vBtn-${i}`).remove();
-            if(i+1 < total) {
+            card.classList.remove('border-indigo-500', 'bg-indigo-500/5');
+            card.classList.add('border-green-500/50', 'bg-green-500/5');
+            icon.innerHTML = '<i class="fa-solid fa-check-double text-green-400"></i>';
+            showTost("Görev Tamamlandı!");
+
+            if(i + 1 < total) {
                 const next = document.getElementById(`vStep-${i+1}`);
-                next.classList.remove('opacity-30', 'pointer-events-none');
-                next.classList.add('border-indigo-400');
+                next.classList.remove('opacity-30', 'pointer-events-none', 'border-transparent');
+                next.classList.add('border-indigo-500', 'bg-indigo-500/5');
                 document.getElementById(`vBtn-${i+1}`).classList.remove('hidden');
-            } else { unlockNow(target); }
+            } else {
+                finalUnlock(target);
+            }
         }
 
-        function unlockNow(url) {
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.7 } });
-            const b = document.getElementById('vUnlockBtn');
-            b.disabled = false; b.classList.remove('bg-slate-800', 'text-slate-500', 'opacity-50');
-            b.classList.add('saas-gradient', 'text-white', 'opacity-100', 'animate-bounce');
-            b.innerHTML = 'UNLOCK CONTENT';
+        function finalUnlock(url) {
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#6366f1', '#06b6d4', '#ffffff'] });
+            const b = document.getElementById('vUnlock');
+            b.disabled = false;
+            b.classList.remove('bg-slate-900', 'text-slate-600', 'opacity-50');
+            b.classList.add('saas-gradient', 'text-white', 'opacity-100', 'animate-bounce', 'shadow-2xl', 'shadow-indigo-500/50');
+            b.innerHTML = '<i class="fa-solid fa-cloud-arrow-down text-xl"></i> DOSYAYI ŞİMDİ İNDİR';
             b.onclick = () => location.href = url;
+            showTost("Tebrikler! Kilidiniz Açıldı.");
         }
+
     </script>
 </body>
 </html>
