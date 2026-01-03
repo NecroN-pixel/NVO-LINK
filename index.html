@@ -1,110 +1,179 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NVO LINK v10.0 | GOD MODE</title>
+    <title>NVO LINK | Professional SaaS Link Gateway</title>
+    
+    <meta name="description" content="NVO LINK - Professional Social Unlock Gateway">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <style>
-        :root { --p: #00d2ff; --s: #3a7bd5; --dark: #050505; }
-        body { background: var(--dark); color: white; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .btn-grad { background: linear-gradient(135deg, var(--p), var(--s)); transition: 0.3s; }
-        .btn-grad:active { scale: 0.95; opacity: 0.8; }
-        input { background: rgba(255,255,255,0.05)!important; border: 1px solid rgba(255,255,255,0.1)!important; border-radius: 12px!important; padding: 12px!important; color: white!important; outline: none; width: 100%; }
-        input:focus { border-color: var(--p)!important; box-shadow: 0 0 15px rgba(0,210,255,0.2); }
-        .card-anim { animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        /* QR Modal */
-        #qrModal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #06b6d4;
+            --bg-dark: #0b0f1a;
+            --card-dark: #151b2c;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .saas-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+
+        .glass-panel {
+            background: rgba(21, 27, 44, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .task-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .task-card.active {
+            border-left: 4px solid var(--accent);
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        /* SaaS Loader */
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .btn-boost:active { transform: scale(0.96); }
     </style>
 </head>
-<body class="pb-20">
+<body class="antialiased overflow-x-hidden">
 
-    <div id="qrModal" onclick="this.style.display='none'">
-        <div class="glass p-8 rounded-[40px] text-center" onclick="event.stopPropagation()">
-            <h3 class="text-xl font-bold mb-4">Bağlantı QR Kodu</h3>
-            <img id="qrImg" src="" class="mx-auto rounded-2xl border-8 border-white mb-6">
-            <button onclick="document.getElementById('qrModal').style.display='none'" class="w-full py-3 bg-white/10 rounded-xl font-bold">KAPAT</button>
+    <nav class="sticky top-0 z-50 glass-panel px-4 py-3 flex justify-between items-center border-b border-white/5">
+        <div class="flex items-center gap-2">
+            <div class="w-9 h-9 saas-gradient rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid fa-link text-white text-sm"></i>
+            </div>
+            <span class="font-extrabold text-lg tracking-tight">NVO<span class="text-indigo-400">LINK</span></span>
+        </div>
+        <div id="navActions" class="flex gap-2">
+            </div>
+    </nav>
+
+    <main class="max-w-xl mx-auto px-4 pt-6 pb-24">
+        
+        <section id="adminDashboard" class="hidden space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass-panel p-4 rounded-2xl">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Links</p>
+                    <div class="flex items-baseline gap-2">
+                        <h2 id="statTotalLinks" class="text-2xl font-black">0</h2>
+                        <span class="text-green-400 text-[10px] font-bold">+12%</span>
+                    </div>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Global Views</p>
+                    <h2 id="statTotalViews" class="text-2xl font-black">0</h2>
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 rounded-[2.5rem] relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <i class="fa-solid fa-rocket text-4xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-4">Create Campaign</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 ml-2 mb-1 block">CAMPAIGN TITLE</label>
+                        <input type="text" id="lTitle" placeholder="e.g. My Secret Mod Menu" class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-sm focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 ml-2 mb-1 block">TARGET DESTINATION</label>
+                        <input type="text" id="lTarget" placeholder="https://..." class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-sm focus:border-indigo-500 outline-none">
+                    </div>
+
+                    <div class="bg-black/20 p-4 rounded-2xl border border-white/5">
+                        <p class="text-[10px] font-bold text-slate-500 mb-3">SOCIAL TASKS (REQUIRED)</p>
+                        <div id="taskBuilderList" class="space-y-2 mb-4"></div>
+                        <div class="flex gap-2">
+                            <select id="taskType" class="bg-slate-800 border-none rounded-lg text-[10px] px-2 text-white outline-none">
+                                <option value="youtube">YouTube</option>
+                                <option value="discord">Discord</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="other">Link</option>
+                            </select>
+                            <input type="text" id="tName" placeholder="Task Name" class="flex-1 bg-slate-800 border-none rounded-lg p-2 text-[10px] text-white">
+                            <input type="text" id="tLink" placeholder="URL" class="flex-1 bg-slate-800 border-none rounded-lg p-2 text-[10px] text-white">
+                            <button onclick="addTaskToBuilder()" class="w-10 h-10 saas-gradient rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <button onclick="publishCampaign()" class="w-full py-4 saas-gradient rounded-2xl font-extrabold text-white shadow-xl shadow-indigo-500/20 btn-boost">
+                        GENERATE SMART LINK
+                    </button>
+                </div>
+            </div>
+
+            <div id="campaignList" class="space-y-3">
+                </div>
+        </section>
+
+        <section id="visitorGateway" class="hidden text-center pt-8">
+            <div class="inline-flex p-1 rounded-3xl bg-slate-800/50 border border-white/5 mb-6">
+                <div class="px-4 py-1 rounded-2xl bg-indigo-500 text-[10px] font-bold text-white uppercase tracking-tighter">Verified Link</div>
+            </div>
+            
+            <h1 id="vTitle" class="text-3xl font-black mb-2 tracking-tight">Campaign Loading...</h1>
+            <p class="text-slate-400 text-sm mb-10 px-8">Complete the following steps to unlock your destination.</p>
+
+            <div id="vTaskList" class="space-y-3 text-left">
+                <div class="glass-panel p-5 rounded-2xl shimmer h-16"></div>
+                <div class="glass-panel p-5 rounded-2xl shimmer h-16"></div>
+            </div>
+
+            <button id="vUnlockBtn" disabled class="w-full mt-10 py-5 rounded-[2rem] bg-slate-800 text-slate-500 font-black tracking-widest border border-white/5 opacity-50 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-lock"></i> STEPS INCOMPLETE
+            </button>
+        </section>
+
+    </main>
+
+    <div id="qrModal" class="fixed inset-0 z-[100] bg-black/95 hidden flex items-center justify-center p-6" onclick="this.classList.add('hidden')">
+        <div class="glass-panel p-8 rounded-[3rem] text-center w-full max-w-xs" onclick="event.stopPropagation()">
+            <h3 class="font-bold mb-4">Smart QR Code</h3>
+            <img id="qrImage" src="" class="w-full rounded-2xl border-8 border-white mb-6">
+            <button onclick="document.getElementById('qrModal').classList.add('hidden')" class="w-full py-3 bg-white/10 rounded-xl font-bold">Close</button>
         </div>
     </div>
 
-    <header class="p-5 flex justify-between items-center sticky top-0 z-50 glass">
-        <div class="flex items-center gap-2">
-            <div class="w-10 h-10 btn-grad rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                <i class="fa-solid fa-bolt-lightning text-white"></i>
-            </div>
-            <span class="text-xl font-black tracking-tighter">NVO<span class="text-cyan-400">LINK</span> <span class="text-[10px] bg-white/10 px-1 rounded">V10</span></span>
-        </div>
-        <div id="userProfile" class="flex items-center gap-3">
-             <button onclick="login()" id="loginBtn" class="text-xs font-bold bg-white text-black px-4 py-2 rounded-full">GİRİŞ</button>
-        </div>
-    </header>
-
-    <main id="main" class="p-4 max-w-md mx-auto space-y-6">
-        <div id="adminArea" class="hidden space-y-6 card-anim">
-            <div class="grid grid-cols-2 gap-3">
-                <div class="glass p-4 rounded-2xl">
-                    <p class="text-[10px] text-gray-500 font-bold uppercase">Toplam Link</p>
-                    <h4 id="countLinks" class="text-2xl font-black">0</h4>
-                </div>
-                <div class="glass p-4 rounded-2xl">
-                    <p class="text-[10px] text-gray-500 font-bold uppercase">Yayın Durumu</p>
-                    <h4 class="text-xs font-bold text-green-400 mt-2"><i class="fa-solid fa-circle text-[8px] animate-pulse"></i> AKTİF</h4>
-                </div>
-            </div>
-
-            <div class="glass p-6 rounded-[32px] border-t-2 border-cyan-500/50">
-                <h3 class="font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-cyan-400"></i> Yeni Link</h3>
-                <div class="space-y-3">
-                    <input type="text" id="lTitle" placeholder="Başlık (Örn: Hileli Dosya)">
-                    <input type="text" id="lTarget" placeholder="Hedef URL (Google Drive vb.)">
-                    
-                    <div class="p-4 rounded-2xl bg-white/5 border border-dashed border-white/10">
-                        <p class="text-[10px] font-bold text-gray-500 mb-3">GÖREVLER (Sınırsız)</p>
-                        <div id="taskPreview" class="space-y-2 mb-3"></div>
-                        <div class="flex gap-2">
-                            <input type="text" id="tName" placeholder="Görev Adı" class="!text-xs">
-                            <input type="text" id="tLink" placeholder="URL" class="!text-xs">
-                            <button onclick="addT()" class="btn-grad w-12 rounded-xl text-white">+</button>
-                        </div>
-                    </div>
-                    
-                    <button onclick="save()" class="w-full py-4 btn-grad rounded-2xl font-black text-white shadow-xl shadow-cyan-500/20">YAYINLA</button>
-                </div>
-            </div>
-
-            <div id="myLinks" class="space-y-3 pb-10"></div>
-        </div>
-
-        <div id="visitorArea" class="hidden text-center py-10 card-anim">
-            <div class="w-20 h-20 btn-grad rounded-[28px] flex items-center justify-center mx-auto mb-6 shadow-2xl">
-                <i class="fa-solid fa-shield-halved text-3xl"></i>
-            </div>
-            <h1 id="vTitle" class="text-2xl font-black mb-2 tracking-tight">Bağlantı Hazır</h1>
-            <p class="text-gray-500 text-xs mb-8 px-10">Dosyayı indirmek için aşağıdaki adımları sırayla takip edin.</p>
-            
-            <div id="vTasks" class="space-y-3 text-left"></div>
-            
-            <button id="vUnlock" disabled class="w-full mt-10 py-5 rounded-3xl bg-white/5 text-gray-500 font-black tracking-widest border border-white/10 opacity-50">
-                <i class="fa-solid fa-lock mr-2"></i> KİLİTLİ
-            </button>
-        </div>
-    </main>
-
-    <nav id="adminNav" class="hidden fixed bottom-0 w-full glass p-4 flex justify-around items-center border-t border-white/10">
-        <button onclick="location.reload()" class="text-cyan-400"><i class="fa-solid fa-house-chimney text-xl"></i></button>
-        <button onclick="alert('Yakında: Detaylı Analiz')" class="text-gray-500"><i class="fa-solid fa-chart-line text-xl"></i></button>
-        <button onclick="signOut(auth).then(()=>location.reload())" class="text-red-500"><i class="fa-solid fa-power-off text-xl"></i></button>
-    </nav>
+    <div id="adminNav" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 glass-panel px-6 py-4 rounded-full flex items-center gap-8 shadow-2xl z-50">
+        <button onclick="location.reload()" class="text-indigo-400"><i class="fa-solid fa-house-chimney text-lg"></i></button>
+        <button onclick="alert('Insight Pro: Coming Soon')" class="text-slate-500"><i class="fa-solid fa-chart-line text-lg"></i></button>
+        <button onclick="userLogout()" class="text-red-500/70"><i class="fa-solid fa-arrow-right-from-bracket text-lg"></i></button>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, getDoc, getDocs, deleteDoc, query, where, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, getDoc, getDocs, deleteDoc, query, where, serverTimestamp, writeBatch, increment, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // CONFIG (Replace with your actual Firebase config)
         const firebaseConfig = {
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
             authDomain: "nvo-link.firebaseapp.com",
@@ -119,142 +188,223 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        let tempT = [];
-        const lid = new URLSearchParams(window.location.search).get('id');
+        let builderTasks = [];
+        const params = new URLSearchParams(window.location.search);
+        const campaignID = params.get('id');
 
-        // AUTH
-        onAuthStateChanged(auth, u => {
-            if(lid) {
-                document.getElementById('visitorArea').classList.remove('hidden');
-                loadVisitor();
-            } else if(u) {
-                document.getElementById('adminArea').classList.remove('hidden');
+        // --- AUTH LOGIC ---
+        onAuthStateChanged(auth, (user) => {
+            if (campaignID) {
+                document.getElementById('visitorGateway').classList.remove('hidden');
+                loadVisitorGateway();
+            } else if (user) {
+                document.getElementById('adminDashboard').classList.remove('hidden');
                 document.getElementById('adminNav').classList.remove('hidden');
-                document.getElementById('userProfile').innerHTML = `<img src="${u.photoURL}" class="w-8 h-8 rounded-full border border-cyan-500">`;
-                loadAdmin(u.uid);
+                document.getElementById('navActions').innerHTML = `<img src="${user.photoURL}" class="w-9 h-9 rounded-full ring-2 ring-indigo-500/20">`;
+                loadAdminCampaigns(user.uid);
+            } else {
+                renderLoginScreen();
             }
         });
 
-        window.login = () => signInWithPopup(auth, provider);
+        function renderLoginScreen() {
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            document.getElementById('adminDashboard').innerHTML = `
+                <div class="text-center py-20">
+                    <div class="w-20 h-20 saas-gradient rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-2xl rotate-12">
+                        <i class="fa-solid fa-lock text-3xl text-white"></i>
+                    </div>
+                    <h2 class="text-2xl font-extrabold mb-2">Grow Your Audience</h2>
+                    <p class="text-slate-400 text-sm mb-8 px-10">The most professional way to lock your content and grow social accounts.</p>
+                    <button id="googleLogin" class="w-full py-4 bg-white text-black font-black rounded-2xl flex items-center justify-center gap-3">
+                        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5">
+                        SIGN IN WITH GOOGLE
+                    </button>
+                </div>
+            `;
+            document.getElementById('googleLogin').onclick = () => signInWithPopup(auth, provider);
+        }
 
-        // ADMIN FUNCTIONS
-        window.addT = () => {
-            const n = document.getElementById('tName').value;
-            const l = document.getElementById('tLink').value;
-            if(n && l) {
-                tempT.push({name: n, link: l.startsWith('http') ? l : 'https://'+l});
-                renderT();
-                document.getElementById('tName').value = ""; document.getElementById('tLink').value = "";
+        window.userLogout = () => signOut(auth).then(() => location.reload());
+
+        // --- ADMIN: CAMPAIGN BUILDER ---
+        window.addTaskToBuilder = () => {
+            const type = document.getElementById('taskType').value;
+            const name = document.getElementById('tName').value;
+            const link = document.getElementById('tLink').value;
+            
+            if (name && link) {
+                builderTasks.push({ type, name, link: link.includes('://') ? link : 'https://' + link });
+                renderBuilderList();
+                document.getElementById('tName').value = "";
+                document.getElementById('tLink').value = "";
             }
         };
 
-        function renderT() {
-            document.getElementById('taskPreview').innerHTML = tempT.map((t,i) => `
-                <div class="flex justify-between items-center bg-white/5 p-2 rounded-lg text-[10px]">
-                    <span class="truncate w-32 font-bold">${t.name}</span>
-                    <button onclick="tempT.splice(${i},1);renderT()" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
+        function renderBuilderList() {
+            const list = document.getElementById('taskBuilderList');
+            list.innerHTML = builderTasks.map((t, i) => `
+                <div class="flex items-center justify-between bg-slate-800/50 p-2 rounded-xl text-[10px] border border-white/5">
+                    <span class="font-bold flex items-center gap-2">
+                        <i class="fa-brands fa-${t.type === 'other' ? 'link' : t.type} text-indigo-400"></i> ${t.name}
+                    </span>
+                    <button onclick="builderTasks.splice(${i},1);renderBuilderList()" class="text-red-400"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `).join('');
         }
 
-        window.save = async () => {
-            const t = document.getElementById('lTitle').value;
-            const l = document.getElementById('lTarget').value;
-            if(!t || !l) return alert("Eksik bilgi!");
+        window.publishCampaign = async () => {
+            const title = document.getElementById('lTitle').value;
+            const target = document.getElementById('lTarget').value;
+            
+            if (!title || !target) return alert("Fill all fields!");
 
             const docRef = await addDoc(collection(db, "links"), {
-                title: t, target: l.startsWith('http') ? l : 'https://'+l, uid: auth.currentUser.uid, createdAt: serverTimestamp()
+                title, 
+                target: target.includes('://') ? target : 'https://' + target, 
+                uid: auth.currentUser.uid, 
+                views: 0,
+                createdAt: serverTimestamp()
             });
 
             const batch = writeBatch(db);
-            tempT.forEach((task, i) => {
+            builderTasks.forEach((t, i) => {
                 const tRef = doc(collection(db, "links", docRef.id, "tasks"));
-                batch.set(tRef, {...task, order: i});
+                batch.set(tRef, { ...t, order: i });
             });
             await batch.commit();
             location.reload();
         };
 
-        async function loadAdmin(uid) {
+        async function loadAdminCampaigns(uid) {
             const q = query(collection(db, "links"), where("uid", "==", uid));
             const snap = await getDocs(q);
-            const list = document.getElementById('myLinks');
-            document.getElementById('countLinks').innerText = snap.size;
+            const list = document.getElementById('campaignList');
+            let totalViews = 0;
+            document.getElementById('statTotalLinks').innerText = snap.size;
             list.innerHTML = "";
+            
             snap.forEach(d => {
-                const url = window.location.origin + window.location.pathname + "?id=" + d.id;
-                const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+                const data = d.data();
+                totalViews += (data.views || 0);
+                const shareUrl = window.location.origin + window.location.pathname + "?id=" + d.id;
                 list.innerHTML += `
-                    <div class="glass p-4 rounded-2xl flex items-center justify-between border-l-4 border-cyan-500">
-                        <div class="overflow-hidden mr-2">
-                            <h4 class="font-bold text-sm truncate">${d.data().title}</h4>
-                            <p class="text-[8px] text-cyan-400 truncate">${url}</p>
+                    <div class="glass-panel p-4 rounded-2xl flex items-center justify-between group hover:border-indigo-500/50 transition">
+                        <div class="overflow-hidden mr-3">
+                            <h4 class="font-bold text-sm truncate">${data.title}</h4>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter"><i class="fa-solid fa-eye mr-1"></i> ${data.views || 0}</span>
+                            </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="showQR('${qr}')" class="w-8 h-8 rounded-lg bg-white/5 text-white text-xs"><i class="fa-solid fa-qrcode"></i></button>
-                            <button onclick="navigator.clipboard.writeText('${url}');alert('Kopyalandı')" class="w-8 h-8 rounded-lg bg-white/5 text-white text-xs"><i class="fa-solid fa-copy"></i></button>
-                            <button onclick="del('${d.id}')" class="w-8 h-8 rounded-lg bg-white/5 text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                        <div class="flex gap-1">
+                            <button onclick="showQR('${shareUrl}')" class="w-8 h-8 rounded-lg bg-white/5 text-slate-400 hover:text-indigo-400 transition"><i class="fa-solid fa-qrcode text-xs"></i></button>
+                            <button onclick="navigator.clipboard.writeText('${shareUrl}');alert('Link Copied!')" class="w-8 h-8 rounded-lg bg-white/5 text-slate-400 hover:text-indigo-400 transition"><i class="fa-solid fa-copy text-xs"></i></button>
+                            <button onclick="deleteCampaign('${d.id}')" class="w-8 h-8 rounded-lg bg-white/5 text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-trash text-xs"></i></button>
                         </div>
                     </div>
                 `;
             });
+            document.getElementById('statTotalViews').innerText = totalViews;
         }
-        window.showQR = (url) => { document.getElementById('qrImg').src = url; document.getElementById('qrModal').style.display = 'flex'; };
-        window.del = async (id) => { if(confirm("Silinsin mi?")) { await deleteDoc(doc(db, "links", id)); location.reload(); }};
 
-        // VISITOR FUNCTIONS
-        async function loadVisitor() {
-            const dSnap = await getDoc(doc(db, "links", lid));
-            if(!dSnap.exists()) return;
-            document.getElementById('vTitle').innerText = dSnap.data().title;
-            const tSnap = await getDocs(collection(db, "links", lid, "tasks"));
-            const tks = []; tSnap.forEach(t => tks.push(t.data()));
+        window.showQR = (url) => {
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=000000`;
+            document.getElementById('qrImage').src = qrUrl;
+            document.getElementById('qrModal').classList.remove('hidden');
+        };
+
+        window.deleteCampaign = async (id) => {
+            if(confirm("Delete this campaign?")) {
+                await deleteDoc(doc(db, "links", id));
+                location.reload();
+            }
+        };
+
+        // --- VISITOR: GATEWAY LOGIC ---
+        async function loadVisitorGateway() {
+            const dRef = doc(db, "links", campaignID);
+            const dSnap = await getDoc(dRef);
             
-            if(tks.length === 0) return unlock(dSnap.data().target);
+            if (!dSnap.exists()) {
+                document.getElementById('visitorGateway').innerHTML = "<h1>Link Expired or Invalid</h1>";
+                return;
+            }
 
-            document.getElementById('vTasks').innerHTML = tks.map((t,i) => `
-                <div id="step-${i}" class="glass p-4 rounded-2xl flex items-center justify-between transition-all ${i===0?'border-l-4 border-cyan-500':'opacity-30 grayscale pointer-events-none'}">
-                    <div class="flex items-center gap-3">
-                        <div id="num-${i}" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-bold">${i+1}</div>
-                        <span class="text-sm font-bold text-gray-300">${t.name}</span>
+            // Analytics: Update View
+            updateDoc(dRef, { views: increment(1) });
+
+            document.getElementById('vTitle').innerText = dSnap.data().title;
+            const tSnap = await getDocs(collection(db, "links", campaignID, "tasks"));
+            const tasks = [];
+            tSnap.forEach(t => tasks.push(t.data()));
+
+            const list = document.getElementById('vTaskList');
+            if (tasks.length === 0) return unlockNow(dSnap.data().target);
+
+            list.innerHTML = tasks.map((t, i) => `
+                <div id="vStep-${i}" class="task-card glass-panel p-5 rounded-2xl flex items-center justify-between border-l-4 ${i===0 ? 'active border-indigo-400' : 'opacity-30 pointer-events-none'}">
+                    <div class="flex items-center gap-4">
+                        <div id="vIcon-${i}" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-indigo-400">
+                            <i class="fa-brands fa-${t.type === 'other' ? 'link' : t.type} text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">${t.type}</p>
+                            <h4 class="font-bold text-sm text-white">${t.name}</h4>
+                        </div>
                     </div>
-                    <button id="btn-${i}" onclick="run(${i}, '${t.link}', ${tks.length}, '${dSnap.data().target}')" class="px-4 py-2 btn-grad text-[10px] font-bold rounded-lg ${i===0?'':'hidden'}">GİT</button>
+                    <button id="vBtn-${i}" onclick="startVerification(${i}, '${t.link}', ${tasks.length}, '${dSnap.data().target}')" class="px-5 py-2 saas-gradient text-white text-[10px] font-black rounded-xl ${i===0?'':'hidden'}">GO</button>
                 </div>
             `).join('');
         }
 
-        window.run = (i, url, total, target) => {
+        window.startVerification = (i, url, total, target) => {
             window.open(url, '_blank');
-            const btn = document.getElementById(`btn-${i}`);
-            let s = 10;
+            const btn = document.getElementById(`vBtn-${i}`);
+            let timer = 10;
+            
             const itv = setInterval(() => {
-                btn.innerText = s + "s";
                 btn.disabled = true;
-                s--;
-                if(s < 0) {
+                btn.innerText = `WAITING ${timer}S`;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                timer--;
+                
+                if (timer < 0) {
                     clearInterval(itv);
-                    btn.remove();
-                    document.getElementById(`num-${i}`).innerHTML = '<i class="fa-solid fa-check text-green-500"></i>';
-                    document.getElementById(`step-${i}`).classList.remove('border-l-4', 'border-cyan-500');
-                    if(i+1 < total) {
-                        const next = document.getElementById(`step-${i+1}`);
-                        next.classList.remove('opacity-30', 'grayscale', 'pointer-events-none');
-                        next.classList.add('border-l-4', 'border-cyan-500');
-                        document.getElementById(`btn-${i+1}`).classList.remove('hidden');
-                    } else { unlock(target); }
+                    completeVerification(i, total, target);
                 }
             }, 1000);
         };
 
-        function unlock(url) {
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            const b = document.getElementById('vUnlock');
+        function completeVerification(i, total, target) {
+            const card = document.getElementById(`vStep-${i}`);
+            const icon = document.getElementById(`vIcon-${i}`);
+            const btn = document.getElementById(`vBtn-${i}`);
+
+            card.classList.remove('active', 'border-indigo-400');
+            card.classList.add('border-green-500/50');
+            icon.innerHTML = '<i class="fa-solid fa-check text-green-400"></i>';
+            btn.remove();
+
+            if (i + 1 < total) {
+                const next = document.getElementById(`vStep-${i+1}`);
+                next.classList.remove('opacity-30', 'pointer-events-none');
+                next.classList.add('active', 'border-indigo-400');
+                document.getElementById(`vBtn-${i+1}`).classList.remove('hidden');
+            } else {
+                unlockNow(target);
+            }
+        }
+
+        function unlockNow(url) {
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.7 }, colors: ['#6366f1', '#06b6d4', '#ffffff'] });
+            const b = document.getElementById('vUnlockBtn');
             b.disabled = false;
-            b.classList.remove('opacity-50', 'bg-white/5', 'text-gray-500');
-            b.classList.add('btn-grad', 'text-white', 'animate-bounce');
-            b.innerHTML = '<i class="fa-solid fa-download mr-2"></i> DOSYAYI İNDİR';
+            b.classList.remove('bg-slate-800', 'text-slate-500', 'opacity-50');
+            b.classList.add('saas-gradient', 'text-white', 'opacity-100', 'animate-bounce', 'shadow-2xl', 'shadow-indigo-500/40');
+            b.innerHTML = '<i class="fa-solid fa-cloud-arrow-down mr-2"></i> UNLOCK CONTENT';
             b.onclick = () => location.href = url;
         }
+
     </script>
 </body>
 </html>
