@@ -1,390 +1,278 @@
 
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NVOLINK G-0.1.7 | TITAN ENTERPRISE</title>
+    <title>NVOLINK G-0.1.8 | PURE TITAN</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* NVOLINK TITAN CORE CSS ENGINE v0.1.7 
-           Total Properties: 1000+ Declarations
-        */
         :root {
-            --p: #3b82f6; --p-focus: #2563eb; --p-content: #ffffff;
-            --s: #8b5cf6; --s-focus: #7c3aed; --s-content: #ffffff;
-            --a: #10b981; --a-focus: #059669; --a-content: #ffffff;
-            --n: #2a2e37; --n-focus: #16181d; --n-content: #ffffff;
-            --b1: #000000; --b2: #0a0a0b; --b3: #111112;
-            --bc: #f3f4f6; --border: #1f1f22;
-            --rounded-box: 2rem; --rounded-btn: 1.5rem; --rounded-badge: 1.9rem;
-            --animation-btn: 0.25s; --animation-input: 0.2s;
-            --btn-text-case: uppercase; --btn-focus-scale: 0.95;
-            --border-btn: 1px; --tab-border: 1px; --tab-radius: 0.5rem;
+            --blue: #3b82f6; --purple: #8b5cf6; --black: #000000;
+            --card: #0a0a0b; --border: rgba(255,255,255,0.08);
         }
 
-        /* RESET & BASE */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none !important; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--b1); color: var(--bc); overflow-x: hidden; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-        
-        /* SCROLL ENGINE */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--b1); }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; transition: 0.3s; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--p); }
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
 
-        /* ADVANCED ANIMATIONS */
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes pulse-ring { 0% { transform: scale(0.33); opacity: 0; } 80%, 100% { opacity: 0; } }
-        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        body { 
+            background: var(--black); 
+            color: #fff; 
+            overflow-x: hidden;
+            /* TELEFONLARDA ALT BAR ÇAKIŞMASINI ÖNLEYEN KRİTİK AYAR */
+            padding-bottom: calc(100px + env(safe-area-inset-bottom)); 
+        }
 
-        /* UI COMPONENTS */
-        .nvo-glass { background: rgba(10, 10, 11, 0.75); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.08); }
-        .nvo-card { background: var(--b2); border: 1px solid var(--border); border-radius: var(--rounded-box); position: relative; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); overflow: hidden; }
-        .nvo-card:hover { border-color: var(--p); transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25); }
-        .nvo-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.5s; }
-        .nvo-card:hover::before { left: 100%; }
+        /* DİNAMİK ARKA PLAN */
+        .mesh-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% -20%, #1e1b4b, transparent),
+                        radial-gradient(circle at 0% 100%, #0f172a, transparent);
+            z-index: -1;
+        }
 
-        /* BUTTONS & INPUTS */
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 1rem 2rem; border-radius: var(--rounded-btn); font-weight: 800; text-transform: var(--btn-text-case); transition: all var(--animation-btn); cursor: pointer; border: 1px solid transparent; gap: 0.75rem; font-size: 0.8rem; letter-spacing: 0.5px; }
-        .btn-p { background: linear-gradient(135deg, var(--p), var(--s)); color: white; box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5); }
-        .btn-p:hover { transform: scale(1.02); box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.6); }
-        .btn-p:active { transform: scale(var(--btn-focus-scale)); }
-        
-        .inp { width: 100%; background: var(--b3); border: 1px solid var(--border); border-radius: 1.25rem; padding: 1.25rem 1.5rem; color: #fff; transition: all var(--animation-input); font-size: 0.9rem; }
-        .inp:focus { border-color: var(--p); background: #161618; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); }
+        /* GLASS MORPHISM */
+        .glass { 
+            background: rgba(10, 10, 11, 0.8); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+        }
 
-        /* PRELOADER LUXE */
-        #nvo-preloader { position: fixed; inset: 0; z-index: 99999; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .loader-logo { width: 80px; height: 80px; position: relative; animation: float 3s ease-in-out infinite; }
-        .loader-bar { width: 250px; height: 2px; background: #111; margin-top: 50px; border-radius: 10px; overflow: hidden; position: relative; }
-        #loader-fill { position: absolute; height: 100%; background: linear-gradient(90deg, var(--p), var(--s)); width: 0%; box-shadow: 0 0 20px var(--p); transition: width 0.5s; }
+        /* KART TASARIMI */
+        .card-titan {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+        .card-titan:active { transform: scale(0.98); }
 
-        /* NAVIGATION LUXE */
-        .bottom-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; height: 85px; z-index: 10000; border-radius: 40px; display: flex; justify-content: space-around; align-items: center; padding: 0 20px; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #4b5563; transition: 0.4s; position: relative; }
-        .nav-item.active { color: var(--p); }
-        .nav-item.active i { transform: translateY(-12px) scale(1.2); text-shadow: 0 10px 20px rgba(59, 130, 246, 0.5); }
-        .nav-item span { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; opacity: 0; transition: 0.3s; }
-        .nav-item.active span { opacity: 1; transform: translateY(-5px); }
+        /* BUTONLAR */
+        .btn-main {
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            padding: 14px 28px; border-radius: 16px;
+            font-weight: 800; text-transform: uppercase; font-size: 12px;
+            letter-spacing: 1px; display: flex; align-items: center; justify-content: center;
+            gap: 10px; transition: 0.3s;
+        }
 
-        /* TOAST NOTIFICATION */
-        .toast-box { position: fixed; top: 30px; right: 30px; z-index: 100000; display: flex; flex-direction: column; gap: 10px; }
-        .toast-item { background: #111; border: 1px solid var(--border); padding: 15px 25px; border-radius: 18px; display: flex; align-items: center; gap: 15px; min-width: 300px; animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* NAVİGASYON (MOBİL DOSTU) */
+        .nav-bottom {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 450px; height: 75px;
+            border-radius: 25px; z-index: 1000;
+            display: flex; justify-content: space-around; align-items: center;
+            /* Safe area padding */
+            margin-bottom: env(safe-area-inset-bottom);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .nav-link { color: #666; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s; }
+        .nav-link.active { color: var(--blue); }
+        .nav-link i { font-size: 20px; }
+        .nav-link span { font-size: 9px; font-weight: 800; text-transform: uppercase; }
+
+        /* GÖREVLER */
+        .task-row {
+            background: #111; border: 1px solid var(--border);
+            padding: 16px; border-radius: 18px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: 0.3s;
+        }
+        .task-row.done { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+
+        /* SKELETON LOAD */
+        .skeleton { background: linear-gradient(90deg, #111 25%, #1a1a1a 50%, #111 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* ANIMATIONS */
+        .fade-up { animation: fadeUp 0.5s ease forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* INPUTS */
+        .titan-input {
+            width: 100%; background: #0f0f10; border: 1px solid var(--border);
+            border-radius: 16px; padding: 16px 20px; color: #fff;
+            transition: 0.3s; font-size: 14px;
+        }
+        .titan-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
 
         /* GATEWAY OVERLAY */
-        #gateway-view { position: fixed; inset: 0; z-index: 20000; background: #000; display: none; overflow-y: auto; }
-        .gw-task-card { background: #0c0c0e; border: 1px solid #1f1f22; border-radius: 24px; padding: 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; margin-bottom: 15px; }
-        .gw-task-card:hover { background: #111; border-color: var(--p); }
-        .gw-task-card.done { border-color: var(--a); background: rgba(16, 185, 129, 0.05); }
-
-        /* CATEGORY CHIPS */
-        .cat-chip { padding: 12px 28px; background: var(--b3); border: 1px solid var(--border); border-radius: 100px; font-size: 10px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transition: 0.3s; cursor: pointer; }
-        .cat-chip.active { background: var(--p); color: #fff; border-color: var(--p); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
-
-        /* LOG ENGINE */
-        #system-log { position: fixed; bottom: 130px; right: 30px; width: 250px; background: rgba(0,0,0,0.8); border: 1px solid #222; border-radius: 15px; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #444; pointer-events: none; z-index: 5000; }
-
-        /* UTILS */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        #gateway-screen { position: fixed; inset: 0; z-index: 2000; background: #000; display: none; overflow-y: auto; padding-bottom: 50px; }
     </style>
 </head>
 <body>
 
-    <div id="nvo-preloader">
-        <div class="loader-logo">
-            <div class="absolute inset-0 bg-blue-600/20 blur-2xl rounded-full"></div>
-            <i class="fa-solid fa-infinity text-5xl text-blue-600 relative z-10"></i>
-        </div>
-        <div class="loader-bar"><div id="loader-fill"></div></div>
-        <div class="mt-10 flex flex-col items-center gap-2">
-            <p class="text-[10px] font-black tracking-[0.6em] text-zinc-500 uppercase">TITAN CORE INITIALIZING</p>
-            <p id="loader-status" class="text-[8px] font-bold text-zinc-700 uppercase">Loading Data Packages...</p>
-        </div>
+    <div class="mesh-bg"></div>
+
+    <div id="loader" class="fixed inset-0 z-[5000] bg-black flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="w-16 h-16 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
+        <p class="mt-6 text-[10px] font-black tracking-[0.5em] text-zinc-500 uppercase">Titan Secure Boot</p>
     </div>
 
-    <div id="toast-container" class="toast-box"></div>
-
-    <div id="system-log">
-        <div class="flex items-center gap-2 mb-2"><div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> SYSTEM STATUS: OK</div>
-        <div id="log-content">Initializing cloud stream...</div>
-    </div>
-
-    <header class="sticky top-0 z-[15000] nvo-glass border-b border-white/5 px-8 py-5">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-8">
-                <div class="flex items-center gap-4 cursor-pointer" onclick="location.reload()">
-                    <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-                        <i class="fa-solid fa-infinity text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-black tracking-tighter italic">NVO<span class="text-blue-600">LINK</span></h1>
-                        <p class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Enterprise Cloud v0.1.7</p>
-                    </div>
+    <header class="sticky top-0 z-[500] glass px-6 py-5 border-b border-white/5">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
+                    <i class="fa-solid fa-bolt-lightning text-lg text-white"></i>
                 </div>
-                <nav class="hidden lg:flex items-center gap-8 border-l border-white/10 pl-8 ml-2">
-                    <a href="#" class="text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-widest transition">Docs</a>
-                    <a href="#" class="text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-widest transition">API</a>
-                    <a href="#" class="text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-widest transition">Support</a>
-                </nav>
+                <h1 class="text-xl font-black italic tracking-tighter">NVO<span class="text-blue-600">LINK</span></h1>
             </div>
             
-            <div id="auth-area" class="flex items-center gap-5">
-                <div id="status-badge" class="hidden sm:flex items-center gap-3 bg-zinc-900/50 px-4 py-2 rounded-full border border-white/5">
-                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-widest">1,242,091 Active Users</span>
-                </div>
-                <button id="login-btn" onclick="nvoAuth.login()" class="btn btn-p !py-3 !px-8">Access Portal</button>
-                <div id="user-info" class="hidden flex items-center gap-4 bg-zinc-900/80 p-1.5 pr-6 rounded-2xl border border-white/10 group cursor-pointer">
-                    <img id="h-avatar" class="w-10 h-10 rounded-xl object-cover border border-white/10 transition group-hover:border-blue-500">
-                    <div>
-                        <p id="h-name" class="text-[10px] font-black uppercase text-white"></p>
-                        <p class="text-[8px] text-zinc-500 font-bold uppercase">Pro Member</p>
-                    </div>
+            <div id="auth-box">
+                <button onclick="nvoAuth.login()" id="btn-login" class="btn-main !py-2.5 !px-6 !text-[10px]">GİRİŞ YAP</button>
+                <div id="user-p" class="hidden flex items-center gap-3 bg-white/5 p-1 pr-4 rounded-full border border-white/10" onclick="nvoApp.tab('profile')">
+                    <img id="u-img" class="w-8 h-8 rounded-full object-cover">
+                    <span id="u-name" class="text-[10px] font-black uppercase"></span>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 pt-12">
-        
-        <section id="view-discovery" class="nvo-view space-y-12">
-            <div class="grid lg:grid-cols-3 gap-8 items-center">
-                <div class="lg:col-span-2 relative group">
-                    <i class="fa-solid fa-search absolute left-8 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-blue-500 transition-all duration-300"></i>
-                    <input type="text" oninput="nvoApp.search(this.value)" placeholder="Search for premium software, keys or campaigns..." class="inp pl-20 py-6 text-base font-medium">
-                    <div class="absolute right-6 top-1/2 -translate-y-1/2 flex gap-2">
-                        <kbd class="bg-zinc-800 px-2 py-1 rounded text-[8px] font-bold text-zinc-500">CTRL</kbd>
-                        <kbd class="bg-zinc-800 px-2 py-1 rounded text-[8px] font-bold text-zinc-500">K</kbd>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 bg-zinc-900/30 p-4 rounded-3xl border border-white/5">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 text-xl">
-                        <i class="fa-solid fa-chart-line"></i>
-                    </div>
-                    <div>
-                        <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Trending Now</p>
-                        <p class="text-sm font-bold text-white">#AI_Tools +24%</p>
-                    </div>
-                </div>
+    <main class="max-w-2xl mx-auto px-6 pt-8">
+
+        <section id="tab-discovery" class="tab-view space-y-8">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+                <input type="text" oninput="nvoApp.search(this.value)" placeholder="Ekosistemi tara..." class="titan-input !pl-14">
             </div>
 
-            <div class="flex gap-4 overflow-x-auto no-scrollbar pb-4" id="cat-container">
-                <button onclick="nvoApp.filter('Hepsi', this)" class="cat-chip active">All Intelligence</button>
-                <button onclick="nvoApp.filter('Yazılım', this)" class="cat-chip">Dev Tools</button>
-                <button onclick="nvoApp.filter('Oyun', this)" class="cat-chip">Gaming HQ</button>
-                <button onclick="nvoApp.filter('Eğitim', this)" class="cat-chip">Academy</button>
-                <button onclick="nvoApp.filter('Medya', this)" class="cat-chip">Content Kit</button>
-                <button onclick="nvoApp.filter('Kripto', this)" class="cat-chip">Blockchain</button>
+            <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                <button onclick="nvoApp.filter('Hepsi', this)" class="cat-btn active bg-blue-600 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase">Hepsi</button>
+                <button onclick="nvoApp.filter('Yazılım', this)" class="cat-btn bg-white/5 text-zinc-500 px-5 py-2 rounded-full text-[10px] font-black uppercase">Yazılım</button>
+                <button onclick="nvoApp.filter('Oyun', this)" class="cat-btn bg-white/5 text-zinc-500 px-5 py-2 rounded-full text-[10px] font-black uppercase">Oyun</button>
+                <button onclick="nvoApp.filter('Kripto', this)" class="cat-btn bg-white/5 text-zinc-500 px-5 py-2 rounded-full text-[10px] font-black uppercase">Kripto</button>
             </div>
 
-            <div id="feed-grid" class="grid md:grid-cols-2 xl:grid-cols-3 gap-10">
+            <div id="feed" class="grid gap-6">
                 </div>
         </section>
 
-        <section id="view-create" class="nvo-view hidden animate-fade-in">
-            <div class="max-w-4xl mx-auto">
-                <div class="grid lg:grid-cols-5 gap-10">
-                    <div class="lg:col-span-3 space-y-8">
-                        <div class="nvo-card p-10 space-y-8">
-                            <h2 class="text-3xl font-black italic">DEPLOY CAMPAIGN</h2>
-                            
-                            <div class="space-y-6">
-                                <div class="space-y-3">
-                                    <label class="text-[10px] font-black text-zinc-500 uppercase ml-2">Internal Title</label>
-                                    <input type="text" id="inp-title" placeholder="Project Alpha Release..." class="inp">
-                                </div>
-                                <div class="space-y-3">
-                                    <label class="text-[10px] font-black text-zinc-500 uppercase ml-2">Direct Target URL</label>
-                                    <input type="url" id="inp-target" placeholder="https://secure-storage.nvolink.com/..." class="inp">
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="space-y-3">
-                                        <label class="text-[10px] font-black text-zinc-500 uppercase ml-2">Domain Category</label>
-                                        <select id="inp-cat" class="inp">
-                                            <option value="Yazılım">Dev Tools</option>
-                                            <option value="Oyun">Gaming</option>
-                                            <option value="Medya">Media</option>
-                                            <option value="Kripto">Web3</option>
-                                        </select>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <label class="text-[10px] font-black text-zinc-500 uppercase ml-2">Security Level</label>
-                                        <select class="inp"><option>Enterprise (High)</option></select>
-                                    </div>
-                                </div>
-                            </div>
+        <section id="tab-create" class="tab-view hidden fade-up">
+            <div class="card-titan p-8 space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black italic">YENİ KAMPANYA</h2>
+                    <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest mt-1">Titan Deployment Engine</p>
+                </div>
 
-                            <div class="bg-black/50 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-                                <div class="flex justify-between items-center">
-                                    <h4 class="text-xs font-black text-blue-500 uppercase tracking-widest">Logic Tasks</h4>
-                                    <span id="task-indicator" class="bg-blue-600/10 text-blue-500 px-3 py-1 rounded-full text-[8px] font-black">0 DEFINED</span>
-                                </div>
-                                <div id="task-stack" class="space-y-3"></div>
-                                <div class="grid gap-3">
-                                    <input type="text" id="t-name" placeholder="Task Label (e.g. Subscribe to Channel)" class="inp !p-4 !text-xs">
-                                    <input type="url" id="t-url" placeholder="Redirect Link" class="inp !p-4 !text-xs">
-                                    <button onclick="nvoApp.pushTask()" class="btn bg-zinc-900 border-zinc-800 hover:bg-zinc-800 w-full py-4 rounded-2xl">
-                                        <i class="fa-solid fa-plus-circle"></i> Attach Task Logic
-                                    </button>
-                                </div>
+                <div class="grid gap-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-zinc-500 uppercase ml-2">Görsel Seç</label>
+                        <div onclick="document.getElementById('f-up').click()" class="h-48 bg-white/5 border-2 border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-600 transition overflow-hidden">
+                            <img id="f-pre" class="hidden w-full h-full object-cover">
+                            <div id="f-hint" class="text-center">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-zinc-700 mb-3"></i>
+                                <p class="text-[10px] font-black text-zinc-600 uppercase">Dosyayı Bırak veya Seç</p>
                             </div>
-
-                            <button onclick="nvoApp.deploy()" id="deploy-btn" class="btn btn-p w-full py-6 text-base tracking-widest">
-                                <i class="fa-solid fa-rocket"></i> INITIALIZE DEPLOYMENT
-                            </button>
                         </div>
+                        <input type="file" id="f-up" class="hidden" accept="image/*" onchange="nvoApp.imgPre(this)">
                     </div>
 
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="nvo-card aspect-[4/5] flex flex-col items-center justify-center p-8 text-center relative group cursor-pointer" onclick="document.getElementById('file-inp').click()">
-                            <img id="c-preview" class="hidden absolute inset-0 w-full h-full object-cover rounded-[2rem]">
-                            <div id="c-hint" class="relative z-10 transition-all duration-500 group-hover:scale-110">
-                                <div class="w-20 h-20 bg-blue-600/10 text-blue-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                                    <i class="fa-solid fa-image text-3xl"></i>
-                                </div>
-                                <p class="text-xs font-black text-zinc-500 uppercase tracking-widest leading-relaxed">Click to Upload<br><span class="text-blue-600">Master Visual</span></p>
-                            </div>
-                            <input type="file" id="file-inp" class="hidden" accept="image/*" onchange="nvoApp.processImage(this)">
+                    <input type="text" id="i-title" placeholder="Başlık" class="titan-input">
+                    <input type="url" id="i-target" placeholder="Hedef Link" class="titan-input">
+                    <select id="i-cat" class="titan-input">
+                        <option value="Yazılım">Yazılım</option>
+                        <option value="Oyun">Oyun</option>
+                        <option value="Kripto">Kripto</option>
+                    </select>
+
+                    <div class="p-6 bg-black rounded-3xl border border-white/5 space-y-4">
+                        <p class="text-[10px] font-black text-blue-500 uppercase">Görev Zinciri</p>
+                        <div id="task-list-ui" class="space-y-2"></div>
+                        <div class="flex gap-2">
+                            <input type="text" id="t-n" placeholder="Görev Adı" class="titan-input !py-3 !text-xs">
+                            <input type="url" id="t-u" placeholder="Link" class="titan-input !py-3 !text-xs">
                         </div>
-                        <div class="nvo-card p-6 bg-zinc-900/20">
-                            <h5 class="text-[9px] font-black text-zinc-600 uppercase mb-4 tracking-widest">Deployment Tips</h5>
-                            <p class="text-[10px] text-zinc-500 leading-relaxed italic">"For maximum engagement, use high-contrast visuals and at least 2 social tasks."</p>
-                        </div>
+                        <button onclick="nvoApp.addTask()" class="w-full py-3 bg-zinc-900 rounded-xl text-[10px] font-black hover:bg-zinc-800 transition">GÖREV EKLE</button>
                     </div>
+
+                    <button onclick="nvoApp.publish()" id="pub-btn" class="btn-main py-5">SİSTEME GÖNDER</button>
                 </div>
             </div>
         </section>
 
-        <section id="view-profile" class="nvo-view hidden">
-            <div class="max-w-5xl mx-auto space-y-12">
-                <div class="nvo-card p-12 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 blur-[120px] rounded-full"></div>
-                    
-                    <div class="flex flex-col lg:flex-row items-center gap-12 relative z-10">
-                        <div class="relative group">
-                            <div class="absolute -inset-1 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-[3.5rem] blur opacity-25 group-hover:opacity-100 transition duration-1000"></div>
-                            <img id="p-avatar" class="w-48 h-48 rounded-[3.2rem] object-cover border-4 border-black relative">
-                            <button onclick="document.getElementById('p-file').click()" class="absolute -right-2 bottom-4 w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center border-4 border-black shadow-2xl hover:scale-110 transition">
-                                <i class="fa-solid fa-camera"></i>
-                            </button>
-                            <input type="file" id="p-file" class="hidden" onchange="nvoApp.updateAvatar(this)">
-                        </div>
-                        
-                        <div class="flex-1 text-center lg:text-left space-y-4">
-                            <div class="flex flex-col lg:flex-row items-center gap-4">
-                                <input type="text" id="p-name-in" class="bg-transparent border-none text-4xl font-black italic tracking-tighter w-full lg:max-w-md focus:ring-0 text-center lg:text-left" onchange="nvoApp.updateName(this.value)">
-                                <span class="bg-blue-600/10 text-blue-500 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest">Titan Developer</span>
-                            </div>
-                            <p id="p-email" class="text-xs text-zinc-500 font-bold uppercase tracking-[0.4em]"></p>
-                            
-                            <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-6">
-                                <div class="bg-zinc-900/50 px-8 py-5 rounded-3xl border border-white/5 text-center">
-                                    <h4 id="stat-links" class="text-3xl font-black italic">0</h4>
-                                    <p class="text-[9px] font-black text-zinc-600 uppercase mt-1">Campaigns</p>
-                                </div>
-                                <div class="bg-zinc-900/50 px-8 py-5 rounded-3xl border border-white/5 text-center">
-                                    <h4 id="stat-views" class="text-3xl font-black italic">0</h4>
-                                    <p class="text-[9px] font-black text-zinc-600 uppercase mt-1">Total Impact</p>
-                                </div>
-                                <div class="bg-zinc-900/50 px-8 py-5 rounded-3xl border border-white/5 text-center">
-                                    <h4 class="text-3xl font-black italic text-green-500">A+</h4>
-                                    <p class="text-[9px] font-black text-zinc-600 uppercase mt-1">Reliability</p>
-                                </div>
-                            </div>
-                        </div>
+        <section id="tab-profile" class="tab-view hidden fade-up">
+            <div class="card-titan p-8 text-center space-y-6">
+                <div class="relative w-28 h-28 mx-auto">
+                    <img id="p-img" class="w-full h-full rounded-3xl object-cover border-4 border-black shadow-2xl">
+                    <div class="absolute -bottom-2 -right-2 bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center border-2 border-black">
+                        <i class="fa-solid fa-check text-white text-xs"></i>
                     </div>
                 </div>
-
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center px-4">
-                        <h3 class="text-xl font-black italic">MY DEPLOYMENTS</h3>
-                        <button class="text-[10px] font-black text-zinc-500 uppercase hover:text-white transition">Filter By Date <i class="fa-solid fa-chevron-down ml-2"></i></button>
+                <div>
+                    <h3 id="p-name" class="text-2xl font-black italic"></h3>
+                    <p id="p-mail" class="text-[10px] font-black text-zinc-600 uppercase tracking-widest"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 p-4 rounded-2xl border border-white/5">
+                        <h4 id="s-links" class="text-2xl font-black italic">0</h4>
+                        <p class="text-[8px] font-black text-zinc-500 uppercase mt-1">Linkler</p>
                     </div>
-                    <div id="my-links-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                    <div class="bg-white/5 p-4 rounded-2xl border border-white/5">
+                        <h4 id="s-views" class="text-2xl font-black italic">0</h4>
+                        <p class="text-[8px] font-black text-zinc-500 uppercase mt-1">İzlenme</p>
+                    </div>
                 </div>
             </div>
+
+            <div id="my-list" class="mt-8 space-y-4"></div>
         </section>
+
     </main>
 
-    <section id="gateway-view">
-        <div class="max-w-2xl mx-auto px-6 py-20 min-h-screen flex flex-col items-center">
-            <div class="w-full text-center space-y-12">
-                <div class="inline-flex items-center gap-4 bg-zinc-900/50 px-6 py-3 rounded-full border border-white/10">
-                    <i class="fa-solid fa-shield-halved text-blue-500"></i>
-                    <span class="text-[10px] font-black uppercase tracking-[0.3em]">Titan Encryption Active</span>
-                </div>
-                
-                <div class="nvo-card overflow-hidden !rounded-[3rem] shadow-2xl">
-                    <img id="gw-image" class="w-full h-80 object-cover">
-                    <div class="p-12 text-left space-y-8">
-                        <div>
-                            <h2 id="gw-title" class="text-4xl font-black italic leading-tight mb-4"></h2>
-                            <p class="text-zinc-500 text-sm leading-relaxed">To access this premium content, verify your identity by completing the following sequence of cloud tasks. Your download will be authorized instantly.</p>
-                        </div>
-
-                        <div id="gw-task-list" class="space-y-4"></div>
-
-                        <button id="gw-unlock-btn" disabled class="btn btn-p w-full py-6 text-base opacity-20 cursor-not-allowed">
-                            AUTHORIZE & DOWNLOAD CONTENT
-                        </button>
-
-                        <div class="pt-8 border-t border-white/5 flex justify-between items-center opacity-30">
-                            <span class="text-[9px] font-black uppercase tracking-widest">Secure Cloud Gateway v2.1</span>
-                            <div class="flex gap-4">
-                                <i class="fa-solid fa-lock"></i>
-                                <i class="fa-solid fa-fingerprint"></i>
-                            </div>
-                        </div>
+    <div id="gateway-screen">
+        <div class="max-w-xl mx-auto px-6 py-20">
+            <div class="card-titan overflow-hidden shadow-2xl">
+                <img id="g-img" class="w-full h-64 object-cover">
+                <div class="p-8 space-y-8">
+                    <div>
+                        <h2 id="g-title" class="text-3xl font-black italic"></h2>
+                        <p class="text-zinc-500 text-sm mt-2">Devam etmek için aşağıdaki görevleri doğrulayın.</p>
                     </div>
+                    
+                    <div id="g-tasks" class="space-y-3"></div>
+
+                    <button id="g-btn" disabled class="btn-main w-full py-5 opacity-30 cursor-not-allowed">
+                        KİLİDİ AÇ VE İNDİR
+                    </button>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <div id="qr-modal" class="fixed inset-0 z-[60000] bg-black/95 backdrop-blur-3xl hidden flex items-center justify-center p-6" onclick="this.style.display='none'">
-        <div class="bg-white p-12 rounded-[4rem] text-center max-w-sm w-full animate-pop-in" onclick="event.stopPropagation()">
-            <div id="qr-target" class="mb-10 flex justify-center"></div>
-            <p class="text-black font-black text-sm uppercase tracking-widest italic">Link Matrix</p>
-            <p class="text-zinc-400 text-[10px] font-bold mt-2 uppercase">Scan to teleport content</p>
-            <button class="mt-10 w-full py-4 bg-zinc-100 rounded-3xl text-black font-black text-xs hover:bg-zinc-200 transition" onclick="document.getElementById('qr-modal').style.display='none'">CLOSE MODULE</button>
+            <button onclick="location.href='index.html'" class="mt-8 text-[10px] font-black text-zinc-600 uppercase w-full text-center">İptal Et ve Geri Dön</button>
         </div>
     </div>
 
-    <nav class="bottom-nav nvo-glass border border-white/10">
-        <button onclick="nvoApp.switchTab('discovery')" id="nav-discovery" class="nav-item active">
-            <i class="fa-solid fa-shapes text-2xl"></i>
-            <span>Discovery</span>
+    <nav class="nav-bottom glass border-white/10">
+        <button onclick="nvoApp.tab('discovery')" id="n-discovery" class="nav-link active">
+            <i class="fa-solid fa-house-chimney-window"></i>
+            <span>Akış</span>
         </button>
-        <button onclick="nvoApp.switchTab('create')" id="nav-create" class="nav-item">
-            <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/40 -translate-y-4">
-                <i class="fa-solid fa-plus text-2xl text-white"></i>
+        <button onclick="nvoApp.tab('create')" id="n-create" class="nav-link">
+            <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/40 -translate-y-4 text-white">
+                <i class="fa-solid fa-plus text-2xl"></i>
             </div>
-            <span class="mt-[-10px]">Deploy</span>
         </button>
-        <button onclick="nvoApp.switchTab('profile')" id="nav-profile" class="nav-item">
-            <i class="fa-solid fa-id-badge text-2xl"></i>
-            <span>Titan HQ</span>
+        <button onclick="nvoApp.tab('profile')" id="n-profile" class="nav-link">
+            <i class="fa-solid fa-user-ninja"></i>
+            <span>Profil</span>
         </button>
     </nav>
 
     <script type="module">
-        /* NVOLINK TITAN CORE LOGIC v0.1.7
-           Advanced Firebase Implementation & UI Management
-        */
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // FIREBASE INFRASTRUCTURE
         const firebaseConfig = {
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
             authDomain: "nvo-link.firebaseapp.com",
@@ -399,363 +287,186 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // TITAN STATE ENGINE
-        window.titanState = {
-            user: null,
-            tempImage: null,
-            tasks: [],
-            currentCategory: 'Hepsi',
-            taskDone: 0,
-            logs: []
-        };
+        window.state = { user: null, tasks: [], b64: null, cat: 'Hepsi', done: 0 };
 
-        // UI MANAGEMENT ENGINE
         window.nvoApp = {
-            log: (msg) => {
-                const logBox = document.getElementById('log-content');
-                const time = new Date().toLocaleTimeString();
-                window.titanState.logs.unshift(`[${time}] ${msg}`);
-                if(window.titanState.logs.length > 5) window.titanState.logs.pop();
-                logBox.innerHTML = window.titanState.logs.map(l => `<div>${l}</div>`).join('');
-            },
-
-            toast: (msg, type = 'success') => {
-                const container = document.getElementById('toast-container');
-                const t = document.createElement('div');
-                t.className = 'toast-item';
-                const icon = type === 'success' ? 'circle-check text-green-500' : 'triangle-exclamation text-red-500';
-                t.innerHTML = `<i class="fa-solid fa-${icon} text-xl"></i><div class="flex flex-col"><span class="text-[10px] font-black uppercase text-zinc-500">Titan System</span><span class="text-xs font-bold text-white">${msg}</span></div>`;
-                container.appendChild(t);
-                setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(50px)'; setTimeout(() => t.remove(), 500); }, 3500);
-            },
-
-            runPreloader: () => {
-                let p = 0;
-                const statusText = document.getElementById('loader-status');
-                const fill = document.getElementById('loader-fill');
-                const msgs = ["Handshaking Cloud...", "Fetching Encrypted Shards...", "Building UI Matrix...", "Titan Core Ready."];
-                
-                const itv = setInterval(() => {
-                    p += Math.floor(Math.random() * 15) + 5;
-                    if(p >= 100) p = 100;
-                    fill.style.width = p + '%';
-                    statusText.innerText = msgs[Math.floor((p/100) * (msgs.length - 1))];
-                    
-                    if(p === 100) {
-                        clearInterval(itv);
-                        setTimeout(() => {
-                            document.getElementById('nvo-preloader').style.opacity = '0';
-                            setTimeout(() => document.getElementById('nvo-preloader').remove(), 800);
-                            nvoApp.log("Preloader sequence completed.");
-                        }, 500);
-                    }
-                }, 150);
-            },
-
-            switchTab: (id) => {
-                document.querySelectorAll('.nvo-view').forEach(v => v.classList.add('hidden'));
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                document.getElementById('view-' + id).classList.remove('hidden');
-                document.getElementById('nav-' + id).classList.add('active');
-                nvoApp.log(`Switched to module: ${id}`);
+            tab: (id) => {
+                document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+                document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+                document.getElementById('tab-'+id).classList.remove('hidden');
+                document.getElementById('n-'+id).classList.add('active');
                 if(id === 'discovery') nvoApp.loadFeed();
                 if(id === 'profile') nvoApp.loadProfile();
             },
 
-            processImage: (input) => {
-                const file = input.files[0];
-                if(!file) return;
-                nvoApp.log("Processing master visual...");
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let w = img.width; if(w > 1000) w = 1000;
-                        canvas.width = w; canvas.height = (img.height * w) / img.width;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, canvas.height);
-                        window.titanState.tempImage = canvas.toDataURL('image/jpeg', 0.85);
-                        document.getElementById('c-preview').src = window.titanState.tempImage;
-                        document.getElementById('c-preview').classList.remove('hidden');
-                        document.getElementById('c-hint').classList.add('opacity-0');
-                        nvoApp.toast("Visual processed successfully.");
-                    };
-                    img.src = e.target.result;
+            imgPre: (inp) => {
+                const r = new FileReader();
+                r.onload = (e) => {
+                    document.getElementById('f-pre').src = e.target.result;
+                    document.getElementById('f-pre').classList.remove('hidden');
+                    document.getElementById('f-hint').classList.add('hidden');
+                    window.state.b64 = e.target.result;
                 };
-                reader.readAsDataURL(file);
+                r.readAsDataURL(inp.files[0]);
             },
 
-            pushTask: () => {
-                const name = document.getElementById('t-name').value;
-                const url = document.getElementById('t-url').value;
-                if(!name || !url) return nvoApp.toast("Missing task parameters!", "error");
-                
-                window.titanState.tasks.push({name, url});
-                document.getElementById('task-stack').innerHTML += `
-                    <div class="flex justify-between items-center bg-zinc-900/50 p-5 rounded-2xl border border-white/5 animate-slide-up">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-bolt text-blue-500"></i>
-                            <span class="text-[10px] font-black uppercase text-zinc-300">${name}</span>
-                        </div>
-                        <i class="fa-solid fa-check-double text-blue-500 text-xs"></i>
+            addTask: () => {
+                const n = document.getElementById('t-n').value;
+                const u = document.getElementById('t-u').value;
+                if(!n || !u) return;
+                window.state.tasks.push({n, u});
+                document.getElementById('task-list-ui').innerHTML += `
+                    <div class="flex justify-between text-[10px] font-black bg-white/5 p-3 rounded-lg">
+                        <span>${n}</span>
+                        <i class="fa-solid fa-link text-blue-500"></i>
                     </div>`;
-                document.getElementById('task-indicator').innerText = window.titanState.tasks.length + " DEFINED";
-                document.getElementById('t-name').value = ""; document.getElementById('t-url').value = "";
-                nvoApp.toast("Task logic attached.");
+                document.getElementById('t-n').value = ''; document.getElementById('t-u').value = '';
             },
 
-            deploy: async () => {
-                const title = document.getElementById('inp-title').value;
-                const target = document.getElementById('inp-target').value;
-                const cat = document.getElementById('inp-cat').value;
-                const btn = document.getElementById('deploy-btn');
-
-                if(!title || !target || !window.titanState.tempImage) return nvoApp.toast("Deployment failed: Missing fields!", "error");
-
-                try {
-                    btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-sync fa-spin"></i> ENCRYPTING & UPLOADING...';
-                    await addDoc(collection(db, "links"), {
-                        title, target, category: cat,
-                        image: window.titanState.tempImage,
-                        tasks: window.titanState.tasks,
-                        uid: window.titanState.user.uid,
-                        uName: window.titanState.user.displayName,
-                        uAvatar: window.titanState.user.photoURL,
-                        views: 0,
-                        createdAt: serverTimestamp()
-                    });
-                    confetti();
-                    nvoApp.toast("Campaign deployed to Titan Cloud!");
-                    setTimeout(() => location.reload(), 1500);
-                } catch(e) {
-                    nvoApp.toast("Titan Error: " + e.message, "error");
-                    btn.disabled = false;
-                }
-            },
-
-            loadFeed: async (searchQuery = "") => {
-                nvoApp.log("Syncing global feed...");
-                const grid = document.getElementById('feed-grid');
-                let q = query(collection(db, "links"), orderBy("createdAt", "desc"));
+            publish: async () => {
+                const t = document.getElementById('i-title').value;
+                const l = document.getElementById('i-target').value;
+                if(!t || !l || !window.state.b64) return alert("Eksik alan!");
                 
-                if(window.titanState.currentCategory !== 'Hepsi') {
-                    q = query(collection(db, "links"), where("category", "==", window.titanState.currentCategory), orderBy("createdAt", "desc"));
-                }
+                document.getElementById('pub-btn').disabled = true;
+                document.getElementById('pub-btn').innerText = "YÜKLENİYOR...";
 
+                await addDoc(collection(db, "links"), {
+                    title: t, target: l, category: document.getElementById('i-cat').value,
+                    image: window.state.b64, tasks: window.state.tasks,
+                    uid: window.state.user.uid, uName: window.state.user.displayName, uAvatar: window.state.user.photoURL,
+                    views: 0, createdAt: serverTimestamp()
+                });
+                confetti();
+                setTimeout(() => location.reload(), 1200);
+            },
+
+            loadFeed: async (search = "") => {
+                const feed = document.getElementById('feed');
+                feed.innerHTML = '<div class="skeleton h-64 rounded-3xl"></div>'.repeat(3);
+                
+                let q = query(collection(db, "links"), orderBy("createdAt", "desc"));
+                if(window.state.cat !== 'Hepsi') q = query(collection(db, "links"), where("category", "==", window.state.cat), orderBy("createdAt", "desc"));
+                
                 const snap = await getDocs(q);
-                grid.innerHTML = "";
-
+                feed.innerHTML = "";
+                
                 snap.forEach(d => {
                     const data = d.data();
-                    if(searchQuery && !data.title.toLowerCase().includes(searchQuery.toLowerCase())) return;
-
-                    grid.innerHTML += `
-                        <div class="nvo-card animate-slide-up">
-                            <div class="relative h-64 overflow-hidden">
-                                <img src="${data.image}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-                                <div class="absolute top-5 left-5 bg-blue-600 text-white text-[8px] font-black px-4 py-2 rounded-full uppercase tracking-widest">${data.category}</div>
-                                <div class="absolute bottom-6 left-6 right-6">
-                                    <h3 class="text-2xl font-black text-white italic leading-tight truncate mb-1">${data.title}</h3>
-                                    <div class="flex items-center gap-4">
-                                        <span class="text-[9px] font-bold text-zinc-400 uppercase"><i class="fa-solid fa-eye text-blue-500 mr-1"></i>${data.views || 0}</span>
-                                        <span class="text-[9px] font-bold text-zinc-400 uppercase"><i class="fa-solid fa-layer-group text-blue-500 mr-1"></i>${data.tasks ? data.tasks.length : 0} Steps</span>
+                    if(search && !data.title.toLowerCase().includes(search.toLowerCase())) return;
+                    feed.innerHTML += `
+                        <div class="card-titan fade-up">
+                            <img src="${data.image}" class="w-full h-56 object-cover">
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-[8px] font-black text-blue-500 bg-blue-500/10 px-3 py-1 rounded-full uppercase">${data.category}</span>
+                                    <span class="text-[10px] font-bold text-zinc-500"><i class="fa-solid fa-eye mr-1"></i>${data.views || 0}</span>
+                                </div>
+                                <h3 class="text-xl font-black italic mb-6">${data.title}</h3>
+                                <div class="flex items-center justify-between pt-5 border-t border-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <img src="${data.uAvatar}" class="w-8 h-8 rounded-full">
+                                        <span class="text-[9px] font-black text-zinc-500 uppercase">${data.uName}</span>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="p-6 flex items-center justify-between bg-zinc-900/10">
-                                <div class="flex items-center gap-3">
-                                    <img src="${data.uAvatar}" class="w-10 h-10 rounded-xl object-cover border border-white/5">
-                                    <span class="text-[10px] font-black uppercase text-zinc-500">${data.uName.split(' ')[0]}</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="nvoApp.openQR('${d.id}')" class="w-12 h-12 bg-zinc-800/50 rounded-2xl flex items-center justify-center text-zinc-400 hover:text-white transition">
-                                        <i class="fa-solid fa-qrcode"></i>
-                                    </button>
-                                    <button onclick="location.href='?id=${d.id}'" class="btn btn-p !py-3 !px-8 !rounded-2xl !text-[10px]">Access</button>
+                                    <button onclick="nvoApp.openGateway('${d.id}')" class="btn-main !py-2 !px-5 !text-[9px]">GÖRÜNTÜLE</button>
                                 </div>
                             </div>
                         </div>`;
                 });
             },
 
-            openQR: (id) => {
-                const modal = document.getElementById('qr-modal');
-                const target = document.getElementById('qr-target');
-                target.innerHTML = "";
-                modal.style.display = 'flex';
-                new QRCode(target, {
-                    text: window.location.origin + window.location.pathname + "?id=" + id,
-                    width: 200, height: 200, colorDark: "#000000", colorLight: "#ffffff"
-                });
-                nvoApp.log("Generated Link Matrix for " + id);
-            },
-
-            renderGateway: async (id) => {
-                nvoApp.log("Decrypting gateway for ID: " + id);
-                document.getElementById('gateway-view').style.display = 'block';
-                const docRef = doc(db, "links", id);
-                const s = await getDoc(docRef);
+            openGateway: async (id) => {
+                document.getElementById('gateway-screen').style.display = 'block';
+                const s = await getDoc(doc(db, "links", id));
+                const data = s.data();
+                document.getElementById('g-img').src = data.image;
+                document.getElementById('g-title').innerText = data.title;
                 
-                if(!s.exists()) return nvoApp.toast("Invalid Secure Link!", "error");
-                
-                const d = s.data();
-                document.getElementById('gw-image').src = d.image;
-                document.getElementById('gw-title').innerText = d.title;
-                
-                const list = document.getElementById('gw-task-list');
-                list.innerHTML = d.tasks && d.tasks.length > 0 ? d.tasks.map((t, i) => `
-                    <div id="task-${i}" onclick="nvoApp.processGatewayTask('${t.url}', ${i}, ${d.tasks.length}, '${d.target}', '${id}')" class="gw-task-card group">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center text-xs font-black text-zinc-600 group-hover:bg-blue-600 group-hover:text-white transition-all">${i+1}</div>
-                            <div class="flex flex-col">
-                                <span class="text-xs font-black uppercase text-zinc-300">${t.name}</span>
-                                <span class="text-[9px] font-bold text-zinc-600 uppercase">Verification Required</span>
-                            </div>
+                const taskBox = document.getElementById('g-tasks');
+                taskBox.innerHTML = data.tasks.map((t, i) => `
+                    <div id="tk-${i}" onclick="nvoApp.runTask('${t.u}', ${i}, ${data.tasks.length}, '${data.target}', '${id}')" class="task-row">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center font-black text-xs text-zinc-500">${i+1}</div>
+                            <span class="text-xs font-black uppercase text-zinc-300">${t.n}</span>
                         </div>
                         <i class="fa-solid fa-chevron-right text-zinc-800"></i>
                     </div>
-                `).join('') : '<p class="text-center py-10 font-black text-zinc-700">NO SECURE TASKS REQUIRED</p>';
+                `).join('');
 
-                if(!d.tasks || d.tasks.length === 0) {
-                    const unlockBtn = document.getElementById('gw-unlock-btn');
-                    unlockBtn.disabled = false; unlockBtn.classList.remove('opacity-20', 'cursor-not-allowed');
-                    unlockBtn.onclick = async () => {
-                        await updateDoc(docRef, { views: increment(1) });
-                        window.location.href = d.target;
-                    };
+                if(data.tasks.length === 0) {
+                    const btn = document.getElementById('g-btn');
+                    btn.disabled = false; btn.classList.remove('opacity-30', 'cursor-not-allowed');
+                    btn.onclick = () => { updateDoc(doc(db, "links", id), {views: increment(1)}); window.location.href = data.target; };
                 }
             },
 
-            processGatewayTask: (url, index, total, finalTarget, linkId) => {
+            runTask: (url, idx, total, target, id) => {
                 window.open(url, '_blank');
-                const card = document.getElementById('task-' + index);
-                card.innerHTML = `<span class="text-xs font-black text-blue-500 uppercase tracking-widest animate-pulse mx-auto">Verifying Cloud Interaction...</span>`;
-                
+                const row = document.getElementById('tk-'+idx);
+                row.innerHTML = `<span class="text-[10px] font-black text-blue-500 uppercase animate-pulse mx-auto">Doğrulanıyor...</span>`;
                 setTimeout(() => {
-                    card.className = "gw-task-card done";
-                    card.innerHTML = `<div class="flex items-center gap-5"><div class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-check text-white"></i></div><span class="text-xs font-black uppercase text-green-500">Identity Verified</span></div>`;
-                    window.titanState.taskDone++;
-                    
-                    if(window.titanState.taskDone >= total) {
-                        const unlockBtn = document.getElementById('gw-unlock-btn');
-                        unlockBtn.disabled = false; unlockBtn.classList.remove('opacity-20', 'cursor-not-allowed');
-                        unlockBtn.innerHTML = '<i class="fa-solid fa-unlock-keyhole mr-3"></i> AUTHORIZED - DOWNLOAD NOW';
-                        unlockBtn.onclick = async () => {
-                            await updateDoc(doc(db, "links", linkId), { views: increment(1) });
-                            confetti();
-                            setTimeout(() => window.location.href = finalTarget, 800);
-                        };
+                    row.className = "task-row done";
+                    row.innerHTML = `<div class="flex items-center gap-4"><div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white"><i class="fa-solid fa-check"></i></div><span class="text-xs font-black uppercase text-green-500">Tamamlandı</span></div>`;
+                    window.state.done++;
+                    if(window.state.done >= total) {
+                        const btn = document.getElementById('g-btn');
+                        btn.disabled = false; btn.classList.remove('opacity-30', 'cursor-not-allowed');
+                        btn.onclick = () => { updateDoc(doc(db, "links", id), {views: increment(1)}); confetti(); setTimeout(()=>window.location.href = target, 800); };
                     }
-                }, 6000);
+                }, 5000);
             },
 
             loadProfile: async () => {
-                nvoApp.log("Accessing Titan Analytics...");
-                const q = query(collection(db, "links"), where("uid", "==", window.titanState.user.uid));
+                const q = query(collection(db, "links"), where("uid", "==", window.state.user.uid));
                 const snap = await getDocs(q);
-                document.getElementById('stat-links').innerText = snap.size;
-                
-                const grid = document.getElementById('my-links-grid');
-                grid.innerHTML = "";
+                document.getElementById('s-links').innerText = snap.size;
+                const list = document.getElementById('my-list');
+                list.innerHTML = "";
                 let totalV = 0;
-
                 snap.forEach(d => {
                     const data = d.data();
-                    totalV += (data.views || 0);
-                    grid.innerHTML += `
-                        <div class="nvo-card p-6 flex items-center justify-between bg-zinc-900/30">
-                            <div class="flex items-center gap-5">
-                                <img src="${data.image}" class="w-14 h-14 rounded-2xl object-cover border border-white/5">
-                                <div class="flex flex-col">
-                                    <h4 class="text-xs font-black uppercase tracking-tighter truncate w-32">${data.title}</h4>
-                                    <p class="text-[10px] text-blue-500 font-black uppercase">${data.views || 0} Impacts</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="navigator.clipboard.writeText('${window.location.origin + window.location.pathname}?id=${d.id}'); nvoApp.toast('Matrix Link Copied!')" class="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-zinc-500 hover:text-blue-500 transition">
-                                    <i class="fa-solid fa-link"></i>
-                                </button>
-                                <button onclick="nvoApp.terminateCampaign('${d.id}')" class="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-red-500/20 hover:text-red-500 transition">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </div>`;
+                    totalV += data.views;
+                    list.innerHTML += `<div class="card-titan p-4 flex justify-between items-center bg-white/5">
+                        <div class="flex items-center gap-4">
+                            <img src="${data.image}" class="w-12 h-12 rounded-xl object-cover">
+                            <span class="text-xs font-black uppercase truncate w-32">${data.title}</span>
+                        </div>
+                        <button onclick="nvoApp.del('${d.id}')" class="text-red-500/20 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+                    </div>`;
                 });
-                document.getElementById('stat-views').innerText = totalV;
+                document.getElementById('s-views').innerText = totalV;
             },
 
-            updateName: async (name) => {
-                if(!name) return;
-                await updateProfile(auth.currentUser, { displayName: name });
-                nvoApp.toast("Titan Identity updated.");
-                setTimeout(() => location.reload(), 800);
-            },
-
-            updateAvatar: (inp) => {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    await updateProfile(auth.currentUser, { photoURL: e.target.result });
-                    nvoApp.toast("Titan Visual updated.");
-                    setTimeout(() => location.reload(), 800);
-                };
-                reader.readAsDataURL(inp.files[0]);
-            },
-
-            terminateCampaign: async (id) => {
-                if(confirm("Terminate this deployment forever?")) {
-                    await deleteDoc(doc(db, "links", id));
-                    nvoApp.loadProfile();
-                    nvoApp.toast("Deployment terminated.");
-                }
-            },
-
-            filter: (cat, el) => {
-                window.titanState.currentCategory = cat;
-                document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-                el.classList.add('active');
-                nvoApp.loadFeed();
-            },
-
-            search: (val) => {
-                nvoApp.loadFeed(val);
-            }
+            del: async (id) => { if(confirm("Silinsin mi?")) { await deleteDoc(doc(db, "links", id)); nvoApp.loadProfile(); } },
+            filter: (c, el) => { window.state.cat = c; document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active', 'bg-blue-600', 'text-white')); el.classList.add('active', 'bg-blue-600', 'text-white'); nvoApp.loadFeed(); },
+            search: (v) => nvoApp.loadFeed(v)
         };
 
-        // AUTH ENGINE
         window.nvoAuth = {
             login: () => signInWithPopup(auth, provider).then(() => location.reload()),
-            logout: () => signOut(auth).then(() => location.reload()),
             init: () => {
-                onAuthStateChanged(auth, (user) => {
+                onAuthStateChanged(auth, u => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loader').remove(), 500);
                     const urlParams = new URLSearchParams(window.location.search);
-                    const linkId = urlParams.get('id');
-
-                    if(linkId) {
-                        nvoApp.renderGateway(linkId);
-                        nvoApp.runPreloader();
-                    } else if(user) {
-                        window.titanState.user = user;
-                        document.getElementById('login-btn').classList.add('hidden');
-                        document.getElementById('user-info').classList.remove('hidden');
-                        document.getElementById('h-avatar').src = user.photoURL;
-                        document.getElementById('h-name').innerText = user.displayName;
-                        document.getElementById('p-avatar').src = user.photoURL;
-                        document.getElementById('p-name-in').value = user.displayName;
-                        document.getElementById('p-email').innerText = user.email;
-                        nvoApp.switchTab('discovery');
-                        nvoApp.runPreloader();
-                    } else {
-                        nvoApp.runPreloader();
-                        nvoApp.loadFeed();
+                    const id = urlParams.get('id');
+                    if(id) nvoApp.openGateway(id);
+                    if(u) {
+                        window.state.user = u;
+                        document.getElementById('btn-login').classList.add('hidden');
+                        document.getElementById('user-p').classList.remove('hidden');
+                        document.getElementById('u-img').src = u.photoURL;
+                        document.getElementById('p-img').src = u.photoURL;
+                        document.getElementById('u-name').innerText = u.displayName.split(' ')[0];
+                        document.getElementById('p-name').innerText = u.displayName;
+                        document.getElementById('p-mail').innerText = u.email;
                     }
+                    nvoApp.loadFeed();
                 });
             }
         };
 
-        // INITIALIZE TITAN
         nvoAuth.init();
-
     </script>
 </body>
 </html>
