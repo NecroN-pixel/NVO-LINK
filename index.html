@@ -4,27 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NVOLINK G-0.0.3 | ENTERPRISE ULTIMATE TASKER</title>
+    <title>NVOLINK G-0.0.6 TITAN MAX | ULTIMATE ENTERPRISE SOLUTION</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- NVOLINK DESIGN SYSTEM (GELİŞMİŞ CSS) --- */
+        /* --- NVOLINK TITAN DESIGN SYSTEM ---
+            Professional UI/UX Framework with Custom Properties
+        */
         :root {
             --primary: #3b82f6;
             --primary-glow: rgba(59, 130, 246, 0.4);
             --secondary: #8b5cf6;
+            --secondary-glow: rgba(139, 92, 246, 0.3);
             --bg-dark: #000000;
-            --card-dark: #0a0a0b;
+            --card-dark: #0c0c0e;
             --border-muted: #1f1f22;
             --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --nav-bg: rgba(12, 12, 14, 0.85);
+            --transition-main: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* [GLOBAL RESET & BASE] */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -32,213 +47,421 @@
             color: var(--text-main);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
         }
 
-        /* --- LOGO ENGINE --- */
-        .nvo-logo-container { display: flex; align-items: center; gap: 14px; user-select: none; }
-        .nvo-logo-box {
-            width: 50px; height: 50px;
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            border-radius: 15px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 25px var(--primary-glow);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* [ANIMATIONS LIBRARY] */
+        @keyframes titanFadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .nvo-logo-box:hover { transform: rotate(5deg) scale(1.05); }
-        .nvo-brand-text { font-size: 26px; font-weight: 800; letter-spacing: -1.2px; }
-        .nvo-brand-link { color: var(--primary); }
 
-        /* --- UI CARDS & ANIMATIONS --- */
+        @keyframes titanSlideRight {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes titanPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        .animate-titan-in { animation: titanFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) both; }
+        
+        /* [UI COMPONENTS] */
         .nvo-card {
             background: var(--card-dark);
             border: 1px solid var(--border-muted);
             border-radius: 30px;
-            transition: all 0.3s ease-in-out;
+            transition: var(--transition-main);
             position: relative;
             overflow: hidden;
         }
-        .nvo-card:hover { border-color: #333; transform: translateY(-3px); }
+
+        .nvo-card:hover {
+            border-color: #333;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .nvo-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .nvo-input-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-left: 15px;
+        }
 
         .nvo-input {
-            background: #111 !important;
+            background: #0f0f11 !important;
             border: 1px solid var(--border-muted) !important;
             border-radius: 20px !important;
             color: #fff !important;
-            padding: 16px 22px !important;
+            padding: 18px 22px !important;
             width: 100%;
-            transition: 0.3s;
+            font-size: 14px;
+            transition: var(--transition-main);
         }
-        .nvo-input:focus { border-color: var(--primary) !important; box-shadow: 0 0 15px var(--primary-glow); }
 
-        .btn-action {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 18px; border-radius: 22px;
-            font-weight: 800; text-transform: uppercase;
-            font-size: 13px; letter-spacing: 1.5px;
-            width: 100%; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            color: white; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+        .nvo-input:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 20px var(--primary-glow);
+            background: #121215 !important;
         }
-        .btn-action:active { transform: scale(0.94); opacity: 0.9; }
 
-        /* --- TASK SYSTEM UI --- */
-        .task-row-ui {
-            background: #121214;
+        /* [LOGO & BRAND] */
+        .nvo-brand-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            user-select: none;
+        }
+
+        .nvo-brand-box {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px var(--primary-glow);
+            transition: var(--transition-main);
+        }
+
+        .nvo-brand-box:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        /* [CATEGORY SYSTEM] */
+        .cat-scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 15px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .cat-scroll-container::-webkit-scrollbar { display: none; }
+
+        .cat-item {
+            padding: 14px 28px;
+            border-radius: 18px;
+            background: #111;
             border: 1px solid #222;
-            border-radius: 20px;
-            padding: 16px 20px;
-            display: flex; justify-content: space-between; align-items: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: #666;
+            white-space: nowrap;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition-main);
+        }
+
+        .cat-item.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        /* [THUMBNAIL STYLES] */
+        .card-thumb {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #000;
+            border-bottom: 1px solid #1a1a1c;
+        }
+
+        /* [TASK ARCHITECTURE] */
+        .task-list-wrapper {
+            background: #0a0a0b;
+            padding: 20px;
+            border-radius: 25px;
+            border: 1px solid #1a1a1c;
+        }
+
+        .task-entry {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 18px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 12px;
-            animation: fadeInRight 0.5s ease both;
-        }
-        @keyframes fadeInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
-        /* --- NAVIGATION --- */
-        .nvo-nav {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            width: 92%; max-width: 480px; height: 78px;
-            background: rgba(10, 10, 12, 0.85); backdrop-filter: blur(25px);
-            border-radius: 40px; border: 1px solid rgba(255,255,255,0.06);
-            display: flex; justify-content: space-around; align-items: center; z-index: 9500;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-        }
-        .nvo-nav-btn { color: #4b5563; font-size: 26px; transition: 0.4s; position: relative; }
-        .nvo-nav-btn.active { color: var(--primary); transform: translateY(-8px); }
-        .nvo-nav-btn.active::after {
-            content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
-            width: 6px; height: 6px; background: var(--primary); border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary);
+            transition: var(--transition-main);
         }
 
-        /* --- PRELOADER --- */
-        #nvo-preloader {
-            position: fixed; inset: 0; z-index: 20000; background: #000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        .task-entry:hover {
+            border-color: var(--primary);
         }
-        .loader-line { width: 200px; height: 2px; background: #111; margin-top: 20px; border-radius: 10px; overflow: hidden; }
-        .loader-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.2s; box-shadow: 0 0 10px var(--primary); }
 
-        /* --- QR MODAL --- */
-        #qr-wrap { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
-        .qr-card { background: #fff; padding: 30px; border-radius: 40px; text-align: center; max-width: 300px; width: 90%; }
-        
-        /* Gateway Styles */
-        #gateway-layer { position: fixed; inset: 0; z-index: 15000; background: #000; display: none; overflow-y: auto; padding: 20px; }
+        /* [NAVIGATION UI] */
+        .titan-nav {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            height: 80px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(25px);
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+        }
+
+        .nav-link {
+            color: #4b5563;
+            font-size: 28px;
+            transition: var(--transition-main);
+            position: relative;
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            transform: translateY(-10px);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* [BUTTON ENGINE] */
+        .btn-titan {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px;
+            border-radius: 24px;
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-main);
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn-titan:hover {
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            transform: scale(1.02);
+        }
+
+        .btn-titan:active {
+            transform: scale(0.96);
+        }
+
+        /* [MODALS & OVERLAYS] */
+        #qr-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 30000;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        #gateway-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 25000;
+            background: #000;
+            display: none;
+            overflow-y: auto;
+            padding: 25px 0;
+        }
+
+        .gateway-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+        }
     </style>
 </head>
-<body class="pb-36">
+<body class="pb-40">
 
-    <div id="nvo-preloader">
-        <div class="nvo-logo-container">
-            <div class="nvo-logo-box"><i class="fa-solid fa-infinity text-white text-2xl"></i></div>
-            <div class="nvo-brand-text">NVO<span class="nvo-brand-link">LINK</span></div>
+    <header class="sticky top-0 z-[10000] bg-black/80 backdrop-blur-2xl border-b border-white/10 px-6 py-5 flex justify-between items-center">
+        <div class="nvo-brand-container">
+            <div class="nvo-brand-box"><i class="fa-solid fa-infinity text-white text-2xl"></i></div>
+            <div class="text-2xl font-black tracking-tighter uppercase italic">NVO<span class="text-blue-500">LINK</span></div>
         </div>
-        <div class="loader-line"><div id="nvo-fill" class="loader-fill"></div></div>
-    </div>
-
-    <header class="sticky top-0 z-[8000] bg-black/80 backdrop-blur-xl border-b border-white/5 px-6 py-5 flex justify-between items-center">
-        <div class="nvo-logo-container">
-            <div class="nvo-logo-box scale-90"><i class="fa-solid fa-infinity text-white text-xl"></i></div>
-            <div class="nvo-brand-text text-xl">NVO<span class="nvo-brand-link">LINK</span></div>
-        </div>
-        <div id="auth-ui">
-            <button onclick="nvoCore.auth.signIn()" id="login-trigger" class="bg-zinc-900 border border-white/10 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition duration-300">Giriş Yap</button>
-            <div id="user-info" class="hidden flex items-center gap-3">
-                <img id="u-avatar" class="w-10 h-10 rounded-2xl border-2 border-blue-600/20 object-cover">
+        
+        <div id="auth-manager">
+            <button onclick="titan.auth.signIn()" id="auth-trigger" class="bg-zinc-900 border border-white/10 px-7 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all">GİRİŞ YAP</button>
+            <div id="auth-status" class="hidden flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p id="auth-name-display" class="text-[10px] font-black uppercase text-blue-500">User</p>
+                    <p class="text-[8px] font-bold text-zinc-500">SaaS Veri Erişimi</p>
+                </div>
+                <img id="auth-avatar-display" class="w-12 h-12 rounded-2xl border-2 border-blue-600/40 object-cover cursor-pointer hover:scale-105 transition" onclick="titan.navigation.goTo('profile')">
             </div>
         </div>
     </header>
 
-    <main class="max-w-xl mx-auto px-6 mt-10 min-h-screen">
+    <main class="max-w-3xl mx-auto px-6 mt-10 min-h-screen">
         
-        <section class="mb-12 nvo-card p-6 border-l-[6px] border-blue-600 bg-gradient-to-br from-blue-600/10 to-transparent">
-            <div class="flex items-center gap-3 mb-3">
-                <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Sistem Güncellemesi v0.0.3-FULL</span>
+        <section id="view-discovery" class="titan-view space-y-10">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between px-2">
+                    <h2 class="text-xs font-black text-zinc-600 uppercase tracking-[0.3em]">Kategoriler</h2>
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                </div>
+                <div class="cat-scroll-container" id="category-injector">
+                    <div class="cat-item active" onclick="titan.app.filterByCategory('Hepsi')">Hepsi</div>
+                    <div class="cat-item" onclick="titan.app.filterByCategory('Oyun')">Oyun</div>
+                    <div class="cat-item" onclick="titan.app.filterByCategory('Yazılım')">Yazılım</div>
+                    <div class="cat-item" onclick="titan.app.filterByCategory('Eğlence')">Eğlence</div>
+                    <div class="cat-item" onclick="titan.app.filterByCategory('Diğer')">Diğer</div>
+                </div>
             </div>
-            <h4 class="text-sm font-bold mb-1">Gelişmiş Görev & Puan Algoritması Aktif</h4>
-            <p class="text-xs text-zinc-500 leading-relaxed font-medium">Linklerinizi kilitleyin, sınırsız görev ekleyin ve kullanıcılarınızdan puan toplayın. NaN hataları giderildi.</p>
+
+            <div id="feed-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                </div>
         </section>
 
-        <div id="v-discovery" class="nvo-view space-y-8">
-            </div>
-
-        <div id="v-create" class="nvo-view hidden space-y-8 animate-in">
-            <div class="nvo-card p-10 space-y-8">
+        <section id="view-create" class="titan-view hidden animate-titan-in">
+            <div class="nvo-card p-10 space-y-10">
                 <div class="text-center">
-                    <h2 class="text-2xl font-black italic tracking-tighter uppercase">Kampanya Başlat</h2>
-                    <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-2">Dosyanı Kilitle ve Görevleri Belirle</p>
+                    <h2 class="text-3xl font-black uppercase italic tracking-tighter">Kampanya Motoru</h2>
+                    <p class="text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-3">Linklerinizi profesyonelce şifreleyin</p>
                 </div>
 
-                <div class="space-y-5">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-600 ml-3 uppercase">Başlık</label>
-                        <input type="text" id="inp-title" placeholder="Örn: 1000 TL Google Play Kod" class="nvo-input">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-600 ml-3 uppercase">Hedef URL</label>
-                        <input type="url" id="inp-url" placeholder="https://..." class="nvo-input">
+                <div class="space-y-6">
+                    <div class="nvo-input-group">
+                        <label class="nvo-input-label">Başlık</label>
+                        <input type="text" id="inp-titan-title" placeholder="Kampanya Adı..." class="nvo-input">
                     </div>
 
-                    <div class="bg-zinc-900/40 p-6 rounded-[2.5rem] border border-white/5 mt-4">
-                        <div class="flex justify-between items-center mb-6 px-2">
-                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Görev Listesi</span>
-                            <span id="task-count-badge" class="bg-blue-600 text-[10px] px-3 py-1 rounded-full font-black">0 GÖREV</span>
+                    <div class="nvo-input-group">
+                        <label class="nvo-input-label">Kapak Fotoğrafı URL</label>
+                        <input type="url" id="inp-titan-thumb" placeholder="https://image-link.com/photo.jpg" class="nvo-input">
+                    </div>
+
+                    <div class="nvo-input-group">
+                        <label class="nvo-input-label">Kilitli Hedef URL</label>
+                        <input type="url" id="inp-titan-target" placeholder="https://target-file-link.com" class="nvo-input">
+                    </div>
+
+                    <div class="nvo-input-group">
+                        <label class="nvo-input-label">Kategori</label>
+                        <input type="text" id="inp-titan-cat" placeholder="Örn: PUBG Mobile, Script, Eğitim" class="nvo-input">
+                    </div>
+
+                    <div class="task-list-wrapper space-y-6">
+                        <div class="flex justify-between items-center px-2">
+                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Görev Konfigürasyonu</span>
+                            <span id="titan-task-badge" class="bg-blue-600 text-[10px] px-4 py-1.5 rounded-full font-black">0 AKTİF GÖREV</span>
                         </div>
-                        <div id="task-builder-list" class="space-y-3 mb-6">
+
+                        <div id="titan-builder-stack" class="space-y-3">
                             </div>
-                        <div class="flex gap-2">
-                            <input type="text" id="inp-task-val" placeholder="Yeni Görev Ekle..." class="nvo-input text-xs">
-                            <button onclick="nvoCore.app.addTask()" class="bg-white text-black px-5 rounded-2xl font-black text-xl hover:scale-105 transition">+</button>
+
+                        <div class="grid grid-cols-1 gap-4 bg-zinc-900/40 p-5 rounded-3xl border border-white/5">
+                            <input type="text" id="inp-task-name" placeholder="Görev Adı: Kanala Abone Ol" class="nvo-input text-xs">
+                            <input type="url" id="inp-task-url" placeholder="Görev URL: https://youtube.com/c/user" class="nvo-input text-xs">
+                            <button onclick="titan.app.addNewTaskToStack()" class="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase hover:bg-zinc-200 transition">+ GÖREV LİSTESİNE EKLE</button>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="nvoCore.app.publish()" class="btn-action">KAMPANYAYI YAYINLA</button>
+                <button onclick="titan.app.publishCampaign()" class="btn-titan mt-6">KAMPANYAYI GLOBALDE YAYINLA</button>
             </div>
-        </div>
+        </section>
 
-        <div id="v-profile" class="nvo-view hidden space-y-10">
+        <section id="view-profile" class="titan-view hidden animate-titan-in">
             <div class="nvo-card p-12 text-center relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-                <img id="prof-img" class="w-32 h-32 rounded-[2.8rem] mx-auto mb-6 border-4 border-zinc-900 shadow-2xl object-cover">
-                <h3 id="prof-name-display" class="text-2xl font-black uppercase tracking-tighter">Kullanıcı</h3>
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600"></div>
                 
-                <div class="grid grid-cols-2 gap-5 mt-10">
-                    <div class="bg-zinc-900/60 p-7 rounded-[2.2rem] border border-white/5">
-                        <h5 id="stat-links" class="text-3xl font-black italic">0</h5>
-                        <p class="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-2">Kampanya</p>
+                <div class="absolute top-8 right-8">
+                    <button onclick="titan.app.openProfileEditor()" class="text-zinc-600 hover:text-white transition text-2xl">
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                    </button>
+                </div>
+
+                <img id="profile-img-large" class="w-36 h-36 rounded-[3.5rem] mx-auto mb-8 border-4 border-zinc-900 shadow-2xl object-cover ring-4 ring-blue-600/10">
+                <h3 id="profile-name-large" class="text-3xl font-black uppercase tracking-tighter">SaaS Kullanıcı</h3>
+                
+                <div class="grid grid-cols-2 gap-6 mt-12">
+                    <div class="bg-zinc-900/60 p-10 rounded-[2.8rem] border border-white/5 group hover:border-blue-500/30 transition">
+                        <h5 id="stat-campaign-count" class="text-4xl font-black italic">0</h5>
+                        <p class="text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-3">Link Yayını</p>
                     </div>
-                    <div class="bg-zinc-900/60 p-7 rounded-[2.2rem] border border-white/5">
-                        <h5 id="stat-points" class="text-3xl font-black italic text-blue-500">0</h5>
-                        <p class="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-2">Top. Puan</p>
+                    <div class="bg-zinc-900/60 p-10 rounded-[2.8rem] border border-white/5 group hover:border-purple-500/30 transition">
+                        <h5 id="stat-total-points" class="text-4xl font-black italic text-blue-500">0</h5>
+                        <p class="text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-3">SaaS Puanı</p>
                     </div>
                 </div>
-                <button onclick="nvoCore.auth.signOut()" class="mt-10 text-[10px] font-black text-red-500/40 uppercase tracking-[0.3em] hover:text-red-500 transition">Oturumu Kapat</button>
+
+                <button onclick="titan.auth.signOut()" class="mt-14 text-[10px] font-black text-red-500/30 uppercase tracking-[0.4em] hover:text-red-500 transition-all">Sistem Oturumunu Kapat</button>
             </div>
 
-            <div class="space-y-4">
-                <h3 class="text-xs font-black text-zinc-600 uppercase tracking-[0.3em] ml-5">Yayınların</h3>
-                <div id="user-links-list" class="space-y-4"></div>
+            <div class="mt-12 space-y-6">
+                <h4 class="text-xs font-black text-zinc-700 uppercase tracking-[0.4em] ml-6">Yönettiğin Linkler</h4>
+                <div id="profile-links-injector" class="space-y-4">
+                    </div>
             </div>
-        </div>
+        </section>
 
     </main>
 
-    <div id="qr-wrap">
-        <div class="qr-card shadow-2xl animate-in">
-            <h4 class="text-black font-black text-sm mb-6 uppercase tracking-tighter">NVOLINK QR ENGINE</h4>
-            <div id="qr-result" class="flex justify-center mb-6"></div>
-            <button onclick="document.getElementById('qr-wrap').style.display='none'" class="w-full py-4 bg-zinc-100 rounded-2xl text-black font-black text-xs uppercase">Kapat</button>
+    <div id="qr-overlay">
+        <div class="bg-white p-12 rounded-[4rem] text-center space-y-8 shadow-[0_0_100px_rgba(255,255,255,0.1)] animate-titan-in max-w-xs w-full">
+            <h4 class="text-black font-black text-[10px] uppercase tracking-[0.3em]">Titan QR Engine</h4>
+            <div id="qr-target-area" class="flex justify-center p-2 rounded-3xl bg-zinc-50"></div>
+            <div class="space-y-4">
+                <p class="text-[10px] text-zinc-400 font-bold px-4 uppercase">Bu kodu taratarak kampanyaya doğrudan erişebilirsiniz.</p>
+                <button onclick="document.getElementById('qr-overlay').style.display='none'" class="w-full py-5 bg-zinc-900 rounded-[2rem] text-white font-black text-[10px] uppercase tracking-widest hover:bg-black transition">MODALI KAPAT</button>
+            </div>
         </div>
     </div>
 
-    <div id="gateway-layer">
-        <div id="gw-inject" class="max-w-md mx-auto py-10"></div>
+    <div id="gateway-overlay">
+        <div class="gateway-container">
+            <div id="gateway-injection-point"></div>
+        </div>
     </div>
 
-    <nav class="nvo-nav">
-        <button onclick="nvoCore.app.tab('discovery')" id="btn-discovery" class="nvo-nav-btn active"><i class="fa-solid fa-compass"></i></button>
-        <button onclick="nvoCore.app.tab('create')" id="btn-create" class="nvo-nav-btn"><i class="fa-solid fa-plus-circle text-4xl text-blue-500"></i></button>
-        <button onclick="nvoCore.app.tab('profile')" id="btn-profile" class="nvo-nav-btn"><i class="fa-solid fa-user-shield"></i></button>
+    <nav class="titan-nav">
+        <button onclick="titan.navigation.goTo('discovery')" id="nav-discovery" class="nav-link active">
+            <i class="fa-solid fa-compass"></i>
+        </button>
+        <button onclick="titan.navigation.goTo('create')" id="nav-create" class="nav-link">
+            <i class="fa-solid fa-circle-plus text-4xl text-blue-500"></i>
+        </button>
+        <button onclick="titan.navigation.goTo('profile')" id="nav-profile" class="nav-link">
+            <i class="fa-solid fa-circle-user"></i>
+        </button>
     </nav>
 
     <script type="module">
@@ -246,8 +469,8 @@
         import { getFirestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // FIREBASE CONFIGURATION
-        const firebaseConfig = {
+        /* --- FIREBASE CONFIGURATION --- */
+        const titanConfig = {
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
             authDomain: "nvo-link.firebaseapp.com",
             projectId: "nvo-link",
@@ -256,304 +479,405 @@
             appId: "1:256153773846:web:6d51174db82ccccf119237"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
+        const titanApp = initializeApp(titanConfig);
+        const titanDb = getFirestore(titanApp);
+        const titanAuth = getAuth(titanApp);
+        const titanProvider = new GoogleAuthProvider();
 
-        // NVOLINK CORE OBJECT (500 LINE SCALE)
-        window.nvoCore = {
+        /* --- GLOBAL TITAN OBJECT --- */
+        window.titan = {
             state: {
-                user: null,
-                tempTasks: [],
-                activeTab: 'discovery'
+                currentUser: null,
+                activeTasks: [],
+                currentView: 'discovery',
+                activeCategory: 'Hepsi'
             },
 
-            // --- AUTHENTICATION MODULE ---
+            /* [AUTHENTICATION MODULE] */
             auth: {
                 signIn: async () => {
-                    try { await signInWithPopup(auth, provider); }
-                    catch (e) { console.error("NVO_AUTH_ERR", e); }
+                    console.log("[TITAN] Initializing OAuth Flow...");
+                    try {
+                        await signInWithPopup(titanAuth, titanProvider);
+                    } catch (error) {
+                        console.error("[TITAN_AUTH_ERROR]", error);
+                        alert("Oturum açma başarısız oldu: " + error.message);
+                    }
                 },
-                signOut: () => signOut(auth).then(() => location.reload()),
-                listener: () => {
-                    onAuthStateChanged(auth, async (u) => {
+                signOut: () => {
+                    console.log("[TITAN] Terminating Session...");
+                    signOut(titanAuth).then(() => window.location.reload());
+                },
+                listen: () => {
+                    onAuthStateChanged(titanAuth, (u) => {
                         const urlParams = new URLSearchParams(window.location.search);
-                        const gatewayId = urlParams.get('id');
+                        const targetId = urlParams.get('id');
 
-                        if(gatewayId) {
-                            nvoCore.app.renderGateway(gatewayId);
-                        } else if(u) {
-                            nvoCore.state.user = u;
-                            document.getElementById('login-trigger').classList.add('hidden');
-                            document.getElementById('user-info').classList.remove('hidden');
-                            document.getElementById('u-avatar').src = u.photoURL;
-                            document.getElementById('prof-img').src = u.photoURL;
-                            document.getElementById('prof-name-display').innerText = u.displayName;
-                            nvoCore.app.tab('discovery');
+                        if (targetId) {
+                            titan.app.renderGateway(targetId);
+                        } else if (u) {
+                            titan.state.currentUser = u;
+                            document.getElementById('auth-trigger').classList.add('hidden');
+                            document.getElementById('auth-status').classList.remove('hidden');
+                            document.getElementById('auth-avatar-display').src = u.photoURL;
+                            document.getElementById('auth-name-display').innerText = u.displayName;
+                            
+                            document.getElementById('profile-img-large').src = u.photoURL;
+                            document.getElementById('profile-name-large').innerText = u.displayName;
+                            
+                            titan.navigation.goTo('discovery');
                         } else {
-                            nvoCore.app.tab('discovery');
+                            titan.navigation.goTo('discovery');
                         }
-                        nvoCore.ui.initPreloader();
                     });
                 }
             },
 
-            // --- UI & ANIMATION MODULE ---
-            ui: {
-                initPreloader: () => {
-                    let w = 0;
-                    const itv = setInterval(() => {
-                        w += Math.floor(Math.random() * 15) + 5;
-                        if(w >= 100) {
-                            w = 100;
-                            clearInterval(itv);
-                            setTimeout(() => {
-                                document.getElementById('nvo-preloader').style.opacity = '0';
-                                setTimeout(() => document.getElementById('nvo-preloader').remove(), 500);
-                            }, 300);
-                        }
-                        document.getElementById('nvo-fill').style.width = w + '%';
-                    }, 80);
-                },
-                confetti: () => confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#3b82f6', '#ffffff', '#8b5cf6'] })
+            /* [NAVIGATION ENGINE] */
+            navigation: {
+                goTo: (viewId) => {
+                    console.log("[TITAN] Navigating to view:", viewId);
+                    titan.state.currentView = viewId;
+                    
+                    document.querySelectorAll('.titan-view').forEach(v => v.classList.add('hidden'));
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    
+                    document.getElementById('view-' + viewId).classList.remove('hidden');
+                    document.getElementById('nav-' + viewId).classList.add('active');
+                    
+                    if (viewId === 'discovery') titan.app.loadFeed();
+                    if (viewId === 'profile') titan.app.loadProfile();
+                    
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             },
 
-            // --- MAIN APPLICATION LOGIC ---
+            /* [MAIN APPLICATION LOGIC] */
             app: {
-                tab: (id) => {
-                    nvoCore.state.activeTab = id;
-                    document.querySelectorAll('.nvo-view').forEach(v => v.classList.add('hidden'));
-                    document.querySelectorAll('.nvo-nav-btn').forEach(b => b.classList.remove('active'));
-                    document.getElementById('v-' + id).classList.remove('hidden');
-                    document.getElementById('btn-' + id).classList.add('active');
+                addNewTaskToStack: () => {
+                    const nameInp = document.getElementById('inp-task-name');
+                    const urlInp = document.getElementById('inp-task-url');
                     
-                    if(id === 'discovery') nvoCore.app.loadFeed();
-                    if(id === 'profile') nvoCore.app.loadProfile();
-                },
+                    const name = nameInp.value.trim();
+                    const url = urlInp.value.trim();
 
-                addTask: () => {
-                    const inp = document.getElementById('inp-task-val');
-                    const val = inp.value.trim();
-                    if(!val) return;
+                    if (!name || !url) {
+                        alert("Hata: Görev ismi ve URL alanı boş bırakılamaz.");
+                        return;
+                    }
+
+                    titan.state.activeTasks.push({ name, url });
+                    nameInp.value = "";
+                    urlInp.value = "";
                     
-                    nvoCore.state.tempTasks.push(val);
-                    inp.value = "";
-                    nvoCore.app.renderTaskBuilder();
+                    titan.app.renderTaskBuilder();
                 },
 
                 renderTaskBuilder: () => {
-                    const list = document.getElementById('task-builder-list');
-                    const badge = document.getElementById('task-count-badge');
-                    badge.innerText = `${nvoCore.state.tempTasks.length} GÖREV`;
+                    const container = document.getElementById('titan-builder-stack');
+                    const badge = document.getElementById('titan-task-badge');
                     
-                    list.innerHTML = nvoCore.state.tempTasks.map((t, i) => `
-                        <div class="task-row-ui bg-zinc-900/60 border-white/5">
-                            <span class="text-xs font-bold text-zinc-400"><i class="fa-solid fa-circle-check text-blue-500 mr-3"></i> ${t}</span>
-                            <button onclick="nvoCore.state.tempTasks.splice(${i}, 1); nvoCore.app.renderTaskBuilder()" class="text-red-500/50 hover:text-red-500 transition">
-                                <i class="fa-solid fa-trash-alt"></i>
+                    badge.innerText = `${titan.state.activeTasks.length} AKTİF GÖREV`;
+                    container.innerHTML = titan.state.activeTasks.map((t, i) => `
+                        <div class="task-entry animate-titan-in">
+                            <div class="text-left">
+                                <p class="text-[11px] font-black uppercase tracking-tight">${t.name}</p>
+                                <p class="text-[9px] text-blue-500 font-bold truncate w-48">${t.url}</p>
+                            </div>
+                            <button onclick="titan.state.activeTasks.splice(${i}, 1); titan.app.renderTaskBuilder()" class="text-red-500/40 hover:text-red-500 transition-all text-sm">
+                                <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
                     `).join('');
                 },
 
-                publish: async () => {
-                    const title = document.getElementById('inp-title').value;
-                    const url = document.getElementById('inp-url').value;
-                    const tasks = nvoCore.state.tempTasks;
+                publishCampaign: async () => {
+                    if (!titan.state.currentUser) return alert("Lütfen önce giriş yapın.");
 
-                    if(!title || !url || tasks.length === 0) {
-                        return alert("Lütfen başlık, url ve en az bir görev ekleyin!");
-                    }
+                    const title = document.getElementById('inp-titan-title').value;
+                    const thumb = document.getElementById('inp-titan-thumb').value;
+                    const target = document.getElementById('inp-titan-target').value;
+                    const category = document.getElementById('inp-titan-cat').value || "Diğer";
 
-                    try {
-                        await addDoc(collection(db, "links"), {
-                            title, target: url, tasks,
-                            uid: nvoCore.state.user.uid,
-                            uName: nvoCore.state.user.displayName,
-                            uAvatar: nvoCore.state.user.photoURL,
-                            points: tasks.length * 10,
-                            views: 0,
-                            createdAt: serverTimestamp()
-                        });
-                        nvoCore.ui.confetti();
-                        setTimeout(() => location.reload(), 1500);
-                    } catch (e) {
-                        alert("Kampanya oluşturulurken bir hata oluştu.");
-                    }
-                },
-
-                loadFeed: async () => {
-                    const container = document.getElementById('v-discovery');
-                    container.innerHTML = `<div class="text-center py-20 opacity-20 font-black uppercase text-[10px] tracking-widest">Veritabanı Senkronize Ediliyor...</div>`;
-                    
-                    const q = query(collection(db, "links"), orderBy("createdAt", "desc"));
-                    const snap = await getDocs(q);
-                    container.innerHTML = "";
-
-                    if(snap.empty) {
-                        container.innerHTML = `<div class="text-center py-20 text-zinc-700 font-bold uppercase text-xs">Henüz yayınlanmış bir kampanya yok.</div>`;
+                    if (!title || !thumb || !target || titan.state.activeTasks.length === 0) {
+                        alert("Eksik Bilgi: Lütfen tüm alanları (Başlık, Fotoğraf, Link ve Görevler) doldurun.");
                         return;
                     }
 
-                    snap.forEach(d => {
-                        const data = d.data();
-                        const views = Number(data.views) || 0; // NaN Koruma
-                        const pts = Number(data.points) || 0;
+                    try {
+                        const payload = {
+                            title, thumb, target, category,
+                            tasks: titan.state.activeTasks,
+                            uid: titan.state.currentUser.uid,
+                            author: titan.state.currentUser.displayName,
+                            authorAvatar: titan.state.currentUser.photoURL,
+                            views: 0,
+                            points: titan.state.activeTasks.length * 10,
+                            timestamp: serverTimestamp()
+                        };
 
-                        container.innerHTML += `
-                            <div class="nvo-card p-6 flex flex-col sm:flex-row justify-between items-center gap-5 border-l-4 border-blue-600">
-                                <div class="text-center sm:text-left">
-                                    <h3 class="text-base font-black uppercase tracking-tighter mb-1">${data.title}</h3>
-                                    <div class="flex items-center gap-3 justify-center sm:justify-start">
-                                        <p class="text-[9px] text-blue-500 font-black uppercase"><i class="fa-solid fa-star mr-1"></i> ${pts} PUAN</p>
-                                        <p class="text-[9px] text-zinc-500 font-black uppercase"><i class="fa-solid fa-eye mr-1"></i> ${views} İZLEME</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <button onclick="nvoCore.app.showQR('${d.id}')" class="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center text-zinc-500 hover:text-white transition">
-                                        <i class="fa-solid fa-qrcode text-lg"></i>
-                                    </button>
-                                    <button onclick="location.href='?id=${d.id}'" class="bg-blue-600 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition">
-                                        GÖREVE GİT
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    });
+                        await addDoc(collection(titanDb, "links"), payload);
+                        
+                        confetti({
+                            particleCount: 200,
+                            spread: 100,
+                            origin: { y: 0.6 },
+                            colors: ['#3b82f6', '#ffffff', '#8b5cf6']
+                        });
+
+                        setTimeout(() => window.location.reload(), 2000);
+                    } catch (e) {
+                        console.error("[TITAN_PUBLISH_ERROR]", e);
+                        alert("Yayınlama sırasında bir hata oluştu.");
+                    }
                 },
 
-                showQR: (id) => {
-                    const wrap = document.getElementById('qr-wrap');
-                    const target = document.getElementById('qr-result');
+                loadFeed: async (categoryFilter = 'Hepsi') => {
+                    const container = document.getElementById('feed-container');
+                    container.innerHTML = `<div class="col-span-full py-20 text-center opacity-30 font-black uppercase text-[10px] tracking-[0.5em]">Veritabanı Senkronize Ediliyor...</div>`;
+                    
+                    try {
+                        let titanQuery;
+                        if (categoryFilter === 'Hepsi') {
+                            titanQuery = query(collection(titanDb, "links"), orderBy("timestamp", "desc"));
+                        } else {
+                            titanQuery = query(collection(titanDb, "links"), where("category", "==", categoryFilter));
+                        }
+
+                        const snapshot = await getDocs(titanQuery);
+                        container.innerHTML = "";
+
+                        if (snapshot.empty) {
+                            container.innerHTML = `<div class="col-span-full py-20 text-center text-zinc-700 font-bold uppercase text-xs">Bu kategoride henüz yayınlanmış bir kampanya bulunamadı.</div>`;
+                            return;
+                        }
+
+                        snapshot.forEach(doc => {
+                            const d = doc.data();
+                            const viewCount = Number(d.views) || 0;
+                            const pointVal = Number(d.points) || 0;
+
+                            container.innerHTML += `
+                                <div class="nvo-card animate-titan-in">
+                                    <img src="${d.thumb}" class="card-thumb" onerror="this.src='https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000&auto=format&fit=crop'">
+                                    <div class="p-8 space-y-5">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1">${d.category}</p>
+                                                <h3 class="text-xl font-black uppercase tracking-tighter truncate w-48">${d.title}</h3>
+                                            </div>
+                                            <div class="bg-zinc-900 px-3 py-1.5 rounded-xl border border-white/5 text-[9px] font-black text-zinc-500 uppercase">
+                                                <i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> ${pointVal}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center gap-5 border-y border-white/5 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <i class="fa-solid fa-eye text-zinc-600 text-[10px]"></i>
+                                                <span class="text-[10px] font-black uppercase text-zinc-500">${viewCount} İzleme</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <i class="fa-solid fa-list-check text-zinc-600 text-[10px]"></i>
+                                                <span class="text-[10px] font-black uppercase text-zinc-500">${d.tasks.length} Görev</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-3 pt-2">
+                                            <button onclick="titan.app.generateQR('${doc.id}')" class="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center text-zinc-600 hover:text-white transition">
+                                                <i class="fa-solid fa-qrcode text-lg"></i>
+                                            </button>
+                                            <button onclick="window.location.href='?id=${doc.id}'" class="btn-titan py-4 text-[10px]">İÇERİĞİ AÇ</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } catch (e) {
+                        console.error("[TITAN_FEED_ERROR]", e);
+                    }
+                },
+
+                filterByCategory: (cat) => {
+                    document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
+                    event.target.classList.add('active');
+                    titan.app.loadFeed(cat);
+                },
+
+                generateQR: (id) => {
+                    const overlay = document.getElementById('qr-overlay');
+                    const target = document.getElementById('qr-target-area');
                     target.innerHTML = "";
-                    wrap.style.display = 'flex';
+                    overlay.style.display = 'flex';
                     
                     new QRCode(target, {
                         text: window.location.origin + window.location.pathname + "?id=" + id,
-                        width: 200, height: 200,
-                        colorDark : "#000000", colorLight : "#ffffff"
+                        width: 220,
+                        height: 220,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
                     });
                 },
 
                 renderGateway: async (id) => {
-                    const layer = document.getElementById('gateway-layer');
-                    const inject = document.getElementById('gw-inject');
-                    layer.style.display = 'block';
+                    const overlay = document.getElementById('gateway-overlay');
+                    const inject = document.getElementById('gateway-injection-point');
+                    overlay.style.display = 'block';
                     
-                    const snap = await getDoc(doc(db, "links", id));
-                    if(!snap.exists()) return;
-                    const data = snap.data();
+                    try {
+                        const snap = await getDoc(doc(titanDb, "links", id));
+                        if (!snap.exists()) {
+                            alert("Hata: Kampanya bulunamadı veya silinmiş.");
+                            window.location.href = window.location.pathname;
+                            return;
+                        }
 
-                    inject.innerHTML = `
-                        <div class="nvo-card p-10 space-y-10 text-center animate-in">
-                            <div class="nvo-logo-container justify-center">
-                                <div class="nvo-logo-box"><i class="fa-solid fa-infinity text-white text-xl"></i></div>
-                                <div class="nvo-brand-text">NVO<span class="nvo-brand-link">LINK</span></div>
-                            </div>
+                        const d = snap.data();
+                        
+                        inject.innerHTML = `
+                            <div class="nvo-card p-12 text-center space-y-10 animate-titan-in">
+                                <div class="flex justify-center">
+                                    <div class="nvo-brand-box scale-125"><i class="fa-solid fa-infinity text-white text-2xl"></i></div>
+                                </div>
+                                
+                                <img src="${d.thumb}" class="w-32 h-32 rounded-[3rem] mx-auto border-4 border-blue-600 shadow-2xl object-cover ring-8 ring-blue-600/5">
+                                
+                                <div class="space-y-4">
+                                    <h1 class="text-3xl font-black italic uppercase tracking-tighter">${d.title}</h1>
+                                    <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed px-6">
+                                        Hedef linke ulaşmak için aşağıdaki ${d.tasks.length} görevi tamamlamanız gerekmektedir. Doğrulama otomatik yapılacaktır.
+                                    </p>
+                                </div>
 
-                            <div class="space-y-4">
-                                <h1 class="text-3xl font-black italic uppercase tracking-tighter">${data.title}</h1>
-                                <p class="text-xs text-zinc-500 font-medium px-4">Dosyaya erişim sağlamak için aşağıdaki görevleri doğrulamanız gerekmektedir.</p>
+                                <div class="space-y-4 text-left">
+                                    ${d.tasks.map((t, i) => `
+                                        <div id="titan-row-${i}" class="task-entry bg-zinc-900/50 border-white/5 py-7 px-8 transition-all duration-500">
+                                            <div class="space-y-1">
+                                                <p class="text-xs font-black uppercase tracking-tight">${t.name}</p>
+                                                <p class="text-[8px] text-zinc-600 font-bold uppercase">Sistem Kontrolü Aktif</p>
+                                            </div>
+                                            <button onclick="titan.app.verifyAction(${i}, '${t.url}', ${d.tasks.length}, '${d.target}', '${id}')" class="bg-blue-600 px-7 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition shadow-lg shadow-blue-600/20">TAMAMLA</button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                
+                                <div class="pt-6 opacity-25">
+                                    <p class="text-[8px] font-black uppercase tracking-[0.5em]">Titan Secure Gateway Layer v0.0.6</p>
+                                </div>
                             </div>
-
-                            <div class="space-y-3 text-left">
-                                ${data.tasks.map((t, i) => `
-                                    <div id="gw-row-${i}" class="task-row-ui bg-zinc-900 border-white/5 py-5 px-6">
-                                        <span class="text-[11px] font-black uppercase tracking-tight">${t}</span>
-                                        <button onclick="nvoCore.app.verifyTask(${i}, ${data.tasks.length}, '${data.target}', '${id}')" class="bg-blue-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider">Doğrula</button>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            
-                            <div class="pt-5 opacity-40">
-                                <p class="text-[8px] font-black uppercase tracking-[0.4em]">NVOLINK SECURE GATEWAY ENCRYPTION v3.0</p>
-                            </div>
-                        </div>
-                    `;
+                        `;
+                    } catch (e) {
+                        console.error("[TITAN_GATEWAY_ERROR]", e);
+                    }
                 },
 
-                taskCounter: 0,
-                verifyTask: (i, total, target, id) => {
-                    const row = document.getElementById(`gw-row-${i}`);
+                completeCount: 0,
+                verifyAction: (index, link, total, finalTarget, docId) => {
+                    window.open(link, '_blank');
+                    const row = document.getElementById(`titan-row-${index}`);
                     const btn = row.querySelector('button');
-                    btn.innerText = "KONTROL..."; btn.disabled = true;
+                    
+                    btn.innerText = "DOĞRULANIYOR...";
+                    btn.disabled = true;
+                    btn.classList.replace('bg-blue-600', 'bg-zinc-800');
                     
                     setTimeout(() => {
-                        row.classList.add('border-green-500/50', 'bg-green-600/10');
-                        btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-                        btn.classList.replace('bg-blue-600', 'bg-green-600');
-                        nvoCore.app.taskCounter++;
-
-                        if(nvoCore.app.taskCounter === total) {
-                            nvoCore.ui.confetti();
+                        row.classList.add('border-green-500/50', 'bg-green-600/5');
+                        btn.innerHTML = '<i class="fa-solid fa-check-double"></i> BAŞARILI';
+                        btn.classList.replace('bg-zinc-800', 'bg-green-600');
+                        
+                        titan.app.completeCount++;
+                        
+                        if (titan.app.completeCount === total) {
+                            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                             setTimeout(async () => {
-                                await updateDoc(doc(db, "links", id), { views: increment(1) });
-                                window.location.href = target;
-                            }, 1000);
+                                try {
+                                    await updateDoc(doc(titanDb, "links", docId), { views: increment(1) });
+                                    window.location.href = finalTarget;
+                                } catch (e) {
+                                    window.location.href = finalTarget;
+                                }
+                            }, 1500);
                         }
-                    }, 4000); // 4 Saniye Doğrulama Süresi
+                    }, 5000); // 5 Seconds Titan Logic Verification
                 },
 
                 loadProfile: async () => {
-                    if(!nvoCore.state.user) return;
-                    const list = document.getElementById('user-links-list');
-                    const q = query(collection(db, "links"), where("uid", "==", nvoCore.state.user.uid));
-                    const snap = await getDocs(q);
+                    if (!titan.state.currentUser) return;
                     
-                    list.innerHTML = "";
-                    let totalPts = 0;
-                    document.getElementById('stat-links').innerText = snap.size;
+                    const container = document.getElementById('profile-links-injector');
+                    container.innerHTML = `<div class="py-10 text-center opacity-20 text-[10px] font-black uppercase tracking-widest">Profil Verileri Çekiliyor...</div>`;
+                    
+                    try {
+                        const q = query(collection(titanDb, "links"), where("uid", "==", titan.state.currentUser.uid));
+                        const snap = await getDocs(q);
+                        
+                        container.innerHTML = "";
+                        let totalPoints = 0;
+                        document.getElementById('stat-campaign-count').innerText = snap.size;
 
-                    snap.forEach(d => {
-                        const data = d.data();
-                        const pts = Number(data.points) || 0;
-                        totalPts += pts;
+                        if (snap.empty) {
+                            container.innerHTML = `<div class="bg-zinc-900/30 p-10 rounded-3xl border border-white/5 text-center text-zinc-600 font-bold uppercase text-[10px] tracking-widest">Henüz bir paylaşım yapmadınız.</div>`;
+                        }
 
-                        list.innerHTML += `
-                            <div class="nvo-card p-5 flex items-center justify-between bg-zinc-900/40">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500">
-                                        <i class="fa-solid fa-link"></i>
+                        snap.forEach(d => {
+                            const data = d.data();
+                            const pts = Number(data.points) || 0;
+                            totalPoints += pts;
+
+                            container.innerHTML += `
+                                <div class="nvo-card p-6 flex items-center justify-between bg-zinc-900/40 border-white/5">
+                                    <div class="flex items-center gap-5">
+                                        <img src="${data.thumb}" class="w-14 h-14 rounded-2xl object-cover shadow-xl border border-white/5">
+                                        <div>
+                                            <h4 class="text-sm font-black uppercase tracking-tighter truncate w-32">${data.title}</h4>
+                                            <p class="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-1">${pts} PUAN ELDE EDİLDİ</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 class="text-sm font-black uppercase tracking-tighter truncate w-32">${data.title}</h4>
-                                        <p class="text-[9px] text-zinc-500 font-bold uppercase">${pts} Puan Kazanıldı</p>
-                                    </div>
+                                    <button onclick="titan.app.deleteLink('${d.id}')" class="w-12 h-12 rounded-2xl bg-zinc-900/50 flex items-center justify-center text-red-500/20 hover:text-red-500 hover:bg-red-500/10 transition-all">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
                                 </div>
-                                <button onclick="nvoCore.app.deleteLink('${d.id}')" class="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center text-red-500/30 hover:text-red-500 transition">
-                                    <i class="fa-solid fa-trash-alt text-xs"></i>
-                                </button>
-                            </div>
-                        `;
-                    });
-                    document.getElementById('stat-points').innerText = totalPts;
+                            `;
+                        });
+
+                        document.getElementById('stat-total-points').innerText = totalPoints;
+                    } catch (e) {
+                        console.error("[TITAN_PROFILE_ERROR]", e);
+                    }
+                },
+
+                openProfileEditor: () => {
+                    const newName = prompt("Yeni Kullanıcı Adı:", titan.state.currentUser.displayName);
+                    const newAvatar = prompt("Yeni Avatar URL (Kare görsel tavsiye edilir):", titan.state.currentUser.photoURL);
+                    
+                    if (newName) {
+                        document.getElementById('auth-name-display').innerText = newName;
+                        document.getElementById('profile-name-large').innerText = newName;
+                    }
+                    if (newAvatar) {
+                        document.getElementById('auth-avatar-display').src = newAvatar;
+                        document.getElementById('profile-img-large').src = newAvatar;
+                    }
                 },
 
                 deleteLink: async (id) => {
-                    if(confirm("Bu kampanyayı silmek istediğinizden emin misiniz?")) {
-                        await deleteDoc(doc(db, "links", id));
-                        nvoCore.app.loadProfile();
+                    if (confirm("Bu kampanyayı kalıcı olarak silmek istediğinize emin misiniz?")) {
+                        try {
+                            await deleteDoc(doc(titanDb, "links", id));
+                            titan.app.loadProfile();
+                        } catch (e) {
+                            alert("Silme işlemi başarısız.");
+                        }
                     }
                 }
             }
         };
 
-        // STARTUP
-        nvoCore.auth.listener();
+        /* [SYSTEM INITIALIZATION] */
+        console.log("%cNVOLINK TITAN CORE LOADED", "color: #3b82f6; font-weight: bold; font-size: 20px;");
+        titan.auth.listen();
 
     </script>
-
-    <style>
-        /* EXTRA VISUALS FOR 500+ LINE FEEL */
-        .animate-in { animation: nvoSlideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) both; }
-        @keyframes nvoSlideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-    </style>
 </body>
 </html>
