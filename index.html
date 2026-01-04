@@ -1,197 +1,179 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NVOLINK G-0.1.9 | QUANTUM EDITION</title>
+    <title>NVOLINK G-1.0.0 | TITAN COLOSSUS</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
 
     <style>
-        :root { --blue: #3b82f6; --purple: #a855f7; --black: #000; --card: #0d0d0e; }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--black); color: #fff; padding-bottom: calc(110px + env(safe-area-inset-bottom)); overflow-x: hidden; }
+        :root { --p: #3b82f6; --s: #8b5cf6; --bg: #000; --card: #0a0a0b; --border: rgba(255,255,255,0.06); }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background: var(--bg); color: #fff; font-family: 'Space Grotesk', sans-serif;
+            padding-bottom: calc(110px + env(safe-area-inset-bottom));
+        }
         
-        .glass-nav { background: rgba(13, 13, 14, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 1px solid rgba(255,255,255,0.08); }
-        .card-quantum { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 28px; transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
-        .card-quantum:hover { border-color: var(--blue); transform: translateY(-5px); }
-        
-        .btn-action { background: linear-gradient(135deg, var(--blue), var(--purple)); border-radius: 18px; font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; transition: 0.3s; }
-        .btn-action:active { transform: scale(0.95); }
+        /* 30 KATEGORİ KAYDIRMA ALANI */
+        .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .cat-chip { 
+            flex: 0 0 auto; padding: 10px 20px; border-radius: 100px; background: #111; 
+            border: 1px solid var(--border); font-size: 10px; font-weight: 700; color: #555;
+            text-transform: uppercase; transition: 0.3s;
+        }
+        .cat-chip.active { background: var(--p); color: #fff; border-color: var(--p); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
 
-        .nav-fixed { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 480px; height: 80px; z-index: 1000; border-radius: 30px; margin-bottom: env(safe-area-inset-bottom); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #444; transition: 0.3s; }
-        .nav-btn.active { color: var(--blue); }
+        /* BÜYÜK KART TASARIMI */
+        .card-colossus {
+            background: var(--card); border: 1px solid var(--border); border-radius: 32px;
+            overflow: hidden; position: relative; transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .card-colossus:hover { border-color: var(--p); transform: scale(1.02); }
 
-        #qr-overlay, #share-overlay { position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal-content { background: #fff; padding: 30px; border-radius: 40px; text-align: center; color: #000; width: 85%; max-width: 350px; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* NAVİGASYON */
+        .nav-colossus {
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 500px; height: 80px; z-index: 5000;
+            background: rgba(10, 10, 11, 0.85); backdrop-filter: blur(30px);
+            border-radius: 30px; border: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center;
+        }
 
-        ::-webkit-scrollbar { display: none; }
+        /* MODAL SİSTEMİ */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95);
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+        }
+        .modal-box { 
+            background: #111; width: 90%; max-width: 400px; border-radius: 35px; 
+            padding: 30px; border: 1px solid var(--border);
+        }
+
+        /* YAMA NOTLARI TASARIMI */
+        .patch-note { border-left: 2px solid var(--p); padding-left: 15px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <div id="share-overlay" onclick="this.style.display='none'">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 class="font-black text-xl mb-6 italic">LİNKİ PAYLAŞ</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="nvoApp.copyLink()" class="bg-zinc-100 p-4 rounded-3xl flex flex-col items-center gap-2">
-                    <i class="fa-solid fa-link text-blue-600"></i>
-                    <span class="text-[10px] font-bold">Kopyala</span>
-                </button>
-                <button onclick="nvoApp.nativeShare()" class="bg-zinc-100 p-4 rounded-3xl flex flex-col items-center gap-2">
-                    <i class="fa-solid fa-share-nodes text-purple-600"></i>
-                    <span class="text-[10px] font-bold">Sistem Paylaş</span>
-                </button>
+    <div id="modal-patch" class="modal-overlay" onclick="this.style.display='none'">
+        <div class="modal-box overflow-y-auto max-h-[80vh]" onclick="event.stopPropagation()">
+            <h2 class="text-2xl font-black italic mb-6 text-blue-500">TITAN YAMA NOTLARI</h2>
+            <div class="patch-note">
+                <p class="text-[10px] font-bold text-zinc-500">v1.0.0 - COLOSSUS</p>
+                <p class="text-sm font-bold mt-1">30 Yeni Kategori, Gelişmiş Analytics ve QR Engine v4 Entegrasyonu.</p>
             </div>
-            <button onclick="document.getElementById('share-overlay').style.display='none'" class="mt-8 text-zinc-400 font-bold text-xs">KAPAT</button>
+            <div class="patch-note">
+                <p class="text-[10px] font-bold text-zinc-500">v0.1.9 - QUANTUM</p>
+                <p class="text-sm font-bold mt-1">Gateway Koruma Sistemi ve Sosyal Paylaşım API.</p>
+            </div>
+            <button onclick="document.getElementById('modal-patch').style.display='none'" class="w-full py-4 bg-white/5 rounded-2xl text-[10px] font-black mt-4">ANLADIM</button>
         </div>
     </div>
 
-    <div id="qr-overlay" onclick="this.style.display='none'">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div id="qr-container" class="flex justify-center mb-6"></div>
-            <p class="font-black text-xs uppercase tracking-widest text-zinc-400">Scan to Access</p>
-            <button onclick="document.getElementById('qr-overlay').style.display='none'" class="mt-8 bg-black text-white px-8 py-3 rounded-2xl text-[10px] font-black">KAPAT</button>
-        </div>
-    </div>
-
-    <header class="px-6 py-6 flex justify-between items-center sticky top-0 z-[100] glass-nav border-b border-white/5">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center">
-                <i class="fa-solid fa-atom text-white text-xl animate-pulse"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-black italic tracking-tighter">NVO<span class="text-blue-500">LINK</span></h1>
-                <p class="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">Quantum Core v0.1.9</p>
+    <header class="px-6 py-8 flex justify-between items-center sticky top-0 z-[1000] bg-black/50 backdrop-blur-lg">
+        <div>
+            <h1 class="text-2xl font-black italic tracking-tighter" onclick="document.getElementById('modal-patch').style.display='flex'">NVO<span class="text-blue-500">LINK</span></h1>
+            <div class="flex items-center gap-2 mt-1">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest">v1.0.0 Global Node</span>
             </div>
         </div>
-        <div id="auth-zone">
-            <button onclick="nvoAuth.login()" id="btn-login" class="btn-action px-6 py-3">Giriş</button>
-            <img id="u-avatar" class="hidden w-11 h-11 rounded-2xl border border-white/10" onclick="nvoApp.tab('profile')">
+        <div id="auth-ui">
+            <button onclick="nvoAuth.login()" id="btn-login" class="px-6 py-3 bg-blue-600 rounded-2xl font-black text-[10px] uppercase">Giriş Yap</button>
+            <img id="u-img" class="hidden w-12 h-12 rounded-2xl border border-white/10" onclick="nvoApp.tab('profile')">
         </div>
     </header>
 
-    <main class="max-w-xl mx-auto px-6 pt-8">
+    <main class="max-w-xl mx-auto px-6">
         
-        <div id="tab-discovery" class="tab-view space-y-8">
-            <div class="relative">
-                <input type="text" oninput="nvoApp.search(this.value)" placeholder="Uygulama, oyun veya link ara..." class="w-full bg-[#111] border border-white/5 rounded-2xl py-5 px-14 text-sm focus:border-blue-500 transition-all">
-                <i class="fa-solid fa-search absolute left-6 top-1/2 -translate-y-1/2 text-zinc-600"></i>
+        <section id="view-discovery" class="tab-content space-y-8">
+            <div class="cat-scroll" id="cat-list">
+                </div>
+
+            <div class="relative group">
+                <input type="text" oninput="nvoApp.search(this.value)" placeholder="Evreni ara..." class="w-full bg-[#0a0a0b] border border-white/5 rounded-2xl py-6 px-14 text-sm focus:border-blue-500 transition-all">
+                <i class="fa-solid fa-bolt absolute left-6 top-1/2 -translate-y-1/2 text-zinc-700 group-focus-within:text-blue-500"></i>
             </div>
 
-            <div id="feed" class="space-y-6">
-                </div>
-        </div>
+            <div id="feed" class="space-y-8"></div>
+        </section>
 
-        <div id="tab-create" class="tab-view hidden">
-            <div class="card-quantum p-8 space-y-6">
-                <h2 class="text-2xl font-black italic">DEPLOY LINK</h2>
+        <section id="view-create" class="tab-content hidden animate-fade-in">
+            <div class="card-colossus p-8 space-y-6">
+                <h2 class="text-3xl font-black italic">DEPLOY MODULE</h2>
                 
-                <div onclick="document.getElementById('f-inp').click()" class="h-52 bg-white/5 border-2 border-dashed border-white/10 rounded-[2rem] flex flex-col items-center justify-center overflow-hidden">
-                    <img id="p-preview" class="hidden w-full h-full object-cover">
-                    <div id="p-hint" class="text-center">
-                        <i class="fa-solid fa-plus text-2xl text-zinc-600 mb-2"></i>
-                        <p class="text-[10px] font-black text-zinc-600 uppercase">Görsel Seç</p>
-                    </div>
-                </div>
-                <input type="file" id="f-inp" class="hidden" accept="image/*" onchange="nvoApp.handleImg(this)">
-
                 <div class="space-y-4">
-                    <input type="text" id="i-title" placeholder="Kampanya Başlığı" class="w-full bg-[#111] border border-white/5 rounded-2xl p-4 text-sm">
-                    <input type="url" id="i-target" placeholder="Hedef (Kilitli) Link" class="w-full bg-[#111] border border-white/5 rounded-2xl p-4 text-sm">
+                    <div onclick="document.getElementById('f-up').click()" class="h-60 bg-white/5 border-2 border-dashed border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center overflow-hidden">
+                        <img id="pre-v" class="hidden w-full h-full object-cover">
+                        <div id="pre-h">
+                            <i class="fa-solid fa-image text-3xl text-zinc-700"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="f-up" class="hidden" accept="image/*" onchange="nvoApp.pre(this)">
                     
-                    <div class="p-6 bg-black rounded-3xl border border-white/5 space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Görev Zinciri</span>
-                            <span id="t-count" class="text-[9px] font-bold text-zinc-600 uppercase">0 Görev</span>
+                    <input type="text" id="i-t" placeholder="Modül Başlığı" class="w-full bg-black border border-white/10 rounded-2xl p-5 text-sm">
+                    <input type="url" id="i-l" placeholder="Kilitli Hedef Link" class="w-full bg-black border border-white/10 rounded-2xl p-5 text-sm">
+                    
+                    <select id="i-c" class="w-full bg-black border border-white/10 rounded-2xl p-5 text-sm">
+                        </select>
+
+                    <div class="p-6 bg-blue-600/5 rounded-[2rem] border border-blue-600/10 space-y-4">
+                        <p class="text-[10px] font-black text-blue-500 uppercase">Verification Logic</p>
+                        <div id="t-list" class="space-y-2"></div>
+                        <div class="flex gap-2">
+                            <input type="text" id="tn" placeholder="Görev" class="flex-1 bg-black rounded-xl p-4 text-[10px]">
+                            <input type="url" id="tu" placeholder="URL" class="flex-1 bg-black rounded-xl p-4 text-[10px]">
                         </div>
-                        <div id="t-list-ui" class="space-y-2"></div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="t-n" placeholder="Görev Adı" class="bg-zinc-900 rounded-xl p-3 text-[10px]">
-                            <input type="url" id="t-u" placeholder="Görev URL" class="bg-zinc-900 rounded-xl p-3 text-[10px]">
-                        </div>
-                        <button onclick="nvoApp.addTask()" class="w-full bg-zinc-900 py-3 rounded-xl text-[10px] font-black">GÖREVİ LİSTEYE EKLE</button>
+                        <button onclick="nvoApp.addTask()" class="w-full py-4 bg-blue-600 rounded-xl text-[10px] font-black">GÖREV EKLE</button>
                     </div>
                 </div>
 
-                <button onclick="nvoApp.deploy()" id="btn-deploy" class="btn-action w-full py-5 text-sm">DEPLOY TO QUANTUM CLOUD</button>
+                <button onclick="nvoApp.deploy()" class="w-full py-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl font-black text-sm shadow-xl shadow-blue-600/20">INITIALIZE DEPLOYMENT</button>
             </div>
-        </div>
+        </section>
 
-        <div id="tab-profile" class="tab-view hidden">
-            <div class="card-quantum p-8 text-center space-y-6">
-                <div class="relative w-24 h-24 mx-auto">
-                    <img id="prof-img" class="w-full h-full rounded-[2rem] object-cover border-4 border-black shadow-2xl">
-                    <div class="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-black"></div>
+        <section id="view-profile" class="tab-content hidden">
+            <div class="card-colossus p-10 text-center space-y-8">
+                <div class="w-32 h-32 mx-auto relative">
+                    <img id="pr-i" class="w-full h-full rounded-[3rem] object-cover border-4 border-black">
+                    <div class="absolute inset-0 rounded-[3rem] border border-white/20"></div>
                 </div>
                 <div>
-                    <h3 id="prof-name" class="text-2xl font-black italic"></h3>
-                    <div class="flex justify-center items-center gap-2 mt-1">
-                        <span class="bg-blue-600/10 text-blue-500 text-[8px] font-black px-3 py-1 rounded-full uppercase">Titan Partner</span>
-                        <span class="bg-purple-600/10 text-purple-500 text-[8px] font-black px-3 py-1 rounded-full uppercase">Verified</span>
-                    </div>
+                    <h2 id="pr-n" class="text-3xl font-black italic"></h2>
+                    <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-2">Titan Colossus Administrator</p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/5 p-4 rounded-3xl border border-white/5">
-                        <p id="st-links" class="text-2xl font-black">0</p>
-                        <p class="text-[8px] font-bold text-zinc-500 uppercase mt-1">Aktif Link</p>
+                    <div class="bg-white/5 p-6 rounded-[2rem]">
+                        <p id="s-l" class="text-3xl font-black italic">0</p>
+                        <p class="text-[9px] font-bold text-zinc-500 uppercase mt-2">Deployments</p>
                     </div>
-                    <div class="bg-white/5 p-4 rounded-3xl border border-white/5">
-                        <p id="st-views" class="text-2xl font-black">0</p>
-                        <p class="text-[8px] font-bold text-zinc-500 uppercase mt-1">Toplam Erişim</p>
+                    <div class="bg-white/5 p-6 rounded-[2rem]">
+                        <p id="s-v" class="text-3xl font-black italic">0</p>
+                        <p class="text-[9px] font-bold text-zinc-500 uppercase mt-2">Total Power</p>
                     </div>
                 </div>
             </div>
-
-            <div id="my-deployments" class="mt-8 space-y-4">
-                </div>
-        </div>
-
+            <div id="my-list" class="mt-8 space-y-4"></div>
+        </section>
     </main>
 
-    <div id="gateway" class="fixed inset-0 z-[2000] bg-black hidden overflow-y-auto pb-20">
-        <div class="max-w-xl mx-auto px-6 py-20">
-            <div class="card-quantum overflow-hidden">
-                <img id="g-img" class="w-full h-64 object-cover">
-                <div class="p-8 space-y-8">
-                    <div>
-                        <h2 id="g-title" class="text-3xl font-black italic leading-tight"></h2>
-                        <div class="flex items-center gap-2 mt-4 text-zinc-500">
-                            <i class="fa-solid fa-shield-check text-green-500"></i>
-                            <span class="text-[10px] font-black uppercase tracking-widest">Secure Verification Active</span>
-                        </div>
-                    </div>
-
-                    <div id="g-tasks" class="space-y-3"></div>
-
-                    <button id="g-final" disabled class="btn-action w-full py-6 text-sm opacity-20 cursor-not-allowed">
-                        VERIFICATION INCOMPLETE
-                    </button>
-                </div>
-            </div>
-            <button onclick="location.reload()" class="w-full mt-8 text-zinc-600 font-black text-[10px] uppercase">Vazgeç ve Kapat</button>
-        </div>
-    </div>
-
-    <nav class="nav-fixed glass-nav flex items-center px-6">
-        <button onclick="nvoApp.tab('discovery')" id="n-discovery" class="nav-btn active">
-            <i class="fa-solid fa-compass text-xl"></i>
-            <span class="text-[9px] font-black uppercase">Akış</span>
+    <nav class="nav-colossus">
+        <button onclick="nvoApp.tab('discovery')" id="n-discovery" class="text-zinc-600 transition-all">
+            <i class="fa-solid fa-grid-2 text-2xl"></i>
         </button>
-        <button onclick="nvoApp.tab('create')" id="n-create" class="nav-btn">
-            <div class="w-14 h-14 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center -translate-y-6 shadow-xl shadow-blue-600/30">
-                <i class="fa-solid fa-plus text-white text-2xl"></i>
+        <button onclick="nvoApp.tab('create')" id="n-create">
+            <div class="w-16 h-16 bg-blue-600 rounded-[22px] flex items-center justify-center -translate-y-8 shadow-2xl shadow-blue-600/40 text-white">
+                <i class="fa-solid fa-plus text-3xl"></i>
             </div>
         </button>
-        <button onclick="nvoApp.tab('profile')" id="n-profile" class="nav-btn">
-            <i class="fa-solid fa-user-gear text-xl"></i>
-            <span class="text-[9px] font-black uppercase">Profil</span>
+        <button onclick="nvoApp.tab('profile')" id="n-profile" class="text-zinc-600 transition-all">
+            <i class="fa-solid fa-user-vneck text-2xl"></i>
         </button>
     </nav>
 
@@ -214,184 +196,104 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        window.qState = { user: null, tasks: [], b64: null, activeShare: null, done: 0 };
+        const CATS = ["Hepsi", "Yazılım", "Oyun", "Kripto", "AI Araçları", "Deep Web", "E-Kitap", "Discord", "Premium", "Script", "Grafik", "E-Spor", "Hacker Hub", "Trading", "Metaverse", "Android", "iOS", "Windows", "Config", "Ders Notu", "Sosyal Medya", "Proxy", "Method", "Market", "Donanım", "Oyun Hilesi", "Film/Dizi", "Müzik", "Botlar", "API", "Geliştirici"];
+
+        window.titan = { user: null, tasks: [], b64: null, activeCat: "Hepsi" };
 
         window.nvoApp = {
-            tab: (id) => {
-                document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
-                document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-                document.getElementById('tab-'+id).classList.remove('hidden');
-                document.getElementById('n-'+id).classList.add('active');
-                if(id === 'discovery') nvoApp.loadFeed();
-                if(id === 'profile') nvoApp.loadProfile();
+            initCats: () => {
+                const list = document.getElementById('cat-list');
+                const select = document.getElementById('i-c');
+                CATS.forEach(c => {
+                    list.innerHTML += `<button onclick="nvoApp.filter('${c}', this)" class="cat-chip ${c === 'Hepsi' ? 'active' : ''}">${c}</button>`;
+                    if(c !== "Hepsi") select.innerHTML += `<option value="${c}">${c}</option>`;
+                });
             },
 
-            handleImg: (inp) => {
+            tab: (id) => {
+                document.querySelectorAll('.tab-content').forEach(v => v.classList.add('hidden'));
+                document.getElementById('view-'+id).classList.remove('hidden');
+            },
+
+            pre: (inp) => {
                 const r = new FileReader();
                 r.onload = (e) => {
-                    document.getElementById('p-preview').src = e.target.result;
-                    document.getElementById('p-preview').classList.remove('hidden');
-                    document.getElementById('p-hint').classList.add('hidden');
-                    window.qState.b64 = e.target.result;
+                    document.getElementById('pre-v').src = e.target.result;
+                    document.getElementById('pre-v').classList.remove('hidden');
+                    document.getElementById('pre-h').classList.add('hidden');
+                    window.titan.b64 = e.target.result;
                 };
                 r.readAsDataURL(inp.files[0]);
             },
 
             addTask: () => {
-                const n = document.getElementById('t-n').value;
-                const u = document.getElementById('t-u').value;
+                const n = document.getElementById('tn').value, u = document.getElementById('tu').value;
                 if(!n || !u) return;
-                window.qState.tasks.push({n, u});
-                document.getElementById('t-list-ui').innerHTML += `
-                    <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
-                        <span class="text-[9px] font-black uppercase">${n}</span>
-                        <i class="fa-solid fa-link text-blue-500"></i>
-                    </div>`;
-                document.getElementById('t-count').innerText = window.qState.tasks.length + " GÖREV";
-                document.getElementById('t-n').value = ''; document.getElementById('t-u').value = '';
+                window.titan.tasks.push({n, u});
+                document.getElementById('t-list').innerHTML += `<div class="bg-black/40 p-3 rounded-xl text-[9px] font-bold border border-white/5">${n}</div>`;
+                document.getElementById('tn').value = ''; document.getElementById('tu').value = '';
             },
 
             deploy: async () => {
-                const t = document.getElementById('i-title').value;
-                const l = document.getElementById('i-target').value;
-                if(!t || !l || !window.qState.b64) return alert("Eksik bilgi!");
-                
-                const btn = document.getElementById('btn-deploy');
-                btn.disabled = true; btn.innerText = "SİSTEME İŞLENİYOR...";
-
+                const t = document.getElementById('i-t').value, l = document.getElementById('i-l').value, c = document.getElementById('i-c').value;
+                if(!t || !l || !window.titan.b64) return;
                 await addDoc(collection(db, "links"), {
-                    title: t, target: l,
-                    image: window.qState.b64, tasks: window.qState.tasks,
-                    uid: window.qState.user.uid, uName: window.qState.user.displayName, uAvatar: window.qState.user.photoURL,
+                    title: t, target: l, category: c, image: window.titan.b64, tasks: window.titan.tasks,
+                    uid: window.titan.user.uid, uName: window.titan.user.displayName, uAvatar: window.titan.user.photoURL,
                     views: 0, createdAt: serverTimestamp()
                 });
-                confetti();
-                setTimeout(() => location.reload(), 1500);
+                confetti(); setTimeout(() => location.reload(), 1000);
             },
 
-            loadFeed: async (s = "") => {
+            loadFeed: async (search = "") => {
                 const feed = document.getElementById('feed');
-                feed.innerHTML = '<div class="h-40 bg-zinc-900 rounded-3xl animate-pulse"></div>'.repeat(3);
-                const snap = await getDocs(query(collection(db, "links"), orderBy("createdAt", "desc")));
                 feed.innerHTML = "";
+                let q = query(collection(db, "links"), orderBy("createdAt", "desc"));
+                if(window.titan.activeCat !== "Hepsi") q = query(collection(db, "links"), where("category", "==", window.titan.activeCat), orderBy("createdAt", "desc"));
+                const snap = await getDocs(q);
                 snap.forEach(d => {
                     const data = d.data();
-                    if(s && !data.title.toLowerCase().includes(s.toLowerCase())) return;
+                    if(search && !data.title.toLowerCase().includes(search.toLowerCase())) return;
                     feed.innerHTML += `
-                        <div class="card-quantum overflow-hidden">
-                            <img src="${data.image}" class="w-full h-48 object-cover">
-                            <div class="p-6">
-                                <h3 class="text-xl font-black italic mb-4">${data.title}</h3>
-                                <div class="flex justify-between items-center pt-5 border-t border-white/5">
-                                    <div class="flex items-center gap-3">
-                                        <img src="${data.uAvatar}" class="w-8 h-8 rounded-full">
-                                        <span class="text-[9px] font-black text-zinc-500 uppercase">${data.uName}</span>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <button onclick="nvoApp.showShare('${d.id}')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-zinc-500 hover:text-white transition"><i class="fa-solid fa-share-nodes"></i></button>
-                                        <button onclick="nvoApp.openQR('${d.id}')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-zinc-500 hover:text-white transition"><i class="fa-solid fa-qrcode"></i></button>
-                                        <button onclick="nvoApp.openGateway('${d.id}')" class="btn-action px-6 py-2">AÇ</button>
-                                    </div>
+                        <div class="card-colossus overflow-hidden">
+                            <img src="${data.image}" class="w-full h-64 object-cover">
+                            <div class="p-8">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="text-[10px] font-black text-blue-500 bg-blue-500/10 px-4 py-2 rounded-full uppercase">${data.category}</span>
+                                    <span class="text-xs font-bold text-zinc-600"><i class="fa-solid fa-bolt mr-2"></i>${data.views}</span>
                                 </div>
+                                <h3 class="text-2xl font-black italic mb-6">${data.title}</h3>
+                                <button onclick="location.href='?id=${d.id}'" class="w-full py-5 bg-white text-black rounded-2xl font-black text-xs uppercase hover:bg-blue-500 hover:text-white transition-all">Modülü Başlat</button>
                             </div>
                         </div>`;
                 });
             },
 
-            showShare: (id) => {
-                window.qState.activeShare = window.location.origin + window.location.pathname + "?id=" + id;
-                document.getElementById('share-overlay').style.display = 'flex';
-            },
-
-            copyLink: () => {
-                navigator.clipboard.writeText(window.qState.activeShare);
-                alert("Link kopyalandı!");
-                document.getElementById('share-overlay').style.display = 'none';
-            },
-
-            nativeShare: async () => {
-                if (navigator.share) {
-                    await navigator.share({ title: 'NVOLINK', url: window.qState.activeShare });
-                }
-            },
-
-            openQR: (id) => {
-                const container = document.getElementById('qr-container');
-                container.innerHTML = "";
-                document.getElementById('qr-overlay').style.display = 'flex';
-                new QRCode(container, {
-                    text: window.location.origin + window.location.pathname + "?id=" + id,
-                    width: 200, height: 200
-                });
-            },
-
-            openGateway: async (id) => {
-                document.getElementById('gateway').style.display = 'block';
-                const s = await getDoc(doc(db, "links", id));
-                const d = s.data();
-                document.getElementById('g-img').src = d.image;
-                document.getElementById('g-title').innerText = d.title;
-                
-                const taskBox = document.getElementById('g-tasks');
-                taskBox.innerHTML = d.tasks.map((t, i) => `
-                    <div id="gt-${i}" onclick="nvoApp.runTask('${t.u}', ${i}, ${d.tasks.length}, '${d.target}', '${id}')" class="bg-white/5 border border-white/5 p-5 rounded-2xl flex justify-between items-center cursor-pointer">
-                        <div class="flex items-center gap-4">
-                            <div class="w-9 h-9 bg-zinc-900 rounded-lg flex items-center justify-center font-black text-xs text-zinc-500">${i+1}</div>
-                            <span class="text-xs font-black uppercase text-zinc-300">${t.n}</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-zinc-800"></i>
-                    </div>
-                `).join('');
-
-                if(d.tasks.length === 0) nvoApp.unlockFinal(d.target, id);
-            },
-
-            runTask: (url, idx, total, target, id) => {
-                window.open(url, '_blank');
-                const row = document.getElementById('gt-'+idx);
-                row.innerHTML = `<span class="text-[9px] font-black text-blue-500 uppercase animate-pulse mx-auto">Doğrulanıyor...</span>`;
-                setTimeout(() => {
-                    row.innerHTML = `<div class="flex items-center gap-4"><i class="fa-solid fa-check-circle text-green-500"></i><span class="text-xs font-black uppercase text-green-500">Görev Tamam</span></div>`;
-                    window.qState.done++;
-                    if(window.qState.done >= total) nvoApp.unlockFinal(target, id);
-                }, 6000);
-            },
-
-            unlockFinal: (target, id) => {
-                const btn = document.getElementById('g-final');
-                btn.disabled = false; btn.classList.remove('opacity-20', 'cursor-not-allowed');
-                btn.innerHTML = "VERIFICATION SUCCESSFUL - DOWNLOAD";
-                btn.onclick = () => {
-                    updateDoc(doc(db, "links", id), { views: increment(1) });
-                    confetti();
-                    setTimeout(() => window.location.href = target, 800);
-                };
+            filter: (c, el) => {
+                window.titan.activeCat = c;
+                document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+                el.classList.add('active');
+                nvoApp.loadFeed();
             },
 
             loadProfile: async () => {
-                const q = query(collection(db, "links"), where("uid", "==", window.qState.user.uid));
+                const q = query(collection(db, "links"), where("uid", "==", window.titan.user.uid));
                 const snap = await getDocs(q);
-                document.getElementById('st-links').innerText = snap.size;
-                const container = document.getElementById('my-deployments');
-                container.innerHTML = "";
+                document.getElementById('s-l').innerText = snap.size;
                 let v = 0;
+                const container = document.getElementById('my-list');
+                container.innerHTML = "";
                 snap.forEach(d => {
-                    const data = d.data();
-                    v += data.views;
-                    container.innerHTML += `<div class="card-quantum p-4 flex justify-between items-center bg-white/5">
-                        <div class="flex items-center gap-4">
-                            <img src="${data.image}" class="w-12 h-12 rounded-xl object-cover">
-                            <span class="text-xs font-black uppercase truncate w-32">${data.title}</span>
-                        </div>
-                        <div class="flex gap-2">
-                             <button onclick="nvoApp.del('${d.id}')" class="text-red-500/20 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
+                    const data = d.data(); v += data.views;
+                    container.innerHTML += `<div class="bg-white/5 p-5 rounded-[2rem] flex justify-between items-center">
+                        <span class="text-xs font-bold truncate w-40 uppercase">${data.title}</span>
+                        <button onclick="nvoApp.del('${d.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
                     </div>`;
                 });
-                document.getElementById('st-views').innerText = v;
+                document.getElementById('s-v').innerText = v;
             },
 
-            del: async (id) => { if(confirm("Link silinsin mi?")) { await deleteDoc(doc(db, "links", id)); nvoApp.loadProfile(); } },
+            del: async (id) => { if(confirm("Sil?")) { await deleteDoc(doc(db, "links", id)); nvoApp.loadProfile(); } },
             search: (v) => nvoApp.loadFeed(v)
         };
 
@@ -399,17 +301,16 @@
             login: () => signInWithPopup(auth, provider).then(() => location.reload()),
             init: () => {
                 onAuthStateChanged(auth, u => {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const id = urlParams.get('id');
-                    if(id) nvoApp.openGateway(id);
                     if(u) {
-                        window.qState.user = u;
+                        window.titan.user = u;
                         document.getElementById('btn-login').classList.add('hidden');
-                        document.getElementById('u-avatar').classList.remove('hidden');
-                        document.getElementById('u-avatar').src = u.photoURL;
-                        document.getElementById('prof-img').src = u.photoURL;
-                        document.getElementById('prof-name').innerText = u.displayName;
+                        document.getElementById('u-img').classList.remove('hidden');
+                        document.getElementById('u-img').src = u.photoURL;
+                        document.getElementById('pr-i').src = u.photoURL;
+                        document.getElementById('pr-n').innerText = u.displayName;
+                        nvoApp.loadProfile();
                     }
+                    nvoApp.initCats();
                     nvoApp.loadFeed();
                 });
             }
@@ -419,4 +320,3 @@
     </script>
 </body>
 </html>
-
