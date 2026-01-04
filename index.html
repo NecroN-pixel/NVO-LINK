@@ -3,260 +3,511 @@
 <html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NVOLINK | Secure Decryption</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NVOLINK OMEGA | THE NEXT GEN SAAS</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg: #000; --card: #0d0d0f; --border: #1f1f22;
-            --blue: #3b82f6; --purple: #8b5cf6; --red: #ef4444;
+            --p: #3b82f6; --s: #8b5cf6; --a: #00d2ff;
+            --bg: #000000; --c: #0a0a0b; --b: #1f1f22;
         }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: #fff; overflow: hidden; }
 
-        /* Arkaplan Matrix Efekti */
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+        /* Ana İskelet */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
+        
+        /* Matrix Arkaplanı */
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.1; pointer-events: none; }
 
-        .omega-card {
-            background: rgba(13, 13, 15, 0.9);
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--p); border-radius: 10px; }
+
+        /* Animasyonlu Logo */
+        .omega-logo-box {
+            width: 55px; height: 55px;
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+            position: relative; overflow: hidden;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Cam Kartlar */
+        .glass-card {
+            background: rgba(10, 10, 11, 0.8);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 45px;
-            box-shadow: 0 0 50px rgba(59, 130, 246, 0.1);
-            animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--b);
+            border-radius: 35px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass-card:hover { border-color: var(--p); transform: translateY(-5px); }
+
+        /* Butonlar */
+        .btn-omega {
+            background: linear-gradient(135deg, var(--p), var(--s));
+            padding: 18px 30px; border-radius: 22px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            transition: 0.3s; width: 100%;
+        }
+        .btn-omega:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .btn-omega:active { transform: scale(0.98); }
+
+        /* Alt Navigasyon */
+        .omega-nav {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 450px; height: 85px;
+            background: rgba(10, 10, 11, 0.9); backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 40px;
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 9999; box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+        }
+        .nav-item { color: #555; font-size: 26px; transition: 0.4s; position: relative; padding: 15px; }
+        .nav-item.active { color: var(--p); transform: translateY(-10px); }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 6px; height: 6px; background: var(--p); border-radius: 50%; box-shadow: 0 0 15px var(--p);
         }
 
-        @keyframes cardIn {
-            from { opacity: 0; transform: scale(0.9) translateY(30px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        /* Preloader */
+        #omega-loader {
+            position: fixed; inset: 0; background: #000; z-index: 100000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
+        .loading-bar { width: 250px; height: 2px; background: #111; margin-top: 30px; position: relative; overflow: hidden; }
+        .loading-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--p); box-shadow: 0 0 10px var(--p); }
 
-        .btn-mega {
-            background: linear-gradient(135deg, var(--blue), var(--purple));
-            border-radius: 22px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: 0.4s;
-            position: relative;
-            overflow: hidden;
+        /* Kategori Chip */
+        .chip {
+            padding: 12px 25px; background: #111; border: 1px solid #222; border-radius: 100px;
+            font-size: 11px; font-weight: 800; color: #777; white-space: nowrap; transition: 0.3s;
         }
+        .chip.active { background: var(--p); border-color: var(--p); color: #fff; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); }
 
-        .btn-mega:not(:disabled):hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-mega:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
-
-        .task-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            transition: 0.3s;
-        }
-        .task-item.done { border-color: #22c55e; background: rgba(34, 197, 94, 0.05); }
-
-        /* Progress Circle */
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.35s;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-
-        /* Reklam Alanı */
-        .ad-slot {
-            background: #050505;
-            border: 1px dashed #333;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #444;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
+        /* GateWay Animasyon */
+        .gw-overlay { position: fixed; inset: 0; z-index: 20000; background: #000; display: flex; flex-direction: column; align-items: center; padding: 40px; }
     </style>
 </head>
+<body>
 
-<body class="min-h-screen flex items-center justify-center p-6">
     <canvas id="matrix-canvas"></canvas>
 
-    <div class="omega-card max-w-lg w-full p-10 space-y-8 text-center relative">
-        
-        <div class="space-y-2">
-            <div class="text-5xl font-black italic tracking-tighter">
-                NVO<span class="text-blue-500">LINK</span>
-            </div>
-            <p class="text-[10px] text-zinc-500 font-black uppercase tracking-[0.4em]">Decryption Protocol v5.0</p>
-        </div>
-
-        <div class="ad-slot h-20 w-full italic">Sponsor Reklam Alanı</div>
-
-        <div class="relative flex justify-center items-center">
-            <svg class="w-32 h-32">
-                <circle class="text-zinc-900" stroke-width="8" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64"/>
-                <circle id="progress-circle" class="text-blue-500 progress-ring__circle" stroke-width="8" stroke-dasharray="364.42" stroke-dashoffset="364.42" stroke-linecap="round" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64"/>
-            </svg>
-            <div id="timer-text" class="absolute text-3xl font-black italic">10</div>
-        </div>
-
-        <div id="status-msg" class="text-sm font-bold text-zinc-400 italic">
-            Güvenli protokoller analiz ediliyor...
-        </div>
-
-        <div id="task-area" class="space-y-3 hidden">
-            <p class="text-[9px] font-black text-blue-500 uppercase text-left ml-2">Gerekli Protokoller</p>
-            <div class="task-item p-4 flex justify-between items-center group cursor-pointer" onclick="omega.doTask('yt')">
-                <div class="flex items-center gap-3">
-                    <i class="fa-brands fa-youtube text-red-500 text-xl"></i>
-                    <span class="text-xs font-bold uppercase">Kanalımıza Abone Ol</span>
-                </div>
-                <i id="check-yt" class="fa-solid fa-circle-check text-zinc-800 transition"></i>
-            </div>
-        </div>
-
-        <div class="bg-red-500/5 border border-red-500/20 rounded-3xl p-5 text-[10px] text-zinc-400 leading-relaxed italic">
-            <i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i>
-            Yönlendirilen siteler NVOLINK sorumluluğunda değildir. Lütfen güvenliğiniz için şifrelerinizi paylaşmayın.
-        </div>
-
-        <div class="space-y-4">
-            <button id="mainBtn" disabled class="w-full py-6 btn-mega text-xs flex items-center justify-center gap-3">
-                <i class="fa-solid fa-unlock-keyhole"></i>
-                LİNKİ ÇÖZ
-            </button>
-            <button onclick="location.reload()" class="text-[9px] font-black text-zinc-600 uppercase tracking-widest hover:text-white transition">Hata mı oluştu? Sayfayı Yenile</button>
-        </div>
-
+    <div id="omega-loader">
+        <div class="omega-logo-box"><i class="fa-solid fa-infinity text-2xl"></i></div>
+        <div class="loading-bar"><div class="loading-progress" id="p-bar"></div></div>
+        <p class="mt-4 text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">System Loading...</p>
     </div>
 
-    <script>
-        /* ================================
-           OMEGA REDIRECT ENGINE
-        ================================ */
-        const omega = {
-            timeTotal: 10,
-            timeLeft: 10,
-            tasksDone: { yt: false },
-            isReady: false,
+    <header class="sticky top-0 z-[5000] bg-black/60 backdrop-blur-2xl border-b border-white/5 px-6 py-5">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="location.reload()">
+                <div class="omega-logo-box scale-75"><i class="fa-solid fa-infinity text-xl"></i></div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-2xl font-black italic tracking-tighter">NVO<span class="text-blue-500">LINK</span></span>
+                    <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Omega Protocol v1</span>
+                </div>
+            </div>
+            <div id="auth-box">
+                <button onclick="omegaAuth.login()" id="login-btn" class="bg-white text-black px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-tighter">Giriş Yap</button>
+                <div id="user-info" class="hidden flex items-center gap-4 bg-zinc-900/80 p-1.5 pr-5 rounded-2xl border border-white/10">
+                    <img id="u-avatar" class="w-9 h-9 rounded-xl object-cover">
+                    <div class="flex flex-col">
+                        <span id="u-name" class="text-[10px] font-black uppercase truncate max-w-[80px]"></span>
+                        <span class="text-[8px] text-blue-500 font-bold uppercase">Pro Access</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-            init() {
-                this.handleSecurity();
-                this.startMatrix();
-                this.startTimer();
-                this.checkUrlParams();
-            },
+    <main class="max-w-xl mx-auto px-6 pt-10 pb-40">
+        
+        <section id="discovery-header" class="space-y-6 mb-12">
+            <div class="relative group">
+                <i class="fa-solid fa-bolt absolute left-6 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-blue-500 transition"></i>
+                <input type="text" oninput="omegaApp.search(this.value)" placeholder="Ekosistemde keşfe çık..." class="w-full bg-[#0a0a0b] border border-[#1f1f22] rounded-3xl py-5 px-16 text-sm outline-none focus:border-blue-600 transition shadow-2xl">
+            </div>
+            <div class="flex gap-3 overflow-x-auto no-scrollbar py-2" id="categories">
+                <button onclick="omegaApp.filter('Hepsi', this)" class="chip active">Hepsi</button>
+                <button onclick="omegaApp.filter('Oyun', this)" class="chip">Oyun</button>
+                <button onclick="omegaApp.filter('Yazılım', this)" class="chip">Yazılım</button>
+                <button onclick="omegaApp.filter('Eğitim', this)" class="chip">Eğitim</button>
+                <button onclick="omegaApp.filter('Script', this)" class="chip">Script</button>
+            </div>
+        </section>
 
-            handleSecurity() {
-                // Anti-Refresh: Eğer sessionStorage'da bu link daha önce "kullanıldı" işaretlendiyse engelle
-                const linkId = new URLSearchParams(window.location.search).get('id') || 'default';
-                if(sessionStorage.getItem('used_'+linkId)) {
-                    document.body.innerHTML = `<div class='text-center space-y-6'><h1 class='text-5xl font-black text-red-600'>ERROR 403</h1><p class='text-zinc-500 font-bold'>GÜVENLİK İHLALİ: Link tek kullanımlıktır.</p><button onclick='location.href="/"' class='px-10 py-4 bg-white text-black font-black rounded-full'>DÖNÜŞ YAP</button></div>`;
-                    throw new Error("Security Block");
-                }
-            },
+        <div id="view-home" class="view-panel space-y-8"></div>
 
-            startMatrix() {
-                const canvas = document.getElementById('matrix-canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                const chars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                const fontSize = 15;
-                const columns = canvas.width / fontSize;
-                const drops = Array(Math.floor(columns)).fill(1);
-
-                function draw() {
-                    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.fillStyle = "#3b82f6";
-                    ctx.font = fontSize + "px monospace";
-                    for(let i = 0; i < drops.length; i++) {
-                        const text = chars[Math.floor(Math.random() * chars.length)];
-                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                        drops[i]++;
-                    }
-                }
-                setInterval(draw, 33);
-            },
-
-            startTimer() {
-                const circle = document.getElementById('progress-circle');
-                const text = document.getElementById('timer-text');
-                const radius = 58;
-                const circumference = 2 * Math.PI * radius;
-
-                const interval = setInterval(() => {
-                    this.timeLeft--;
-                    text.innerText = this.timeLeft;
-
-                    // Circle Animasyonu
-                    const offset = circumference - ( (this.timeTotal - this.timeLeft) / this.timeTotal) * circumference;
-                    circle.style.strokeDashoffset = offset;
-
-                    if(this.timeLeft <= 0) {
-                        clearInterval(interval);
-                        this.protocolReady();
-                    }
-                }, 1000);
-            },
-
-            doTask(type) {
-                if(type === 'yt') {
-                    window.open('https://youtube.com/@nvolink', '_blank'); // Burayı kendi kanalınla değiştir
-                    setTimeout(() => {
-                        this.tasksDone.yt = true;
-                        document.querySelector('.task-item').classList.add('done');
-                        document.getElementById('check-yt').className = "fa-solid fa-circle-check text-green-500";
-                        this.validateAll();
-                    }, 2000);
-                }
-            },
-
-            protocolReady() {
-                document.getElementById('status-msg').innerHTML = "<span class='text-blue-500 animate-pulse'>PROTOKOL HAZIR!</span>";
-                document.getElementById('task-area').classList.remove('hidden');
-                this.isReady = true;
-                this.validateAll();
-            },
-
-            validateAll() {
-                const btn = document.getElementById('mainBtn');
-                if(this.isReady && this.tasksDone.yt) {
-                    btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-bolt-lightning animate-bounce"></i> BAĞLANTIYI AÇ`;
-                    btn.onclick = () => this.finalRedirect();
-                }
-            },
-
-            checkUrlParams() {
-                // Eğer URL'de bir ID varsa bunu alıyoruz (Firebase entegrasyonu için)
-                const params = new URLSearchParams(window.location.search);
-                this.linkId = params.get('id');
-            },
-
-            finalRedirect() {
-                // Güvenlik için işaretle
-                sessionStorage.setItem('used_'+this.linkId, 'true');
+        <div id="view-add" class="view-panel hidden">
+            <div class="glass-card p-10 space-y-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-black italic">YENİ KAMPANYA</h2>
+                    <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em] mt-2">Linkini güvene al ve paylaş</p>
+                </div>
                 
-                document.body.style.opacity = "0";
-                document.body.style.transition = "1s";
+                <div onclick="document.getElementById('file-input').click()" class="h-60 bg-zinc-900/40 rounded-[40px] border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="prev-img" class="hidden w-full h-full object-cover">
+                    <div id="hint-ui" class="text-center transition group-hover:scale-110">
+                        <div class="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 transition">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                        </div>
+                        <p class="text-xs font-black text-zinc-500 uppercase">Kapak Görseli</p>
+                    </div>
+                </div>
+                <input type="file" id="file-input" class="hidden" accept="image/*" onchange="omegaApp.handleFile(this)">
+
+                <div class="space-y-5">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-zinc-600 ml-4 uppercase">Başlık</label>
+                        <input type="text" id="in-title" placeholder="Örn: Instagram Edit Paketi" class="w-full bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 text-sm outline-none focus:border-blue-500 transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-zinc-600 ml-4 uppercase">Hedef Link</label>
+                        <input type="url" id="in-url" placeholder="https://..." class="w-full bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 text-sm outline-none focus:border-blue-500 transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-zinc-600 ml-4 uppercase">Kategori</label>
+                        <select id="in-cat" class="w-full bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 text-sm outline-none focus:border-blue-500 transition appearance-none">
+                            <option value="Oyun">Oyun</option>
+                            <option value="Yazılım">Yazılım</option>
+                            <option value="Eğitim">Eğitim</option>
+                            <option value="Script">Script</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="omegaApp.publish()" id="pub-btn" class="btn-omega">Kampanyayı Başlat</button>
+            </div>
+        </div>
+
+        <div id="view-user" class="view-panel hidden space-y-8">
+            <div class="glass-card p-10 text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 to-cyan-400"></div>
+                <img id="prof-img" class="w-32 h-32 mx-auto rounded-[40px] object-cover border-4 border-black shadow-2xl mb-6">
+                <h3 id="prof-name" class="text-3xl font-black italic">---</h3>
+                <p id="prof-mail" class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-2"></p>
                 
-                setTimeout(() => {
-                    // Buraya Firebase'den gelen asıl link gelecek
-                    window.location.href = "https://example.com"; 
-                }, 1000);
+                <div class="grid grid-cols-2 gap-5 mt-10">
+                    <div class="bg-zinc-900/40 p-6 rounded-[30px] border border-white/5">
+                        <h4 id="stat-links" class="text-3xl font-black">0</h4>
+                        <p class="text-[9px] text-zinc-500 font-black uppercase mt-1">Paylaşımlar</p>
+                    </div>
+                    <div class="bg-zinc-900/40 p-6 rounded-[30px] border border-white/5">
+                        <h4 id="stat-views" class="text-3xl font-black">0</h4>
+                        <p class="text-[9px] text-zinc-500 font-black uppercase mt-1">Toplam Erişim</p>
+                    </div>
+                </div>
+                
+                <button onclick="omegaAuth.logout()" class="mt-10 text-[10px] font-black text-red-500/40 hover:text-red-500 transition uppercase tracking-widest">Oturumu Kapat</button>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xs font-black text-zinc-500 uppercase tracking-[0.2em] ml-5">Link Yönetimi</h3>
+                <div id="user-links-list" class="space-y-4"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="qr-modal" class="hidden fixed inset-0 z-[20000] bg-black/95 backdrop-blur-xl flex items-center justify-center p-10" onclick="this.classList.add('hidden')">
+        <div class="bg-white p-8 rounded-[50px] shadow-[0_0_100px_rgba(59,130,246,0.5)]" onclick="event.stopPropagation()">
+            <div id="qr-canvas"></div>
+            <p class="text-black text-center font-black text-[10px] mt-6 uppercase tracking-widest">NVOLINK OMEGA SCANNER</p>
+        </div>
+    </div>
+
+    <div id="gateway-root" class="hidden gw-overlay"></div>
+
+    <nav class="omega-nav">
+        <button onclick="omegaApp.switchTab('home')" id="nav-home" class="nav-item active"><i class="fa-solid fa-house-chimney-window"></i></button>
+        <button onclick="omegaApp.switchTab('add')" id="nav-add" class="nav-item"><i class="fa-solid fa-plus-circle text-4xl text-blue-500"></i></button>
+        <button onclick="omegaApp.switchTab('user')" id="nav-user" class="nav-item"><i class="fa-solid fa-fingerprint"></i></button>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
+            authDomain: "nvo-link.firebaseapp.com",
+            projectId: "nvo-link",
+            storageBucket: "nvo-link.firebasestorage.app",
+            messagingSenderId: "256153773846",
+            appId: "1:256153773846:web:6d51174db82ccccf119237"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        window.omegaState = { user: null, b64: null, cat: 'Hepsi' };
+
+        // --- AUTH ENGINE ---
+        window.omegaAuth = {
+            login: async () => { try { await signInWithPopup(auth, provider); } catch(e) { console.error(e); } },
+            logout: () => signOut(auth).then(() => location.reload()),
+            listen: () => {
+                onAuthStateChanged(auth, async (u) => {
+                    const params = new URLSearchParams(window.location.search);
+                    if(params.get('id')) return omegaApp.renderGateway(params.get('id'));
+
+                    if(u) {
+                        window.omegaState.user = u;
+                        document.getElementById('login-btn').classList.add('hidden');
+                        document.getElementById('user-info').classList.remove('hidden');
+                        document.getElementById('u-avatar').src = u.photoURL;
+                        document.getElementById('u-name').innerText = u.displayName;
+                        document.getElementById('prof-img').src = u.photoURL;
+                        document.getElementById('prof-name').innerText = u.displayName;
+                        document.getElementById('prof-mail').innerText = u.email;
+                    }
+                    omegaApp.loadFeed();
+                    omegaApp.initMatrix();
+                    omegaApp.preloader();
+                });
             }
         };
 
-        omega.init();
+        // --- CORE APP ENGINE ---
+        window.omegaApp = {
+            preloader: () => {
+                let p = 0;
+                const bar = document.getElementById('p-bar');
+                const itv = setInterval(() => {
+                    p += Math.floor(Math.random() * 15) + 5;
+                    if(p >= 100) {
+                        p = 100;
+                        clearInterval(itv);
+                        setTimeout(() => {
+                            document.getElementById('omega-loader').style.opacity = '0';
+                            setTimeout(() => document.getElementById('omega-loader').remove(), 600);
+                        }, 500);
+                    }
+                    bar.style.width = p + '%';
+                }, 80);
+            },
+
+            initMatrix: () => {
+                const c = document.getElementById('matrix-canvas');
+                const ctx = c.getContext('2d');
+                c.width = window.innerWidth; c.height = window.innerHeight;
+                const chars = "010101NVOLINKOMEGA";
+                const drops = Array(Math.floor(c.width/20)).fill(1);
+                function draw() {
+                    ctx.fillStyle = "rgba(0,0,0,0.05)";
+                    ctx.fillRect(0,0,c.width,c.height);
+                    ctx.fillStyle = "#3b82f6";
+                    ctx.font = "15px monospace";
+                    drops.forEach((y, i) => {
+                        const txt = chars[Math.floor(Math.random()*chars.length)];
+                        ctx.fillText(txt, i*20, y*20);
+                        if(y*20 > c.height && Math.random() > 0.975) drops[i] = 0;
+                        drops[i]++;
+                    });
+                }
+                setInterval(draw, 50);
+            },
+
+            switchTab: (id) => {
+                document.querySelectorAll('.view-panel').forEach(v => v.classList.add('hidden'));
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.getElementById('view-'+id).classList.remove('hidden');
+                document.getElementById('nav-'+id).classList.add('active');
+                if(id === 'home') omegaApp.loadFeed();
+                if(id === 'user') omegaApp.loadProfile();
+            },
+
+            handleFile: (input) => {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    window.omegaState.b64 = e.target.result;
+                    document.getElementById('prev-img').src = e.target.result;
+                    document.getElementById('prev-img').classList.remove('hidden');
+                    document.getElementById('hint-ui').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            },
+
+            publish: async () => {
+                const t = document.getElementById('in-title').value;
+                const url = document.getElementById('in-url').value;
+                const cat = document.getElementById('in-cat').value;
+                const btn = document.getElementById('pub-btn');
+
+                if(!t || !url || !window.omegaState.b64 || !window.omegaState.user) return alert("Lütfen tüm alanları doldurun!");
+
+                btn.innerText = "YAYINLANIYOR...";
+                btn.disabled = true;
+
+                try {
+                    await addDoc(collection(db, "links"), {
+                        title: t, target: url, category: cat, image: window.omegaState.b64,
+                        uid: window.omegaState.user.uid, uName: window.omegaState.user.displayName,
+                        uAvatar: window.omegaState.user.photoURL, views: 0,
+                        createdAt: serverTimestamp()
+                    });
+                    confetti();
+                    setTimeout(() => location.reload(), 1500);
+                } catch(e) { alert("Hata oluştu!"); btn.disabled = false; btn.innerText = "Yeniden Dene"; }
+            },
+
+            loadFeed: async (s = "") => {
+                const cont = document.getElementById('view-home');
+                cont.innerHTML = `<div class="py-20 text-center opacity-20 font-black italic tracking-widest">DECRYPTING FEED...</div>`;
+                
+                let q = query(collection(db, "links"), orderBy("createdAt", "desc"));
+                if(window.omegaState.cat !== 'Hepsi') q = query(collection(db, "links"), where("category", "==", window.omegaState.cat), orderBy("createdAt", "desc"));
+                
+                const snap = await getDocs(q);
+                cont.innerHTML = "";
+
+                if(snap.empty) cont.innerHTML = `<div class="py-20 text-center text-zinc-600 font-bold uppercase">Henüz paylaşım yok.</div>`;
+
+                snap.forEach(d => {
+                    const data = d.data();
+                    if(s && !data.title.toLowerCase().includes(s.toLowerCase())) return;
+                    cont.innerHTML += `
+                        <div class="glass-card overflow-hidden group">
+                            <div class="relative h-64 overflow-hidden">
+                                <img src="${data.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                                <div class="absolute top-5 left-5 bg-blue-600 text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest">${data.category}</div>
+                                <div class="absolute bottom-6 left-6 right-6">
+                                    <h3 class="text-2xl font-black italic leading-tight">${data.title}</h3>
+                                    <div class="flex items-center gap-2 mt-2 opacity-60">
+                                        <i class="fa-solid fa-eye text-xs"></i>
+                                        <span class="text-[10px] font-bold uppercase">${data.views || 0} Görüntülenme</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-6 flex justify-between items-center bg-zinc-900/10">
+                                <div class="flex items-center gap-3">
+                                    <img src="${data.uAvatar}" class="w-8 h-8 rounded-xl border border-white/10">
+                                    <span class="text-[10px] font-black text-zinc-500 uppercase tracking-tighter">${data.uName}</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="omegaApp.qr('${d.id}')" class="w-11 h-11 rounded-2xl bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition"><i class="fa-solid fa-qrcode"></i></button>
+                                    <button onclick="location.href='?id=${d.id}'" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase transition">Kilidi Aç</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+
+            loadProfile: async () => {
+                if(!window.omegaState.user) return;
+                const list = document.getElementById('user-links-list');
+                const q = query(collection(db, "links"), where("uid", "==", window.omegaState.user.uid));
+                const snap = await getDocs(q);
+                list.innerHTML = "";
+                let total = 0;
+                document.getElementById('stat-links').innerText = snap.size;
+
+                snap.forEach(d => {
+                    const data = d.data();
+                    const v = data.views || 0;
+                    total += v;
+                    list.innerHTML += `
+                        <div class="glass-card p-5 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <img src="${data.image}" class="w-16 h-16 rounded-2xl object-cover">
+                                <div>
+                                    <h4 class="text-sm font-black italic truncate w-32 uppercase">${data.title}</h4>
+                                    <p class="text-[9px] text-blue-500 font-black mt-1"><i class="fa-solid fa-bolt mr-1"></i> ${v} HIT</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="navigator.clipboard.writeText('${window.location.origin + window.location.pathname + '?id=' + d.id}');alert('Kopyalandı!')" class="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center text-zinc-600"><i class="fa-solid fa-link"></i></button>
+                                <button onclick="omegaApp.del('${d.id}')" class="w-10 h-10 rounded-xl bg-red-900/20 flex items-center justify-center text-red-500/40 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('stat-views').innerText = total;
+            },
+
+            del: async (id) => { if(confirm("Protokol silinsin mi?")) { await deleteDoc(doc(db, "links", id)); omegaApp.loadProfile(); } },
+
+            qr: (id) => {
+                const modal = document.getElementById('qr-modal');
+                const target = document.getElementById('qr-canvas');
+                target.innerHTML = "";
+                modal.classList.remove('hidden');
+                new QRCode(target, { text: window.location.origin + window.location.pathname + "?id=" + id, width: 220, height: 220, colorDark: "#000", colorLight: "#fff" });
+            },
+
+            renderGateway: async (id) => {
+                const root = document.getElementById('gateway-root');
+                root.classList.remove('hidden');
+                const snap = await getDoc(doc(db, "links", id));
+                if(!snap.exists()) return root.innerHTML = "PROCOTOL NOT FOUND";
+                const data = snap.data();
+                await updateDoc(doc(db, "links", id), { views: increment(1) });
+
+                root.innerHTML = `
+                    <div class="w-full max-w-md mt-10 space-y-10 text-center">
+                        <div class="omega-logo-box mx-auto"><i class="fa-solid fa-infinity text-2xl"></i></div>
+                        <div class="glass-card overflow-hidden">
+                            <img src="${data.image}" class="w-full h-56 object-cover opacity-60">
+                            <div class="p-10 space-y-6">
+                                <span class="text-[9px] font-black text-blue-500 border border-blue-500/30 px-5 py-2 rounded-full uppercase tracking-widest">Security Gateway v1.0</span>
+                                <h1 class="text-3xl font-black italic">${data.title}</h1>
+                                <p class="text-zinc-500 text-xs font-medium px-4 leading-relaxed">Güvenli bağlantı oluşturuluyor. Lütfen bot olmadığınızı kanıtlamak için bekleyin.</p>
+                                <div id="gw-box" class="pt-6">
+                                    <button onclick="omegaApp.startDecryption(this, '${data.target}')" class="btn-omega">Protokolü Çöz</button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-zinc-800 font-bold uppercase tracking-[0.5em]">Encrypted by NVOLINK OMEGA</p>
+                    </div>
+                `;
+            },
+
+            startDecryption: (btn, target) => {
+                let s = 10;
+                btn.disabled = true;
+                const i = setInterval(() => {
+                    btn.innerHTML = `<i class="fa-solid fa-cog fa-spin mr-3"></i> ANALYZING... ${s}`;
+                    s--;
+                    if(s < 0) {
+                        clearInterval(i);
+                        btn.innerHTML = "ERİŞİM ONAYLANDI! GİT";
+                        btn.classList.replace('btn-omega', 'bg-green-600');
+                        btn.disabled = false;
+                        confetti();
+                        btn.onclick = () => location.href = target;
+                    }
+                }, 1000);
+            },
+
+            filter: (c, el) => {
+                window.omegaState.cat = c;
+                document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+                el.classList.add('active');
+                omegaApp.loadFeed();
+            },
+
+            search: (v) => omegaApp.loadFeed(v)
+        };
+
+        omegaAuth.listen();
     </script>
 </body>
 </html>
