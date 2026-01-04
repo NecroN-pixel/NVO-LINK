@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NVO LINK G-0.0.1 | Enterprise SaaS</title>
+    <title>NVO LINK G-0.0.1 | Mega Gateway</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -11,176 +11,278 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        :root { --p: #6366f1; --s: #06b6d4; --bg: #000000; --card: #111827; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: #f3f4f6; overflow-x: hidden; padding-bottom: 80px; }
-        .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
+        :root {
+            --p: #6366f1; --p-light: #818cf8; --s: #06b6d4; --bg: #030712; --card: #111827;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: #f3f4f6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- UI DESIGNS --- */
+        .glass { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.06); }
+        .saas-border { border: 1px solid rgba(99, 102, 241, 0.2); }
         .saas-gradient { background: linear-gradient(135deg, var(--p), var(--s)); }
-        .nav-item.active { color: #6366f1; }
-        .nav-item.active i { transform: translateY(-5px); text-shadow: 0 5px 15px rgba(99, 102, 241, 0.5); }
-        .page-entry { animation: fadeUp 0.5s ease-out; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        input, select { background: #1f2937 !important; border: 1px solid #374151 !important; color: white !important; border-radius: 12px !important; }
+        .saas-text-gradient { background: linear-gradient(135deg, #fff, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Resim Önizleme */
-        .img-preview { width: 100%; height: 150px; object-fit: cover; border-radius: 12px; display: none; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--p); border-radius: 10px; }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        .animate-float { animation: float 5s infinite ease-in-out; }
+        .page-entry { animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Input & UI Components */
+        input, select, textarea { 
+            background: rgba(31, 41, 55, 0.6) !important; 
+            border: 1px solid rgba(255,255,255,0.1) !important; 
+            border-radius: 18px !important; 
+            color: white !important;
+            padding: 14px !important;
+            transition: 0.3s all;
+        }
+        input:focus { border-color: var(--p) !important; box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.15); outline: none; }
+
+        .url-box { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+        
+        /* Bottom Nav Logic */
+        .nav-item { transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .nav-item.active { color: var(--p); transform: translateY(-8px); }
+        .nav-item.active i { filter: drop-shadow(0 0 8px var(--p)); }
+
+        /* Discovery Card */
+        .discovery-card { transition: 0.4s; }
+        .discovery-card:hover { transform: scale(1.03) translateY(-5px); border-color: var(--p); }
+
+        /* Notification Toast */
+        #toast { position: fixed; top: 25px; right: 25px; z-index: 9999; transform: translateX(180%); transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #toast.active { transform: translateX(0); }
+
+        /* Image Optimization UI */
+        .img-preview-container {
+            width: 100%; height: 220px; border-radius: 24px; overflow: hidden; position: relative;
+            background: #1f2937; border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+        }
+        .img-preview-container img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
-<body>
+<body class="pb-32">
 
-    <header class="sticky top-0 z-50 glass px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <img src="https://i.hizliresim.com/placeholder.png" id="siteLogo" class="h-10 object-contain" alt="NVO LINK"> 
-            </div>
-        <div id="userBadge" class="hidden text-xs font-bold bg-white/10 px-3 py-1 rounded-full border border-white/10">
-            <i class="fa-solid fa-user-astronaut text-indigo-400 mr-1"></i> <span id="uName">Misafir</span>
+    <div id="toast" class="glass px-8 py-5 rounded-[2rem] flex items-center gap-4 shadow-2xl border-l-8 border-indigo-500">
+        <div class="w-10 h-10 saas-gradient rounded-2xl flex items-center justify-center"><i class="fa-solid fa-bolt text-white"></i></div>
+        <div>
+            <p id="toastMsg" class="text-sm font-black uppercase tracking-widest text-white"></p>
+            <p class="text-[9px] text-slate-400 font-bold uppercase">NVO System Notification</p>
         </div>
-    </header>
-
-    <div id="authScreen" class="min-h-[80vh] flex flex-col items-center justify-center p-6 text-center page-entry">
-        <div class="w-24 h-24 saas-gradient rounded-3xl flex items-center justify-center mb-6 shadow-2xl rotate-12">
-            <i class="fa-solid fa-infinity text-4xl text-white"></i>
-        </div>
-        <h1 class="text-3xl font-black mb-2 text-white">NVO LINK <span class="text-indigo-500">G-0.0.1</span></h1>
-        <p class="text-gray-400 text-sm mb-8">Yeni nesil içerik kilitleme ve sosyal büyüme platformu.</p>
-        <button onclick="login()" class="w-full max-w-xs py-4 bg-white text-black font-black rounded-2xl shadow-xl hover:scale-105 transition">
-            <i class="fa-brands fa-google mr-2"></i> GOOGLE İLE GİRİŞ
-        </button>
     </div>
 
-    <main id="appArea" class="hidden px-4 pt-6">
+    <div id="updateScreen" class="fixed inset-0 z-[2000] bg-slate-950/98 flex items-center justify-center p-6 backdrop-blur-2xl hidden">
+        <div class="glass max-w-lg w-full rounded-[4rem] p-12 saas-border relative overflow-hidden text-center page-entry">
+            <div class="absolute -top-24 -left-24 w-64 h-64 bg-indigo-500/15 blur-[100px]"></div>
+            <img src="https://i.ibb.co/3WqP7W8/19124-removebg-preview.png" class="h-16 mx-auto mb-8 animate-float">
+            <h2 class="text-3xl font-black mb-4 saas-text-gradient">SÜRÜM G-0.0.1 MEGALODON</h2>
+            <div class="grid grid-cols-2 gap-4 text-left mb-10">
+                <div class="bg-white/5 p-4 rounded-3xl border border-white/5">
+                    <p class="text-indigo-400 font-black text-[10px] mb-1 uppercase">Keşfet Modu</p>
+                    <p class="text-[10px] text-slate-400">Trend linkleri gör ve kitleni global olarak büyüt.</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-3xl border border-white/5">
+                    <p class="text-cyan-400 font-black text-[10px] mb-1 uppercase">Akıllı Resim</p>
+                    <p class="text-[10px] text-slate-400">Yüksek kaliteli resimler artık otomatik optimize edilir.</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-3xl border border-white/5">
+                    <p class="text-indigo-400 font-black text-[10px] mb-1 uppercase">Profil Paneli</p>
+                    <p class="text-[10px] text-slate-400">Seviye ve toplam izlenme takibi aktif edildi.</p>
+                </div>
+                <div class="bg-white/5 p-4 rounded-3xl border border-white/5">
+                    <p class="text-cyan-400 font-black text-[10px] mb-1 uppercase">İstatistikler</p>
+                    <p class="text-[10px] text-slate-400">Canlı veritabanı bağlantılı tıklanma analizleri.</p>
+                </div>
+            </div>
+            <button onclick="closeUpdate()" class="w-full py-6 saas-gradient rounded-[2.5rem] font-black text-white shadow-2xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition">KEŞFETMEYE HAZIRIM</button>
+        </div>
+    </div>
+
+    <nav class="sticky top-0 z-[1000] glass px-6 py-5 flex justify-between items-center border-b border-white/5">
+        <div class="flex items-center gap-3">
+            <img src="https://i.ibb.co/3WqP7W8/19124-removebg-preview.png" class="h-10 object-contain">
+            <div class="flex flex-col">
+                <span class="font-black text-xl leading-none tracking-tighter">NVO<span class="text-indigo-500">LINK</span></span>
+                <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest">G-0.0.1 MEG-EDITION</span>
+            </div>
+        </div>
+        <div id="authHeader" class="flex items-center gap-4">
+            <button onclick="login()" id="loginBtn" class="bg-white text-black px-8 py-3 rounded-full font-black text-xs shadow-2xl transition hover:bg-indigo-50">GİRİŞ YAP</button>
+        </div>
+    </nav>
+
+    <main id="appContainer" class="max-w-2xl mx-auto px-4 mt-10">
         
-        <section id="view-home" class="page-entry space-y-6">
-            <div class="grid grid-cols-2 gap-3">
-                <div class="glass p-4 rounded-2xl border-b-4 border-indigo-500">
-                    <p class="text-[10px] text-gray-400 font-bold">TOPLAM LİNK</p>
-                    <h2 id="statLinks" class="text-2xl font-black mt-1">0</h2>
+        <section id="view-home" class="tab-view space-y-8 page-entry">
+            <div class="grid grid-cols-2 gap-5">
+                <div class="glass p-8 rounded-[3rem] border-b-4 border-indigo-500 relative overflow-hidden group">
+                    <div class="absolute -right-4 -bottom-4 text-indigo-500/10 text-6xl group-hover:scale-125 transition-transform"><i class="fa-solid fa-link"></i></div>
+                    <p class="text-xs font-black text-slate-500 uppercase tracking-widest">Linklerim</p>
+                    <h2 id="totalLinks" class="text-4xl font-black mt-2">0</h2>
                 </div>
-                <div class="glass p-4 rounded-2xl border-b-4 border-cyan-500">
-                    <p class="text-[10px] text-gray-400 font-bold">TOPLAM GÖRÜNTÜLENME</p>
-                    <h2 id="statViews" class="text-2xl font-black mt-1">0</h2>
+                <div class="glass p-8 rounded-[3rem] border-b-4 border-cyan-500 relative overflow-hidden group">
+                    <div class="absolute -right-4 -bottom-4 text-cyan-500/10 text-6xl group-hover:scale-125 transition-transform"><i class="fa-solid fa-chart-line"></i></div>
+                    <p class="text-xs font-black text-slate-500 uppercase tracking-widest">Tıklanma</p>
+                    <h2 id="totalViews" class="text-4xl font-black mt-2">0</h2>
                 </div>
             </div>
 
-            <button onclick="switchTab('create')" class="w-full py-4 saas-gradient rounded-2xl font-black text-white shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-plus-circle"></i> YENİ LİNK OLUŞTUR
-            </button>
+            <div onclick="switchTab('create')" class="glass p-6 rounded-[2.5rem] border border-dashed border-indigo-500/30 flex items-center justify-center gap-4 cursor-pointer hover:bg-indigo-500/5 transition group">
+                <div class="w-12 h-12 saas-gradient rounded-2xl flex items-center justify-center text-white shadow-xl group-hover:rotate-90 transition-transform"><i class="fa-solid fa-plus text-xl"></i></div>
+                <div class="text-left">
+                    <h3 class="font-black text-lg">Yeni Kampanya Oluştur</h3>
+                    <p class="text-xs text-slate-500 font-bold uppercase">Dosyalarını kilit altına al ve büyüt.</p>
+                </div>
+            </div>
 
-            <div>
-                <h3 class="font-bold text-sm text-gray-400 mb-3 ml-1">LİNKLERİM</h3>
-                <div id="myLinkList" class="space-y-3 pb-20"></div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center px-4">
+                    <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.3em]">Aktif Kampanyalarım</h3>
+                    <button onclick="loadAdminData()" class="text-indigo-400 text-xs font-bold hover:underline">Yenile <i class="fa-solid fa-rotate-right ml-1"></i></button>
+                </div>
+                <div id="myCampaigns" class="space-y-4 pb-20">
+                    </div>
             </div>
         </section>
 
-        <section id="view-discovery" class="hidden page-entry pb-20">
-            <h2 class="text-xl font-black mb-4 flex items-center gap-2">
-                <i class="fa-regular fa-compass text-indigo-400"></i> Keşfet
-            </h2>
-            <div id="discoveryList" class="grid grid-cols-2 gap-3">
-                <div class="col-span-2 text-center text-gray-500 py-10">Yükleniyor...</div>
+        <section id="view-discovery" class="tab-view hidden space-y-8 page-entry">
+            <div class="text-center py-6">
+                <h1 class="text-3xl font-black saas-text-gradient">Link Keşfet</h1>
+                <p class="text-slate-500 text-sm font-bold uppercase tracking-widest mt-2">Global Trendler & Popüler İçerikler</p>
             </div>
+            
+            <div id="publicFeed" class="grid grid-cols-2 gap-5 pb-24">
+                </div>
         </section>
 
-        <section id="view-create" class="hidden page-entry pb-20">
-            <div class="glass p-6 rounded-3xl border border-white/5">
-                <h2 class="font-bold text-lg mb-4">Link Özellikleri</h2>
-                
+        <section id="view-create" class="tab-view hidden page-entry pb-24">
+            <div class="glass p-10 rounded-[4rem] space-y-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 saas-gradient rounded-[1.5rem] flex items-center justify-center shadow-2xl rotate-6"><i class="fa-solid fa-wand-magic-sparkles text-2xl text-white"></i></div>
+                    <div>
+                        <h2 class="text-2xl font-black">Kampanya Sihirbazı</h2>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Adım Adım Kilitleme Sistemi</p>
+                    </div>
+                </div>
+
                 <div class="space-y-4">
-                    <div class="relative">
-                        <label class="block text-xs font-bold text-gray-500 mb-2">KAPAK FOTOĞRAFI (Opsiyonel)</label>
-                        <input type="file" id="imgInput" accept="image/*" class="hidden" onchange="handleImage(this)">
-                        <div onclick="document.getElementById('imgInput').click()" class="w-full h-32 border-2 border-dashed border-gray-600 rounded-xl flex flex-col items-center justify-center text-gray-500 cursor-pointer hover:border-indigo-500 transition">
-                            <i class="fa-solid fa-camera text-2xl mb-2"></i>
-                            <span class="text-xs">Fotoğraf Seç</span>
+                    <label class="text-[11px] font-black text-slate-500 ml-2 uppercase">1. KAPAK GÖRSELİ (MAX 500PX OPTİZE)</label>
+                    <div class="img-preview-container" id="imgBox" onclick="document.getElementById('imgInput').click()">
+                        <img id="imgPreview" class="hidden">
+                        <div id="imgUI" class="text-center">
+                            <i class="fa-solid fa-cloud-arrow-up text-4xl text-indigo-500 mb-3"></i>
+                            <p class="text-xs font-black text-white uppercase">Resim Seç veya Sürükle</p>
+                            <p class="text-[9px] text-slate-500 font-bold mt-1">Sistem Otomatik Boyutlandırır</p>
                         </div>
-                        <img id="preview" class="img-preview mt-3 border border-white/10">
-                        <input type="hidden" id="finalImageBase64">
                     </div>
-
-                    <input type="text" id="cTitle" placeholder="Başlık (Örn: GTA 5 Mod)" class="w-full p-3 outline-none">
-                    <input type="text" id="cTarget" placeholder="Hedef Link (İndirme Linki)" class="w-full p-3 outline-none">
-
-                    <div class="bg-gray-800/50 p-4 rounded-xl">
-                        <p class="text-xs font-bold text-gray-400 mb-2">GÖREVLER</p>
-                        <div id="taskPreview" class="space-y-2 mb-3"></div>
-                        <div class="flex gap-2 mb-2">
-                            <select id="tType" class="p-2 text-xs w-1/3">
-                                <option value="youtube">YouTube</option>
-                                <option value="instagram">Instagram</option>
-                                <option value="discord">Discord</option>
-                                <option value="tiktok">TikTok</option>
-                                <option value="link">Website</option>
-                            </select>
-                            <input type="text" id="tName" placeholder="Açıklama" class="p-2 text-xs w-2/3">
-                        </div>
-                        <input type="text" id="tLink" placeholder="Görev URL" class="w-full p-2 text-xs mb-2">
-                        <button onclick="addTask()" class="w-full py-2 bg-indigo-500/20 text-indigo-400 text-xs font-bold rounded-lg">+ EKLE</button>
-                    </div>
-
-                    <button onclick="publish()" class="w-full py-4 bg-white text-black font-black rounded-xl">YAYINLA</button>
+                    <input type="file" id="imgInput" class="hidden" accept="image/*" onchange="handleImageProcessing(this)">
                 </div>
+
+                <div class="space-y-5">
+                    <label class="text-[11px] font-black text-slate-500 ml-2 uppercase">2. KAMPANYA DETAYLARI</label>
+                    <div class="space-y-4">
+                        <input type="text" id="lTitle" placeholder="Örn: Minecraft Full Mod Paketi" class="w-full">
+                        <input type="text" id="lTarget" placeholder="Hedef URL (Kilitli Dosya/Sayfa)" class="w-full">
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-8 rounded-[3rem] border border-white/5 space-y-6">
+                    <div class="flex justify-between items-center">
+                        <label class="text-[11px] font-black text-indigo-400 uppercase tracking-widest">3. GÖREVLER</label>
+                        <span id="taskCount" class="bg-indigo-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg">0</span>
+                    </div>
+                    
+                    <div id="builderTasks" class="space-y-3">
+                        </div>
+
+                    <div class="space-y-3 pt-4 border-t border-white/5">
+                        <div class="grid grid-cols-2 gap-3">
+                            <select id="tType" class="text-xs">
+                                <option value="youtube">YouTube</option>
+                                <option value="discord">Discord</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="tiktok">TikTok</option>
+                                <option value="twitter">X / Twitter</option>
+                                <option value="link">Özel Website</option>
+                            </select>
+                            <input type="text" id="tName" placeholder="Buton İsmi" class="text-xs">
+                        </div>
+                        <input type="text" id="tLink" placeholder="Takip Edilecek Link" class="w-full text-xs">
+                        <button onclick="addTaskToList()" class="w-full py-4 bg-white/5 rounded-2xl text-xs font-black hover:bg-white/10 transition uppercase tracking-widest">+ Görevi Listeye Ekle</button>
+                    </div>
+                </div>
+
+                <button onclick="publishCampaign()" id="publishBtn" class="w-full py-6 saas-gradient rounded-[2.5rem] font-black text-white shadow-2xl shadow-indigo-500/20 active:scale-95 transition-all text-lg">
+                    KAMPANYAYI YAYINLA
+                </button>
             </div>
         </section>
 
-        <section id="view-profile" class="hidden page-entry pb-20 text-center">
-            <div class="glass p-8 rounded-[3rem] border border-white/5 relative overflow-hidden mt-4">
-                <div class="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-indigo-500/20 to-transparent"></div>
-                <img id="pAvatar" src="" class="w-24 h-24 rounded-full border-4 border-indigo-500 mx-auto relative z-10 shadow-2xl">
-                <h2 id="pName" class="text-xl font-black mt-4">Kullanıcı</h2>
-                <p id="pEmail" class="text-xs text-gray-500 mb-6">user@gmail.com</p>
-
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div class="bg-white/5 p-3 rounded-2xl">
-                        <i class="fa-solid fa-trophy text-yellow-500 text-xl mb-1"></i>
-                        <p class="text-[10px] font-bold">SEVİYE</p>
-                        <h3 class="font-bold">G-0.0.1</h3>
+        <section id="view-profile" class="tab-view hidden page-entry pb-24 text-center">
+            <div class="glass p-12 rounded-[5rem] saas-border relative overflow-hidden">
+                <div class="absolute -top-32 -right-32 w-80 h-80 bg-indigo-500/10 blur-[100px]"></div>
+                <img id="pAvatar" src="" class="w-32 h-32 rounded-[3rem] border-4 border-indigo-500/30 mx-auto shadow-2xl mb-8 ring-8 ring-indigo-500/5">
+                <h2 id="pName" class="text-3xl font-black mb-2 saas-text-gradient">...</h2>
+                <p id="pEmail" class="text-xs text-slate-500 font-bold mb-10 tracking-widest">...</p>
+                
+                <div class="grid grid-cols-2 gap-5 mb-12 text-left">
+                    <div class="bg-white/5 p-6 rounded-[2.5rem]">
+                        <p class="text-[10px] font-black text-indigo-400 uppercase mb-2">Seviye</p>
+                        <h4 class="text-xl font-black">G-0.0.1 ALPHA</h4>
                     </div>
-                    <div class="bg-white/5 p-3 rounded-2xl">
-                        <i class="fa-solid fa-chart-bar text-green-500 text-xl mb-1"></i>
-                        <p class="text-[10px] font-bold">ETKİLEŞİM</p>
-                        <h3 id="pTotalViews" class="font-bold">0</h3>
+                    <div class="bg-white/5 p-6 rounded-[2.5rem]">
+                        <p class="text-[10px] font-black text-cyan-400 uppercase mb-2">Başarı Puanı</p>
+                        <h4 id="pSuccess" class="text-xl font-black">0 XP</h4>
                     </div>
                 </div>
 
-                <button onclick="logout()" class="text-red-500 text-sm font-bold bg-red-500/10 px-6 py-3 rounded-xl w-full">ÇIKIŞ YAP</button>
+                <button onclick="logout()" class="w-full py-5 bg-red-500/10 text-red-500 rounded-3xl font-black text-xs hover:bg-red-500/20 transition">OTURUMU SONLANDIR</button>
+            </div>
+        </section>
+
+        <section id="view-visitor" class="hidden fixed inset-0 z-[5000] bg-slate-950 overflow-y-auto">
+            <div class="relative w-full h-[45vh]">
+                <img id="vCover" src="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                <div class="absolute bottom-10 left-8 right-8">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="bg-indigo-600 text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-tighter shadow-lg">NVO PROTECTED</span>
+                        <span class="text-xs text-white/60 font-bold"><i class="fa-solid fa-eye mr-1"></i> <span id="vViews">0</span></span>
+                    </div>
+                    <h1 id="vTitle" class="text-4xl font-black text-white leading-tight">...</h1>
+                    <p class="text-slate-400 text-sm mt-3 font-medium">Hedef içeriğe erişmek için aşağıdaki adımları tamamlayın.</p>
+                </div>
+            </div>
+            
+            <div class="p-8 -mt-6 bg-slate-950 rounded-t-[3rem] relative z-10 space-y-4">
+                <div id="vTasks" class="space-y-4">
+                    </div>
+                
+                <button id="vUnlock" disabled class="w-full mt-12 py-7 rounded-[3rem] bg-slate-900 text-slate-700 font-black tracking-widest border border-white/5 opacity-50 flex items-center justify-center gap-4 transition-all duration-700">
+                    <i class="fa-solid fa-lock text-2xl"></i> ADIMLARI TAMAMLA
+                </button>
             </div>
         </section>
 
     </main>
 
-    <div id="visitorArea" class="hidden min-h-screen bg-black z-[100] relative">
-        <div class="h-60 w-full relative">
-            <img id="vCover" src="" class="w-full h-full object-cover opacity-50">
-            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-            <div class="absolute bottom-4 left-4 right-4">
-                <h1 id="vTitle" class="text-2xl font-black text-white leading-tight">...</h1>
-                <div class="flex items-center gap-2 mt-2">
-                    <span class="text-[10px] bg-indigo-600 px-2 py-0.5 rounded text-white">G-0.0.1</span>
-                    <span class="text-[10px] text-gray-400"><i class="fa-solid fa-eye"></i> <span id="vCount">0</span></span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="p-6 -mt-6 bg-black rounded-t-3xl relative z-10">
-             <div id="vTaskList" class="space-y-4"></div>
-             <button id="vUnlock" disabled class="w-full mt-8 py-4 bg-gray-800 text-gray-500 font-bold rounded-xl flex items-center justify-center gap-2">
-                 <i class="fa-solid fa-lock"></i> KİLİTLİ
-             </button>
-        </div>
-    </div>
-
-    <nav id="bottomNav" class="fixed bottom-0 w-full glass pb-safe pt-2 px-6 flex justify-between items-center z-40 hidden border-t border-white/5 pb-4">
-        <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center gap-1 transition-all text-gray-500 p-2">
-            <i class="fa-solid fa-house text-xl transition-transform"></i>
-        </button>
-        <button onclick="switchTab('discovery')" class="nav-item flex flex-col items-center gap-1 transition-all text-gray-500 p-2">
-            <i class="fa-solid fa-compass text-xl transition-transform"></i>
-        </button>
-        <div class="w-12"></div> <button onclick="switchTab('create')" class="absolute left-1/2 -translate-x-1/2 -top-6 w-14 h-14 saas-gradient rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/40 border-4 border-black text-white">
-            <i class="fa-solid fa-plus text-xl"></i>
-        </button>
-        <button onclick="switchTab('profile')" class="nav-item flex flex-col items-center gap-1 transition-all text-gray-500 p-2">
-            <i class="fa-solid fa-user text-xl transition-transform"></i>
-        </button>
+    <nav id="bottomNav" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 glass px-10 py-5 rounded-[2.5rem] flex items-center gap-14 shadow-2xl z-[1500] saas-border">
+        <button onclick="switchTab('home')" class="nav-item active"><i class="fa-solid fa-house-chimney text-xl"></i></button>
+        <button onclick="switchTab('discovery')" class="nav-item"><i class="fa-solid fa-compass text-xl"></i></button>
+        <button onclick="switchTab('create')" class="w-14 h-14 saas-gradient rounded-3xl flex items-center justify-center text-white shadow-2xl shadow-indigo-500/40 -mt-16 border-4 border-slate-950"><i class="fa-solid fa-plus text-2xl"></i></button>
+        <button onclick="switchTab('profile')" class="nav-item"><i class="fa-solid fa-user-gear text-xl"></i></button>
     </nav>
 
     <script type="module">
@@ -203,309 +305,270 @@
         const provider = new GoogleAuthProvider();
 
         let tasks = [];
-        let currentUser = null;
-        const urlParams = new URLSearchParams(window.location.search);
-        const linkId = urlParams.get('id');
+        let user = null;
+        let base64Image = null;
+        const cid = new URLSearchParams(window.location.search).get('id');
 
-        // LOGO UPDATE
-        // Kullanıcının attığı logoyu base64 veya URL olarak buraya tanımlayalım.
-        const LOGO_URL = "https://i.ibb.co/3WqP7W8/19124-removebg-preview.png"; // Placeholder for the user logo if they host it. 
-        // Kod çalışınca üstteki img src'si güncellenir.
-        document.getElementById('siteLogo').src = "https://i.imgur.com/Kj7j4Lp.png"; // Geçici placeholder, buraya kendi URL'ni koyarsan süper olur.
-        // Kullanıcının istediği logoyu simüle etmek için CSS ile basit bir text logo yapabiliriz veya img src değiştirebiliriz.
+        // --- CORE UI ---
+        window.showTost = (msg) => {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.add('active');
+            setTimeout(() => t.classList.remove('active'), 4000);
+        };
 
-        // --- AUTH & ROUTING ---
-        onAuthStateChanged(auth, user => {
-            if (linkId) {
-                document.getElementById('visitorArea').classList.remove('hidden');
-                loadVisitor(linkId);
-            } else if (user) {
-                currentUser = user;
-                document.getElementById('authScreen').classList.add('hidden');
-                document.getElementById('appArea').classList.remove('hidden');
+        if(!cid && !localStorage.getItem('megalodon_seen')) {
+            document.getElementById('updateScreen').classList.remove('hidden');
+        }
+        window.closeUpdate = () => {
+            localStorage.setItem('megalodon_seen', 'true');
+            document.getElementById('updateScreen').classList.add('hidden');
+        };
+
+        // --- AUTH ---
+        onAuthStateChanged(auth, u => {
+            if(cid) {
+                document.getElementById('view-visitor').classList.remove('hidden');
+                loadVisitor();
+            } else if(u) {
+                user = u;
+                document.getElementById('authHeader').innerHTML = `<img src="${u.photoURL}" class="w-10 h-10 rounded-2xl ring-4 ring-indigo-500/10">`;
                 document.getElementById('bottomNav').classList.remove('hidden');
-                
-                // Header Update
-                document.getElementById('userBadge').classList.remove('hidden');
-                document.getElementById('userBadge').classList.add('flex');
-                document.getElementById('uName').innerText = user.displayName.split(' ')[0];
-                
-                // Profile Data
-                document.getElementById('pAvatar').src = user.photoURL;
-                document.getElementById('pName').innerText = user.displayName;
-                document.getElementById('pEmail').innerText = user.email;
-
-                loadDashboard();
+                document.getElementById('pAvatar').src = u.photoURL;
+                document.getElementById('pName').innerText = u.displayName;
+                document.getElementById('pEmail').innerText = u.email;
+                switchTab('home');
             } else {
-                document.getElementById('authScreen').classList.remove('hidden');
+                renderLanding();
             }
         });
 
-        window.login = () => signInWithPopup(auth, provider).catch(e => alert("Giriş Hatası: " + e.message));
+        window.login = () => signInWithPopup(auth, provider);
         window.logout = () => signOut(auth).then(() => location.reload());
 
-        // --- NAVIGATION ---
-        window.switchTab = (tab) => {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+        function renderLanding() {
+            document.getElementById('view-home').innerHTML = `
+                <div class="text-center py-24 page-entry">
+                    <div class="w-24 h-24 saas-gradient rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-2xl rotate-12 animate-float">
+                        <i class="fa-solid fa-fingerprint text-4xl text-white"></i>
+                    </div>
+                    <h1 class="text-4xl font-black mb-4 saas-text-gradient leading-tight">İçeriğini Kilitle,<br>Kitleni Büyüt.</h1>
+                    <p class="text-slate-500 text-sm mb-12 px-12">Rekonise'den daha hızlı, daha şık ve tamamen profesyonel gateway sistemi.</p>
+                    <button onclick="login()" class="w-full py-6 bg-white text-black font-black rounded-[2.5rem] shadow-2xl hover:scale-105 transition">GOOGLE İLE HEMEN BAŞLA</button>
+                </div>
+            `;
+        }
+
+        // --- TAB NAVIGATION ---
+        window.switchTab = (id) => {
+            document.querySelectorAll('.tab-view').forEach(t => t.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`view-${id}`).classList.remove('hidden');
             
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            
-            // Tab specific loads
-            if(tab === 'home') loadDashboard();
-            if(tab === 'discovery') loadDiscovery();
-            
-            // Icon styling
-            const map = { 'home': 0, 'discovery': 1, 'profile': 2 };
-            if(map[tab] !== undefined) document.querySelectorAll('.nav-item')[map[tab]].classList.add('active');
+            const btnMap = { 'home': 0, 'discovery': 1, 'profile': 2 };
+            if(btnMap[id] !== undefined) document.querySelectorAll('.nav-item')[btnMap[id]].classList.add('active');
+
+            if(id === 'home') loadAdminData();
+            if(id === 'discovery') loadDiscovery();
         };
 
-        // --- IMAGE COMPRESSION (CANVAS) ---
-        window.handleImage = (input) => {
+        // --- IMAGE ENGINE (500PX LIMIT & QUALITY DROP) ---
+        window.handleImageProcessing = (input) => {
             const file = input.files[0];
-            if (!file) return;
-
+            if(!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    
-                    // 500px Limit Kuralı
-                    if (width > 500) {
-                        height *= 500 / width;
-                        width = 500;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
+                    let w = img.width, h = img.height;
+                    // Megalodon Rule: Force max 500px width
+                    if (w > 500) { h *= 500/w; w = 500; }
+                    canvas.width = w; canvas.height = h;
                     const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, w, h);
+                    base64Image = canvas.toDataURL('image/jpeg', 0.6); // 0.6 Quality drop
                     
-                    // Kaliteyi düşür (0.7)
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    document.getElementById('preview').src = dataUrl;
-                    document.getElementById('preview').style.display = 'block';
-                    document.getElementById('finalImageBase64').value = dataUrl;
+                    document.getElementById('imgPreview').src = base64Image;
+                    document.getElementById('imgPreview').classList.remove('hidden');
+                    document.getElementById('imgUI').classList.add('hidden');
+                    showTost("Resim Optimize Edildi.");
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         };
 
-        // --- DASHBOARD ---
-        async function loadDashboard() {
-            if(!currentUser) return;
-            const q = query(collection(db, "links"), where("uid", "==", currentUser.uid), orderBy("createdAt", "desc"));
-            
-            try {
-                const snap = await getDocs(q);
-                let totalViews = 0;
-                let html = "";
-                
-                snap.forEach(d => {
-                    const data = d.data();
-                    totalViews += (data.views || 0);
-                    const linkUrl = window.location.origin + window.location.pathname + "?id=" + d.id;
-                    
-                    html += `
-                        <div class="glass p-4 rounded-2xl flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-lg bg-gray-800 bg-cover bg-center shrink-0" style="background-image: url('${data.image || "https://via.placeholder.com/150"}')"></div>
-                            <div class="flex-1 overflow-hidden">
-                                <h4 class="font-bold text-sm truncate">${data.title}</h4>
-                                <p class="text-[10px] text-gray-500"><i class="fa-solid fa-eye"></i> ${data.views || 0}</p>
-                            </div>
-                            <button onclick="navigator.clipboard.writeText('${linkUrl}');alert('Link Kopyalandı!')" class="w-8 h-8 rounded bg-white/5 flex items-center justify-center text-gray-400">
-                                <i class="fa-solid fa-link"></i>
-                            </button>
-                            <button onclick="deleteLink('${d.id}')" class="w-8 h-8 rounded bg-red-500/10 flex items-center justify-center text-red-500">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                });
-
-                document.getElementById('statLinks').innerText = snap.size;
-                document.getElementById('statViews').innerText = totalViews;
-                document.getElementById('pTotalViews').innerText = totalViews;
-                document.getElementById('myLinkList').innerHTML = html || "<p class='text-center text-gray-600 text-sm'>Henüz link yok.</p>";
-            } catch (error) {
-                console.error("Dashboard Error:", error);
-                // alert("Veri çekilemedi. Lütfen Firestore Indexes ayarını kontrol et.");
-            }
-        }
-
-        window.deleteLink = async (id) => {
-            if(confirm("Silmek istediğine emin misin?")) {
-                await deleteDoc(doc(db, "links", id));
-                loadDashboard();
-            }
-        };
-
-        // --- DISCOVERY (KEŞFET) ---
-        async function loadDiscovery() {
-            // En çok görüntülenen son 20 link
-            const q = query(collection(db, "links"), orderBy("views", "desc"), limit(20));
-            try {
-                const snap = await getDocs(q);
-                let html = "";
-                snap.forEach(d => {
-                    const data = d.data();
-                    const linkUrl = window.location.origin + window.location.pathname + "?id=" + d.id;
-                    html += `
-                        <div onclick="window.open('${linkUrl}', '_blank')" class="glass p-2 rounded-xl cursor-pointer hover:bg-white/5 transition">
-                            <div class="w-full h-32 rounded-lg bg-gray-800 bg-cover bg-center mb-2 relative" style="background-image: url('${data.image || "https://via.placeholder.com/300x200?text=NVO"}')">
-                                <span class="absolute top-1 right-1 bg-black/60 text-white text-[9px] px-1.5 rounded font-bold">
-                                    <i class="fa-solid fa-eye"></i> ${data.views || 0}
-                                </span>
-                            </div>
-                            <h4 class="font-bold text-xs truncate px-1">${data.title}</h4>
-                        </div>
-                    `;
-                });
-                document.getElementById('discoveryList').innerHTML = html;
-            } catch (e) {
-                document.getElementById('discoveryList').innerHTML = `<p class="col-span-2 text-center text-red-500 text-xs">Keşfet yüklenemedi. Index hatası olabilir.<br>${e.message}</p>`;
-            }
-        }
-
-        // --- CREATE ---
-        window.addTask = () => {
+        // --- CAMPAIGN ENGINE ---
+        window.addTaskToList = () => {
             const type = document.getElementById('tType').value;
             const name = document.getElementById('tName').value;
             const link = document.getElementById('tLink').value;
             if(name && link) {
-                tasks.push({type, name, link: link.startsWith('http') ? link : 'https://'+link});
-                renderTasks();
-                document.getElementById('tName').value = "";
-                document.getElementById('tLink').value = "";
+                tasks.push({ type, name, link: link.includes('://') ? link : 'https://' + link });
+                renderTaskBuilder();
+                document.getElementById('tName').value = ""; document.getElementById('tLink').value = "";
             }
         };
 
-        function renderTasks() {
-            document.getElementById('taskPreview').innerHTML = tasks.map((t,i) => `
-                <div class="flex justify-between items-center bg-black/20 p-2 rounded text-xs">
-                    <span><i class="fa-brands fa-${t.type==='link'?'chrome':t.type}"></i> ${t.name}</span>
-                    <i onclick="tasks.splice(${i},1);renderTasks()" class="fa-solid fa-xmark text-red-400 cursor-pointer"></i>
+        function renderTaskBuilder() {
+            document.getElementById('taskCount').innerText = tasks.length;
+            document.getElementById('builderTasks').innerHTML = tasks.map((t, i) => `
+                <div class="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 group">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <i class="fa-brands fa-${t.type==='link'?'chrome':t.type} text-indigo-400"></i>
+                        <div class="overflow-hidden">
+                            <h5 class="text-xs font-bold text-white truncate">${t.name}</h5>
+                            <p class="text-[8px] text-slate-500 truncate url-box">${t.link}</p>
+                        </div>
+                    </div>
+                    <button onclick="tasks.splice(${i},1);renderTaskBuilder()" class="text-red-500/50 hover:text-red-500 transition"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             `).join('');
         }
 
-        window.publish = async () => {
-            const title = document.getElementById('cTitle').value;
-            const target = document.getElementById('cTarget').value;
-            const image = document.getElementById('finalImageBase64').value; // Base64 string
+        window.publishCampaign = async () => {
+            const title = document.getElementById('lTitle').value;
+            const target = document.getElementById('lTarget').value;
+            if(!title || !target || tasks.length === 0) return showTost("Eksik veri!");
 
-            if(!title || !target || tasks.length === 0) return alert("Başlık, Link ve en az 1 görev gerekli!");
+            document.getElementById('publishBtn').disabled = true;
+            document.getElementById('publishBtn').innerText = "İŞLENİYOR...";
 
             try {
                 const docRef = await addDoc(collection(db, "links"), {
-                    title,
-                    target: target.startsWith('http') ? target : 'https://'+target,
-                    image: image || null,
-                    uid: currentUser.uid,
-                    views: 0,
-                    createdAt: serverTimestamp()
+                    title, target, image: base64Image, uid: user.uid,
+                    creator: user.displayName, views: 0, createdAt: serverTimestamp()
                 });
-
                 const batch = writeBatch(db);
-                tasks.forEach((t, i) => {
-                    batch.set(doc(collection(db, "links", docRef.id, "tasks")), {...t, order: i});
-                });
+                tasks.forEach((t, i) => batch.set(doc(collection(db, "links", docRef.id, "tasks")), { ...t, order: i }));
                 await batch.commit();
-                
-                alert("Link Oluşturuldu!");
-                switchTab('home');
-                tasks = []; renderTasks();
-                document.getElementById('cTitle').value=""; document.getElementById('cTarget').value="";
-                document.getElementById('preview').style.display='none';
-            } catch (e) {
-                alert("Hata: " + e.message);
-            }
+                showTost("KAMPANYA YAYINLANDI!");
+                setTimeout(() => location.reload(), 2000);
+            } catch (e) { showTost("Hata!"); }
         };
 
-        // --- VISITOR ---
-        async function loadVisitor(id) {
-            const dRef = doc(db, "links", id);
-            try {
-                const snap = await getDoc(dRef);
-                if(!snap.exists()) return document.getElementById('vTitle').innerText = "Link Bulunamadı";
-                
-                const data = snap.data();
-                updateDoc(dRef, { views: increment(1) }); // View counter
-
-                document.getElementById('vTitle').innerText = data.title;
-                document.getElementById('vCount').innerText = (data.views || 0) + 1;
-                
-                if(data.image) {
-                    document.getElementById('vCover').src = data.image;
-                } else {
-                    document.getElementById('vCover').src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"; // Default abstract bg
-                }
-
-                const tSnap = await getDocs(collection(db, "links", id, "tasks"));
-                const tData = [];
-                tSnap.forEach(t => tData.push(t.data()));
-
-                const list = document.getElementById('vTaskList');
-                if(tData.length === 0) return unlock(data.target);
-
-                list.innerHTML = tData.map((t, i) => `
-                    <div id="step-${i}" class="glass p-4 rounded-xl flex items-center justify-between border-l-4 ${i===0?'border-indigo-500':'border-transparent opacity-50 pointer-events-none'}">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-indigo-400">
-                                <i class="fa-brands fa-${t.type==='link'?'chrome':t.type}"></i>
+        // --- ADMIN & DISCOVERY DATA ---
+        async function loadAdminData() {
+            if(!user) return;
+            const q = query(collection(db, "links"), where("uid", "==", user.uid));
+            const snap = await getDocs(q);
+            let totalV = 0;
+            document.getElementById('totalLinks').innerText = snap.size;
+            document.getElementById('myCampaigns').innerHTML = "";
+            snap.forEach(d => {
+                const data = d.data(); totalV += data.views;
+                const url = window.location.origin + window.location.pathname + "?id=" + d.id;
+                document.getElementById('myCampaigns').innerHTML += `
+                    <div class="glass p-5 rounded-[2.5rem] flex items-center justify-between saas-border group">
+                        <div class="flex items-center gap-4 overflow-hidden">
+                            <img src="${data.image || 'https://via.placeholder.com/100'}" class="w-14 h-14 rounded-2xl object-cover shadow-lg">
+                            <div class="overflow-hidden">
+                                <h4 class="font-black text-sm truncate">${data.title}</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[9px] font-bold text-slate-500 uppercase"><i class="fa-solid fa-eye mr-1"></i> ${data.views}</span>
+                                    <span class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest">AKTİF</span>
+                                </div>
                             </div>
-                            <div class="text-sm font-bold text-white">${t.name}</div>
                         </div>
-                        <button id="btn-${i}" onclick="doTask(${i}, '${t.link}', ${tData.length}, '${data.target}')" class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg ${i===0?'':'hidden'}">YAP</button>
+                        <div class="flex gap-2">
+                            <button onclick="navigator.clipboard.writeText('${url}');showTost('Kopyalandı!')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-indigo-400 transition"><i class="fa-solid fa-link"></i></button>
+                            <button onclick="deleteDoc(doc(db, 'links', '${d.id}')).then(()=>loadAdminData())" class="w-10 h-10 rounded-xl bg-white/5 text-red-500/50 hover:bg-red-500/10 transition"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
-                `).join('');
-            } catch (e) {
-                console.log(e);
-            }
+                `;
+            });
+            document.getElementById('totalViews').innerText = totalV;
+            document.getElementById('pSuccess').innerText = (totalV * 10) + " XP";
         }
 
-        window.doTask = (i, url, total, target) => {
+        async function loadDiscovery() {
+            const q = query(collection(db, "links"), orderBy("views", "desc"), limit(20));
+            const snap = await getDocs(q);
+            document.getElementById('publicFeed').innerHTML = "";
+            snap.forEach(d => {
+                const data = d.data();
+                document.getElementById('publicFeed').innerHTML += `
+                    <div onclick="location.href='?id=${d.id}'" class="glass p-3 rounded-[2.5rem] space-y-3 cursor-pointer discovery-card">
+                        <img src="${data.image || 'https://via.placeholder.com/300'}" class="w-full aspect-square rounded-[2rem] object-cover shadow-inner">
+                        <div class="px-2">
+                            <h4 class="font-black text-[11px] truncate">${data.title}</h4>
+                            <p class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">${data.creator}</p>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-[8px] font-black text-indigo-400"><i class="fa-solid fa-eye"></i> ${data.views}</span>
+                                <i class="fa-solid fa-circle-arrow-right text-indigo-400/50 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- VISITOR LOGIC ---
+        async function loadVisitor() {
+            const dRef = doc(db, "links", cid);
+            const dSnap = await getDoc(dRef);
+            if(!dSnap.exists()) return;
+            
+            updateDoc(dRef, { views: increment(1) });
+            const data = dSnap.data();
+            document.getElementById('vTitle').innerText = data.title;
+            document.getElementById('vViews').innerText = data.views + 1;
+            document.getElementById('vCover').src = data.image || "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000";
+
+            const tSnap = await getDocs(collection(db, "links", cid, "tasks"));
+            const tasksList = []; tSnap.forEach(t => tasksList.push(t.data()));
+
+            document.getElementById('vTasks').innerHTML = tasksList.map((t, i) => `
+                <div id="vStep-${i}" class="glass p-7 rounded-[2.5rem] flex items-center justify-between border-l-8 ${i===0 ? 'border-indigo-500 bg-indigo-500/5' : 'opacity-30 pointer-events-none border-transparent'} transition-all duration-500">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center text-2xl text-indigo-400 shadow-xl">
+                            <i class="fa-brands fa-${t.type==='link'?'chrome':t.type}"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">${t.type}</p>
+                            <h4 class="font-bold text-white text-base">${t.name}</h4>
+                        </div>
+                    </div>
+                    <button id="vBtn-${i}" onclick="verify(${i}, '${t.link}', ${tasksList.length}, '${data.target}')" class="px-8 py-4 saas-gradient text-white text-[11px] font-black rounded-[1.5rem] shadow-xl ${i===0?'':'hidden'}">BAŞLAT</button>
+                </div>
+            `).join('');
+        }
+
+        window.verify = (i, url, total, target) => {
             window.open(url, '_blank');
-            const btn = document.getElementById(`btn-${i}`);
-            let sec = 8;
-            const timer = setInterval(() => {
-                btn.disabled = true;
-                btn.innerText = sec + "s";
-                btn.classList.add('bg-gray-600');
-                sec--;
-                if(sec < 0) {
-                    clearInterval(timer);
+            const btn = document.getElementById(`vBtn-${i}`);
+            let timer = 12; // Megalodon security wait
+            const itv = setInterval(() => {
+                btn.innerText = timer + "s"; timer--;
+                if(timer < 0) {
+                    clearInterval(itv);
                     btn.remove();
-                    document.getElementById(`step-${i}`).classList.remove('border-indigo-500');
-                    document.getElementById(`step-${i}`).classList.add('border-green-500');
-                    document.getElementById(`step-${i}`).innerHTML += '<i class="fa-solid fa-check-circle text-green-500 text-xl"></i>';
+                    document.getElementById(`vStep-${i}`).classList.remove('border-indigo-500', 'bg-indigo-500/5');
+                    document.getElementById(`vStep-${i}`).classList.add('border-green-500', 'bg-green-500/5');
+                    document.getElementById(`vStep-${i}`).innerHTML += '<i class="fa-solid fa-circle-check text-green-500 text-3xl"></i>';
                     
-                    if(i+1 < total) {
-                        const next = document.getElementById(`step-${i+1}`);
-                        next.classList.remove('opacity-50', 'pointer-events-none', 'border-transparent');
-                        next.classList.add('border-indigo-500');
+                    if(i + 1 < total) {
+                        const next = document.getElementById(`vStep-${i+1}`);
+                        next.classList.remove('opacity-30', 'pointer-events-none', 'border-transparent');
+                        next.classList.add('border-indigo-500', 'bg-indigo-500/5');
                         document.getElementById(`btn-${i+1}`).classList.remove('hidden');
                     } else {
-                        unlock(target);
+                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.7 } });
+                        const lock = document.getElementById('vUnlock');
+                        lock.disabled = false;
+                        lock.classList.replace('bg-slate-900', 'saas-gradient');
+                        lock.classList.replace('text-slate-700', 'text-white');
+                        lock.classList.add('opacity-100', 'animate-bounce', 'shadow-2xl', 'shadow-indigo-500/50');
+                        lock.innerHTML = '<i class="fa-solid fa-cloud-arrow-down text-2xl"></i> DOSYAYI ŞİMDİ İNDİR';
+                        lock.onclick = () => location.href = target;
+                        showTost("Tebrikler! Kilidiniz Açıldı.");
                     }
                 }
             }, 1000);
         };
 
-        function unlock(url) {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            const btn = document.getElementById('vUnlock');
-            btn.disabled = false;
-            btn.classList.remove('bg-gray-800', 'text-gray-500');
-            btn.classList.add('saas-gradient', 'text-white', 'animate-bounce');
-            btn.innerHTML = '<i class="fa-solid fa-download"></i> DOSYAYI İNDİR';
-            btn.onclick = () => window.location.href = url;
-        }
     </script>
 </body>
 </html>
+
