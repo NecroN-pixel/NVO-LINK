@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NVOLINK G-0.1.4 | FULL ENTERPRISE EDITION</title>
+    <title>NVOLINK G-0.1.5 | FULL ENTERPRISE EDITION</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -23,19 +23,20 @@
             --bg-input: #111112;
             --border-color: #1f1f22;
             --text-main: #f3f4f6;
+            --text-dim: #9ca3af;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-deep); color: var(--text-main); overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-deep); color: var(--text-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-        /* --- PRELOADER ANIMATION --- */
+        /* --- PRELOADER --- */
         #nvo-preloader {
             position: fixed; inset: 0; z-index: 20000; background: var(--bg-deep);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .loader-bar-container { width: 240px; height: 3px; background: #111; border-radius: 10px; margin-top: 40px; overflow: hidden; position: relative; }
-        #loader-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); box-shadow: 0 0 15px var(--primary); }
+        #loader-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); box-shadow: 0 0 15px var(--primary); transition: width 0.4s ease; }
 
         /* --- LOGO ENGINE --- */
         .nvo-logo-wrapper { display: flex; align-items: center; gap: 14px; cursor: pointer; }
@@ -44,35 +45,40 @@
             border-radius: 14px; display: flex; align-items: center; justify-content: center; 
             box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); position: relative; overflow: hidden; 
         }
-        .nvo-infinity { font-size: 22px; color: #fff; }
+        .nvo-icon-box::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); transform: rotate(45deg); animation: shine 3s infinite; }
+        @keyframes shine { 0% { left: -100%; } 100% { left: 100%; } }
+        .nvo-infinity { font-size: 22px; color: #fff; filter: drop-shadow(0 0 4px rgba(255,255,255,0.5)); }
         .brand-main { font-size: 26px; font-weight: 800; letter-spacing: -1.2px; color: #fff; }
         .brand-link { color: var(--primary); }
 
         /* --- UI COMPONENTS --- */
-        .nvo-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 28px; transition: 0.3s; overflow: hidden; }
+        .nvo-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 28px; transition: all 0.3s ease; overflow: hidden; }
         .nvo-card:hover { border-color: #333; transform: translateY(-4px); }
-        .nvo-input { background: var(--bg-input) !important; border: 1px solid var(--border-color) !important; border-radius: 20px !important; color: #fff !important; padding: 18px 24px !important; width: 100%; outline: none; }
-        .nvo-input:focus { border-color: var(--primary) !important; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 18px; border-radius: 22px; font-weight: 800; text-transform: uppercase; width: 100%; cursor: pointer; border: none; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2); }
+        .nvo-input { background: var(--bg-input) !important; border: 1px solid var(--border-color) !important; border-radius: 20px !important; color: #fff !important; padding: 18px 24px !important; width: 100%; outline: none; transition: 0.3s; }
+        .nvo-input:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 18px; border-radius: 22px; font-weight: 800; text-transform: uppercase; width: 100%; cursor: pointer; border: none; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25); transition: 0.3s; }
+        .btn-primary:active { transform: scale(0.96); }
 
         /* --- TASK SYSTEM --- */
-        .task-row { background: #161618; padding: 16px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; margin-bottom: 10px; }
-        .gw-task-btn { background: #0c0c0e; border: 1px solid #1f1f22; padding: 20px; border-radius: 24px; width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.3s; }
+        .task-row { background: #161618; padding: 18px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; margin-bottom: 12px; }
+        .gw-task-btn { background: #0c0c0e; border: 1px solid #1f1f22; padding: 22px; border-radius: 26px; width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.3s; }
         .gw-task-btn.done { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
 
         /* --- NAVIGATION --- */
-        .bottom-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 480px; height: 80px; background: rgba(10, 10, 11, 0.8); backdrop-filter: blur(30px); border-radius: 40px; display: flex; justify-content: space-around; align-items: center; z-index: 9000; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .nav-link { color: #4b5563; font-size: 26px; transition: 0.4s; padding: 12px; }
+        .bottom-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 480px; height: 80px; background: rgba(10, 10, 11, 0.8); backdrop-filter: blur(30px); border-radius: 40px; display: flex; justify-content: space-around; align-items: center; z-index: 9000; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .nav-link { color: #4b5563; font-size: 26px; transition: 0.4s; padding: 12px; position: relative; }
         .nav-link.active { color: var(--primary); transform: translateY(-10px); }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary); }
 
-        .cat-chip { padding: 10px 22px; background: #111; border-radius: 100px; font-size: 11px; font-weight: 800; color: #555; border: 1px solid #222; white-space: nowrap; cursor: pointer; }
+        .cat-chip { padding: 10px 24px; background: #111; border-radius: 100px; font-size: 11px; font-weight: 800; color: #666; border: 1px solid #222; white-space: nowrap; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
         .cat-chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); }
 
         #nvo-qr-modal { position: fixed; inset: 0; z-index: 18000; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        .qr-container { background: white; padding: 35px; border-radius: 45px; text-align: center; }
+        .qr-container { background: white; padding: 40px; border-radius: 50px; text-align: center; box-shadow: 0 0 60px rgba(59, 130, 246, 0.3); }
 
-        /* --- GATEWAY OVERLAY --- */
-        #nvo-gateway { position: fixed; inset: 0; z-index: 15000; background: #000; display: none; overflow-y: auto; padding-bottom: 50px; }
+        #nvo-gateway { position: fixed; inset: 0; z-index: 15000; background: #000; display: none; overflow-y: auto; padding-bottom: 60px; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="pb-32">
@@ -83,19 +89,23 @@
             <div class="nvo-brand-text text-left"><span class="brand-main">NVO<span class="brand-link">LINK</span></span></div>
         </div>
         <div class="loader-bar-container"><div id="loader-progress"></div></div>
-        <p class="mt-6 text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">Enterprise System Booting</p>
+        <p class="mt-6 text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">Enterprise System v0.1.5</p>
     </div>
 
     <header class="sticky top-0 z-[8000] bg-black/80 backdrop-blur-2xl border-b border-white/5 px-6 py-5">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <div class="nvo-logo-wrapper" onclick="location.reload()">
                 <div class="nvo-icon-box scale-90"><i class="fa-solid fa-infinity nvo-infinity"></i></div>
-                <div class="nvo-brand-text"><span class="brand-main text-xl">NVO<span class="brand-link">LINK</span></span><span class="text-[8px] font-bold text-zinc-600 tracking-widest uppercase">Full Edition</span></div>
+                <div class="nvo-brand-text"><span class="brand-main text-xl">NVO<span class="brand-link">LINK</span></span><span class="text-[8px] font-bold text-zinc-600 tracking-widest uppercase">Global Cloud</span></div>
             </div>
             <div id="auth-zone" class="flex items-center gap-4">
-                <button id="auth-login-btn" onclick="nvoAuth.login()" class="bg-white text-black px-6 py-2.5 rounded-2xl font-black text-xs">GİRİŞ YAP</button>
-                <div id="auth-user" class="hidden flex items-center gap-3 bg-zinc-900/50 p-1 rounded-2xl border border-white/5">
+                <button id="auth-login-btn" onclick="nvoAuth.login()" class="bg-white text-black px-7 py-3 rounded-2xl font-black text-xs hover:bg-zinc-200 transition">GİRİŞ</button>
+                <div id="auth-user" class="hidden flex items-center gap-3 bg-zinc-900/50 p-1.5 pr-4 rounded-2xl border border-white/5">
                     <img id="header-avatar" class="w-10 h-10 rounded-xl object-cover border border-blue-600/50">
+                    <div class="hidden sm:block">
+                        <p id="header-name" class="text-[10px] font-black uppercase"></p>
+                        <p class="text-[8px] text-blue-500 font-bold">VIP ACCESS</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,14 +115,15 @@
         
         <div id="view-discovery" class="nvo-view space-y-8">
             <div class="relative group">
-                <i class="fa-solid fa-search absolute left-6 top-1/2 -translate-y-1/2 text-zinc-600"></i>
-                <input type="text" oninput="nvoApp.search(this.value)" placeholder="Kampanya veya kategori ara..." class="nvo-input pl-16">
+                <i class="fa-solid fa-search absolute left-6 top-1/2 -translate-y-1/2 text-zinc-600 transition group-focus-within:text-blue-500"></i>
+                <input type="text" oninput="nvoApp.search(this.value)" placeholder="Kampanya, yazılım veya kategori ara..." class="nvo-input pl-16">
             </div>
 
             <div class="flex gap-3 overflow-x-auto no-scrollbar py-2">
                 <button onclick="nvoApp.filter('Hepsi', this)" class="cat-chip active">Hepsi</button>
                 <button onclick="nvoApp.filter('Oyun', this)" class="cat-chip">Oyun</button>
                 <button onclick="nvoApp.filter('Yazılım', this)" class="cat-chip">Yazılım</button>
+                <button onclick="nvoApp.filter('Eğitim', this)" class="cat-chip">Eğitim</button>
                 <button onclick="nvoApp.filter('Medya', this)" class="cat-chip">Medya</button>
             </div>
 
@@ -123,85 +134,119 @@
             <div class="nvo-card p-8 space-y-8">
                 <div class="text-center">
                     <h2 class="text-3xl font-black italic">YENİ KAMPANYA</h2>
-                    <p class="text-[10px] text-zinc-500 font-bold uppercase mt-2 tracking-widest">Dosyanı Kilitle ve Paylaş</p>
+                    <p class="text-[10px] text-zinc-500 font-bold uppercase mt-2 tracking-widest">Sistemine Yeni Bir Link Kilitle</p>
                 </div>
 
-                <div onclick="document.getElementById('file-upload').click()" class="h-56 bg-zinc-900 rounded-[2.5rem] border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center cursor-pointer group hover:border-blue-500 transition relative overflow-hidden">
+                <div onclick="document.getElementById('file-upload').click()" class="h-60 bg-zinc-900 rounded-[2.5rem] border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center cursor-pointer group hover:border-blue-500 transition relative overflow-hidden">
                     <img id="create-preview" class="hidden w-full h-full object-cover">
                     <div id="hint-ui" class="text-center">
-                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-zinc-700 mb-4 group-hover:text-blue-500 transition"></i>
-                        <p class="text-xs font-black text-zinc-600 uppercase">Kapak Fotoğrafı</p>
+                        <div class="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 transition">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                        </div>
+                        <p class="text-xs font-black text-zinc-600 uppercase">Kapak Fotoğrafı Seç</p>
                     </div>
                 </div>
                 <input type="file" id="file-upload" class="hidden" accept="image/*" onchange="nvoApp.handleImage(this)">
 
                 <div class="space-y-4">
-                    <input type="text" id="inp-title" placeholder="Kampanya Başlığı" class="nvo-input">
-                    <input type="url" id="inp-target" placeholder="Hedef Link (İndirme Linki)" class="nvo-input">
-                    <select id="inp-cat" class="nvo-input">
-                        <option value="Oyun">Oyun</option>
-                        <option value="Yazılım">Yazılım</option>
-                        <option value="Medya">Medya</option>
-                    </select>
-                </div>
-
-                <div class="bg-zinc-900/40 p-6 rounded-[2.5rem] border border-white/5">
-                    <p class="text-[10px] font-black text-blue-500 uppercase mb-4 tracking-widest">Görev Tanımlama</p>
-                    <div id="task-list-display" class="space-y-2 mb-6"></div>
-                    <div class="space-y-3">
-                        <input type="text" id="task-name" placeholder="Görev Adı (Örn: YouTube Abone Ol)" class="nvo-input !p-4 !text-xs">
-                        <input type="url" id="task-url" placeholder="Görev Linki" class="nvo-input !p-4 !text-xs">
-                        <button onclick="nvoApp.addTask()" class="w-full bg-zinc-800 py-4 rounded-2xl text-[10px] font-black uppercase tracking-tighter hover:bg-zinc-700">LİSTEYE EKLE</button>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-zinc-500 ml-4 uppercase">Başlık</label>
+                        <input type="text" id="inp-title" placeholder="Örn: PUBG Mobile Hile Paketi" class="nvo-input">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-zinc-500 ml-4 uppercase">Hedef Link</label>
+                        <input type="url" id="inp-target" placeholder="https://drive.google.com/..." class="nvo-input">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-zinc-500 ml-4 uppercase">Kategori</label>
+                        <select id="inp-cat" class="nvo-input">
+                            <option value="Oyun">Oyun</option>
+                            <option value="Yazılım">Yazılım</option>
+                            <option value="Eğitim">Eğitim</option>
+                            <option value="Medya">Medya</option>
+                        </select>
                     </div>
                 </div>
 
-                <button onclick="nvoApp.publish()" id="pub-btn" class="btn-primary py-5">KAMPANYAYI BAŞLAT</button>
+                <div class="bg-zinc-900/40 p-7 rounded-[2.5rem] border border-white/5">
+                    <p class="text-[10px] font-black text-blue-500 uppercase mb-5 tracking-widest">Görev Zinciri Oluştur</p>
+                    <div id="task-list-display" class="space-y-3 mb-6"></div>
+                    <div class="space-y-4">
+                        <input type="text" id="task-name" placeholder="Görev Adı (YouTube Abone Ol)" class="nvo-input !p-4 !text-xs">
+                        <input type="url" id="task-url" placeholder="Görev Linki" class="nvo-input !p-4 !text-xs">
+                        <button onclick="nvoApp.addTask()" class="w-full bg-zinc-800 py-4 rounded-2xl text-[10px] font-black hover:bg-zinc-700 transition uppercase tracking-tighter">LİSTEYE GÖREV EKLE</button>
+                    </div>
+                </div>
+
+                <button onclick="nvoApp.publish()" id="pub-btn" class="btn-primary py-5">KAMPANYAYI YAYINLA</button>
             </div>
         </div>
 
         <div id="view-profile" class="nvo-view hidden space-y-8">
             <div class="nvo-card p-10 text-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-                <img id="prof-avatar" class="w-28 h-28 rounded-[2.5rem] mx-auto mb-6 border-4 border-zinc-900 shadow-2xl object-cover">
-                <h3 id="prof-name" class="text-2xl font-black mb-2">...</h3>
+                
+                <div class="relative w-32 h-32 mx-auto mb-6">
+                    <img id="prof-avatar" class="w-full h-full rounded-[2.8rem] border-4 border-zinc-900 shadow-2xl object-cover">
+                    <button onclick="document.getElementById('edit-avatar-inp').click()" class="absolute -right-2 -bottom-2 w-11 h-11 bg-blue-600 rounded-2xl border-4 border-black flex items-center justify-center shadow-xl">
+                        <i class="fa-solid fa-camera text-sm"></i>
+                    </button>
+                    <input type="file" id="edit-avatar-inp" class="hidden" onchange="nvoApp.updateAvatar(this)">
+                </div>
+
+                <div class="flex justify-center items-center gap-2 mb-2">
+                    <input type="text" id="prof-name-input" class="text-center font-black text-2xl bg-transparent border-none w-full focus:ring-0" onchange="nvoApp.updateName(this.value)">
+                    <i class="fa-solid fa-pen text-[10px] text-zinc-600"></i>
+                </div>
                 <p id="prof-email" class="text-xs text-zinc-500 font-bold uppercase tracking-widest"></p>
                 
-                <div class="grid grid-cols-2 gap-4 mt-8">
-                    <div class="bg-zinc-900/50 p-6 rounded-3xl border border-white/5">
-                        <h4 id="stat-count" class="text-2xl font-black">0</h4>
-                        <p class="text-[9px] text-zinc-600 font-black uppercase">Paylaşım</p>
+                <div class="grid grid-cols-2 gap-5 mt-10">
+                    <div class="bg-zinc-900/50 p-7 rounded-[2rem] border border-white/5">
+                        <h4 id="stat-count" class="text-3xl font-black">0</h4>
+                        <p class="text-[9px] text-zinc-600 font-black uppercase mt-1">İçerik</p>
                     </div>
-                    <div class="bg-zinc-900/50 p-6 rounded-3xl border border-white/5">
-                        <h4 id="stat-views" class="text-2xl font-black">0</h4>
-                        <p class="text-[9px] text-zinc-600 font-black uppercase">İzlenme</p>
+                    <div class="bg-zinc-900/50 p-7 rounded-[2rem] border border-white/5">
+                        <h4 id="stat-views" class="text-3xl font-black">0</h4>
+                        <p class="text-[9px] text-zinc-600 font-black uppercase mt-1">İzlenme</p>
                     </div>
                 </div>
-                <button onclick="nvoAuth.logout()" class="mt-10 text-[10px] text-red-500/50 font-black uppercase tracking-[0.2em] hover:text-red-500 transition">Oturumu Kapat</button>
+                <button onclick="nvoAuth.logout()" class="mt-12 text-[10px] text-red-500/50 font-black uppercase tracking-[0.3em] hover:text-red-500 transition">Sistemden Çıkış Yap</button>
             </div>
-            <div id="prof-links" class="space-y-4"></div>
+
+            <div class="space-y-4">
+                <h3 class="text-xs font-black text-zinc-500 uppercase tracking-widest ml-4">Yönettiğin Linkler</h3>
+                <div id="prof-links" class="space-y-4"></div>
+            </div>
         </div>
 
     </main>
 
     <div id="nvo-gateway">
-        <div class="max-w-md mx-auto p-6 pt-12">
+        <div class="max-w-md mx-auto p-6 pt-16">
             <div class="nvo-logo-wrapper justify-center mb-12">
                 <div class="nvo-icon-box"><i class="fa-solid fa-infinity nvo-infinity"></i></div>
                 <div class="nvo-brand-text"><span class="brand-main">NVO<span class="brand-link">LINK</span></span></div>
             </div>
-            <div class="nvo-card">
-                <img id="gw-img" class="w-full h-60 object-cover">
-                <div class="p-8">
-                    <span class="bg-blue-600/10 text-blue-500 text-[9px] font-black px-4 py-1.5 rounded-full uppercase mb-4 inline-block">Güvenli İçerik</span>
-                    <h2 id="gw-title" class="text-3xl font-black mb-4"></h2>
-                    <p class="text-xs text-zinc-500 font-medium leading-relaxed mb-8">Bu içeriğe erişmek için aşağıdaki görevleri sırayla tamamlamanız gerekmektedir.</p>
+            <div class="nvo-card shadow-2xl">
+                <img id="gw-img" class="w-full h-64 object-cover">
+                <div class="p-9">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-blue-500 text-[10px] font-black uppercase tracking-widest">Güvenli Geçit Aktif</span>
+                    </div>
+                    <h2 id="gw-title" class="text-3xl font-black mb-4 leading-tight"></h2>
+                    <p class="text-xs text-zinc-500 font-medium leading-relaxed mb-10">İçeriğe erişmek için aşağıdaki adımları tamamlayın. Tüm görevler doğrulandıktan sonra indirme butonu açılacaktır.</p>
                     
-                    <div id="gw-tasks" class="space-y-3"></div>
+                    <div id="gw-tasks" class="space-y-4"></div>
                     
-                    <button id="gw-download" disabled class="btn-primary mt-10 opacity-20 cursor-not-allowed">
-                        KİLİDİ AÇ VE İNDİR
+                    <button id="gw-download" disabled class="btn-primary mt-12 opacity-20 cursor-not-allowed py-6">
+                        DOSYAYI KİLİDİNİ AÇ VE İNDİR
                     </button>
-                    <p class="text-center text-[9px] text-zinc-700 font-bold uppercase mt-6 tracking-[0.3em]">NVOLINK Cloud Protection</p>
+                    <div class="mt-8 flex justify-center gap-6 opacity-20">
+                        <i class="fa-solid fa-shield-halved text-xl"></i>
+                        <i class="fa-solid fa-lock text-xl"></i>
+                        <i class="fa-solid fa-server text-xl"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -209,21 +254,22 @@
 
     <div id="nvo-qr-modal" onclick="this.style.display='none'">
         <div class="qr-container" onclick="event.stopPropagation()">
-            <div id="qr-target" class="mb-6"></div>
-            <p class="text-black text-[10px] font-black uppercase tracking-widest">Cihazdan Tara ve Git</p>
+            <div id="qr-target" class="mb-8"></div>
+            <p class="text-black text-[11px] font-black uppercase tracking-[0.2em]">Cihazından Tara ve Paylaş</p>
+            <button class="mt-8 w-full py-4 bg-zinc-100 rounded-2xl text-black font-black text-xs">KAPAT</button>
         </div>
     </div>
 
     <nav class="bottom-nav">
         <button onclick="nvoApp.switchTab('discovery')" class="nav-link active" id="btn-discovery"><i class="fa-solid fa-compass"></i></button>
-        <button onclick="nvoApp.switchTab('create')" class="nav-link" id="btn-create"><i class="fa-solid fa-square-plus text-4xl text-blue-500"></i></button>
+        <button onclick="nvoApp.switchTab('create')" class="nav-link" id="btn-create"><i class="fa-solid fa-add text-4xl text-blue-500"></i></button>
         <button onclick="nvoApp.switchTab('profile')" class="nav-link" id="btn-profile"><i class="fa-solid fa-user-astronaut"></i></button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
@@ -253,8 +299,9 @@
                         document.getElementById('auth-login-btn').classList.add('hidden');
                         document.getElementById('auth-user').classList.remove('hidden');
                         document.getElementById('header-avatar').src = u.photoURL;
+                        document.getElementById('header-name').innerText = u.displayName;
                         document.getElementById('prof-avatar').src = u.photoURL;
-                        document.getElementById('prof-name').innerText = u.displayName;
+                        document.getElementById('prof-name-input').value = u.displayName;
                         document.getElementById('prof-email').innerText = u.email;
                         nvoApp.switchTab('discovery');
                     }
@@ -267,14 +314,14 @@
             runPreloader: () => {
                 let p = 0;
                 const itv = setInterval(() => {
-                    p += Math.floor(Math.random() * 15) + 5;
+                    p += Math.floor(Math.random() * 20) + 5;
                     document.getElementById('loader-progress').style.width = p + '%';
                     if(p >= 100) { 
                         clearInterval(itv); 
                         setTimeout(() => {
                             document.getElementById('nvo-preloader').style.opacity = '0';
                             setTimeout(() => document.getElementById('nvo-preloader').remove(), 800);
-                        }, 500);
+                        }, 400);
                     }
                 }, 100);
             },
@@ -295,7 +342,7 @@
                         let w = img.width; if(w > 800) w = 800;
                         canvas.width = w; canvas.height = (img.height * w) / img.width;
                         canvas.getContext('2d').drawImage(img, 0, 0, w, canvas.height);
-                        window.nvoData.b64 = canvas.toDataURL('image/jpeg', 0.7);
+                        window.nvoData.b64 = canvas.toDataURL('image/jpeg', 0.8);
                         document.getElementById('create-preview').src = window.nvoData.b64;
                         document.getElementById('create-preview').classList.remove('hidden');
                         document.getElementById('hint-ui').classList.add('hidden');
@@ -306,20 +353,20 @@
             },
             addTask: () => {
                 const n = document.getElementById('task-name').value, u = document.getElementById('task-url').value;
-                if(!n || !u) return;
+                if(!n || !u) return alert("Görev adı ve linki girin!");
                 window.nvoData.tasks.push({name: n, url: u});
                 document.getElementById('task-list-display').innerHTML += `
                     <div class="task-row">
-                        <span class="text-[10px] font-black uppercase tracking-tighter">${n}</span>
-                        <i class="fa-solid fa-check-double text-blue-500 text-xs"></i>
+                        <span class="text-[11px] font-black uppercase">${n}</span>
+                        <i class="fa-solid fa-circle-check text-blue-500"></i>
                     </div>`;
                 document.getElementById('task-name').value = ""; document.getElementById('task-url').value = "";
             },
             publish: async () => {
                 const t = document.getElementById('inp-title').value, tg = document.getElementById('inp-target').value, c = document.getElementById('inp-cat').value;
                 const btn = document.getElementById('pub-btn');
-                if(!t || !tg || !window.nvoData.b64) return alert("Hata: Başlık, Link ve Görsel zorunludur!");
-                btn.innerText = "YAYINLANIYOR..."; btn.disabled = true;
+                if(!t || !tg || !window.nvoData.b64) return alert("Lütfen başlık, hedef link ve kapak fotoğrafını ekleyin!");
+                btn.innerText = "SİSTEME KAYDEDİLİYOR..."; btn.disabled = true;
                 await addDoc(collection(db, "links"), {
                     title: t, target: tg, category: c, image: window.nvoData.b64, tasks: window.nvoData.tasks,
                     uid: window.nvoData.user.uid, uName: window.nvoData.user.displayName, uAvatar: window.nvoData.user.photoURL,
@@ -338,23 +385,26 @@
                     if(searchVal && !data.title.toLowerCase().includes(searchVal.toLowerCase())) return;
                     container.innerHTML += `
                         <div class="nvo-card">
-                            <div class="relative h-60">
+                            <div class="relative h-64">
                                 <img src="${data.image}" class="w-full h-full object-cover">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                                <div class="absolute top-4 left-4 bg-blue-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">${data.category}</div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                                <div class="absolute top-5 left-5 bg-blue-600 text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest">${data.category}</div>
                                 <div class="absolute bottom-6 left-6 right-6">
                                     <h3 class="text-2xl font-black text-white leading-tight mb-2">${data.title}</h3>
-                                    <p class="text-[10px] text-zinc-400 font-bold uppercase"><i class="fa-solid fa-eye text-blue-500 mr-2"></i>${data.views || 0} İzlenme</p>
+                                    <div class="flex items-center gap-4">
+                                        <p class="text-[10px] text-zinc-400 font-bold uppercase"><i class="fa-solid fa-eye text-blue-500 mr-2"></i>${data.views || 0} İzlenme</p>
+                                        <p class="text-[10px] text-zinc-400 font-bold uppercase"><i class="fa-solid fa-list-check text-blue-500 mr-2"></i>${data.tasks ? data.tasks.length : 0} Görev</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="p-6 flex justify-between items-center bg-zinc-900/20">
+                            <div class="p-6 flex justify-between items-center bg-zinc-900/10">
                                 <div class="flex items-center gap-3">
-                                    <img src="${data.uAvatar}" class="w-9 h-9 rounded-full border border-white/10">
-                                    <span class="text-xs font-bold text-zinc-500">${data.uName}</span>
+                                    <img src="${data.uAvatar}" class="w-10 h-10 rounded-full border-2 border-white/5">
+                                    <span class="text-xs font-bold text-zinc-400">${data.uName}</span>
                                 </div>
                                 <div class="flex gap-2">
-                                    <button onclick="nvoApp.openQR('${d.id}')" class="w-11 h-11 bg-zinc-800 rounded-xl flex items-center justify-center text-zinc-400"><i class="fa-solid fa-qrcode text-sm"></i></button>
-                                    <button onclick="location.href='?id=${d.id}'" class="bg-blue-600/10 text-blue-500 border border-blue-500/20 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase">Kilidi Aç</button>
+                                    <button onclick="nvoApp.openQR('${d.id}')" class="w-12 h-12 bg-zinc-800 rounded-2xl flex items-center justify-center text-zinc-400 hover:text-white transition"><i class="fa-solid fa-qrcode"></i></button>
+                                    <button onclick="location.href='?id=${d.id}'" class="bg-blue-600/10 text-blue-500 border border-blue-500/20 px-7 py-3 rounded-2xl text-[11px] font-black uppercase hover:bg-blue-600 hover:text-white transition">DOSYAYI AÇ</button>
                                 </div>
                             </div>
                         </div>`;
@@ -364,23 +414,27 @@
                 const m = document.getElementById('nvo-qr-modal');
                 const t = document.getElementById('qr-target');
                 t.innerHTML = ""; m.style.display = 'flex';
-                new QRCode(t, { text: window.location.origin + window.location.pathname + "?id=" + id, width: 220, height: 220 });
+                new QRCode(t, { text: window.location.origin + window.location.pathname + "?id=" + id, width: 240, height: 240 });
             },
             renderGateway: async (id) => {
                 const gw = document.getElementById('nvo-gateway');
                 gw.style.display = 'block';
                 const s = await getDoc(doc(db, "links", id));
+                if(!s.exists()) return gw.innerHTML = "<p class='text-center mt-20 font-black'>Link Mevcut Değil.</p>";
                 const d = s.data();
                 document.getElementById('gw-img').src = d.image;
                 document.getElementById('gw-title').innerText = d.title;
                 const tBox = document.getElementById('gw-tasks');
-                tBox.innerHTML = d.tasks.length > 0 ? d.tasks.map((t, i) => `
-                    <button id="gt-${i}" onclick="nvoApp.doTask('${t.url}', ${i}, ${d.tasks.length}, '${d.target}', '${id}')" class="gw-task-btn">
-                        <span class="text-xs font-black uppercase tracking-tight text-zinc-300">${t.name}</span>
-                        <div class="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center"><i class="fa-solid fa-chevron-right text-[10px] text-zinc-600"></i></div>
-                    </button>`).join('') : `<p class="text-center py-4 text-zinc-600 text-xs font-bold uppercase">Görev bulunmuyor, direkt geçebilirsiniz.</p>`;
+                tBox.innerHTML = d.tasks && d.tasks.length > 0 ? d.tasks.map((t, i) => `
+                    <button id="gt-${i}" onclick="nvoApp.doTask('${t.url}', ${i}, ${d.tasks.length}, '${d.target}', '${id}')" class="gw-task-btn group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-[10px] font-black text-zinc-600 group-hover:bg-blue-600 group-hover:text-white transition">${i+1}</div>
+                            <span class="text-xs font-black uppercase tracking-tight text-zinc-300">${t.name}</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-zinc-700"></i>
+                    </button>`).join('') : `<p class="text-center py-6 text-zinc-600 text-xs font-black uppercase">Görev bulunmuyor, direkt geçebilirsiniz.</p>`;
                 
-                if(d.tasks.length === 0) {
+                if(!d.tasks || d.tasks.length === 0) {
                     const dl = document.getElementById('gw-download');
                     dl.disabled = false; dl.classList.remove('opacity-20', 'cursor-not-allowed');
                     dl.onclick = async () => { await updateDoc(doc(db, "links", id), { views: increment(1) }); window.location.href = d.target; };
@@ -388,20 +442,21 @@
             },
             doTask: (url, i, total, target, id) => {
                 window.open(url, '_blank');
+                const btn = document.getElementById('gt-'+i);
+                btn.innerHTML = `<span class="text-xs font-black text-blue-500 uppercase tracking-widest">DOĞRULANIYOR...</span>`;
                 setTimeout(() => {
-                    const btn = document.getElementById('gt-'+i);
                     btn.classList.add('done');
-                    btn.innerHTML = `<span class="text-xs font-black uppercase text-green-500 tracking-tight">GÖREV TAMAMLANDI</span><i class="fa-solid fa-circle-check text-green-500"></i>`;
+                    btn.innerHTML = `<span class="text-xs font-black uppercase text-green-500">GÖREV TAMAMLANDI</span><i class="fa-solid fa-check-circle text-green-500"></i>`;
                     window.nvoData.done++;
                     if(window.nvoData.done >= total) {
                         const dl = document.getElementById('gw-download');
                         dl.disabled = false; dl.classList.remove('opacity-20', 'cursor-not-allowed');
                         dl.onclick = async () => {
                             await updateDoc(doc(db, "links", id), { views: increment(1) });
-                            confetti(); setTimeout(() => window.location.href = target, 1000);
+                            confetti(); setTimeout(() => window.location.href = target, 800);
                         };
                     }
-                }, 4000);
+                }, 5000);
             },
             loadProfile: async () => {
                 const q = query(collection(db, "links"), where("uid", "==", window.nvoData.user.uid));
@@ -413,23 +468,38 @@
                 snap.forEach(d => {
                     const data = d.data(); totalViews += (data.views || 0);
                     list.innerHTML += `
-                        <div class="nvo-card p-5 flex items-center justify-between bg-zinc-900/40">
+                        <div class="nvo-card p-5 flex items-center justify-between bg-zinc-900/30">
                             <div class="flex items-center gap-4">
-                                <img src="${data.image}" class="w-14 h-14 rounded-2xl object-cover">
+                                <img src="${data.image}" class="w-16 h-16 rounded-2xl object-cover">
                                 <div>
-                                    <h4 class="text-sm font-black truncate w-32 uppercase">${data.title}</h4>
+                                    <h4 class="text-sm font-black truncate w-32 uppercase tracking-tighter">${data.title}</h4>
                                     <p class="text-[9px] text-blue-500 font-black uppercase">${data.views || 0} İzlenme</p>
                                 </div>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="navigator.clipboard.writeText('${window.location.origin + window.location.pathname}?id=${d.id}');alert('Link Kopyalandı!')" class="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-zinc-500"><i class="fa-solid fa-link text-xs"></i></button>
-                                <button onclick="nvoApp.del('${d.id}')" class="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-red-500/20"><i class="fa-solid fa-trash text-xs"></i></button>
+                                <button onclick="navigator.clipboard.writeText('${window.location.origin + window.location.pathname}?id=${d.id}');alert('Link Kopyalandı!')" class="w-11 h-11 bg-zinc-900 rounded-xl flex items-center justify-center text-zinc-500 hover:text-white transition"><i class="fa-solid fa-link text-xs"></i></button>
+                                <button onclick="nvoApp.del('${d.id}')" class="w-11 h-11 bg-zinc-900 rounded-xl flex items-center justify-center text-red-500/30 hover:text-red-500 transition"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
                         </div>`;
                 });
                 document.getElementById('stat-views').innerText = totalViews;
             },
-            del: async (id) => { if(confirm("Silmek istediğine emin misin?")) { await deleteDoc(doc(db, "links", id)); nvoApp.loadProfile(); } },
+            updateName: async (val) => {
+                if(!val) return;
+                await updateProfile(auth.currentUser, { displayName: val });
+                alert("İsim güncellendi!");
+                location.reload();
+            },
+            updateAvatar: (input) => {
+                const r = new FileReader();
+                r.onload = async (e) => {
+                    await updateProfile(auth.currentUser, { photoURL: e.target.result });
+                    alert("Profil fotoğrafı güncellendi!");
+                    location.reload();
+                };
+                r.readAsDataURL(input.files[0]);
+            },
+            del: async (id) => { if(confirm("Bu içeriği silmek istediğine emin misin?")) { await deleteDoc(doc(db, "links", id)); nvoApp.loadProfile(); } },
             filter: (cat, el) => {
                 window.nvoData.cat = cat;
                 document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
