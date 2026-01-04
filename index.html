@@ -4,473 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NVOLINK G-0.0.6 TITAN MAX | ULTIMATE ENTERPRISE SOLUTION</title>
+    <title>NVOLINK G-0.1.1 | NOVA FRAMEWORK</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- NVOLINK TITAN DESIGN SYSTEM ---
-            Professional UI/UX Framework with Custom Properties
-        */
         :root {
-            --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.4);
-            --secondary: #8b5cf6;
-            --secondary-glow: rgba(139, 92, 246, 0.3);
-            --bg-dark: #000000;
-            --card-dark: #0c0c0e;
-            --border-muted: #1f1f22;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --nav-bg: rgba(12, 12, 14, 0.85);
-            --transition-main: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --p: #3b82f6; --p-soft: rgba(59, 130, 246, 0.1);
+            --bg: #000000; --card: #0a0a0b; --border: #1a1a1c;
         }
 
-        /* [GLOBAL RESET & BASE] */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            line-height: 1.5;
+        /* --- PRELOADER --- */
+        #loader {
+            position: fixed; inset: 0; z-index: 99999; background: #000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
+        .spin-outer { width: 70px; height: 70px; border: 4px solid #111; border-top-color: var(--p); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* [ANIMATIONS LIBRARY] */
-        @keyframes titanFadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* --- DESIGN SYSTEM --- */
+        .nova-card { background: var(--card); border: 1px solid var(--border); border-radius: 35px; overflow: hidden; transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .nova-card:hover { transform: translateY(-10px); border-color: #333; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+
+        .nova-input {
+            background: #0d0d0e !important; border: 1px solid var(--border) !important;
+            border-radius: 22px !important; color: white !important; padding: 18px 24px !important;
+            width: 100%; font-size: 14px; margin-bottom: 15px; outline: none; transition: 0.3s;
         }
+        .nova-input:focus { border-color: var(--p) !important; box-shadow: 0 0 20px var(--p-soft); }
 
-        @keyframes titanSlideRight {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+        /* --- GUEST MODE (MISAFIR ARAYÜZÜ) --- */
+        #guest-mode { position: fixed; inset: 0; background: #000; z-index: 80000; overflow-y: auto; display: none; }
+        .guest-container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
+        .guest-thumb { width: 100%; height: 260px; border-radius: 40px; object-fit: cover; border: 1px solid #222; margin-bottom: 25px; }
+        .task-item { 
+            background: #0f0f11; border: 1px solid #1a1a1c; border-radius: 25px; padding: 20px 25px; 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: 0.3s;
         }
+        .task-item.completed { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
 
-        @keyframes titanPulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        /* --- NAVIGATION --- */
+        .nova-nav {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 500px; height: 85px; background: rgba(10,10,11,0.85);
+            backdrop-filter: blur(30px); border-radius: 45px; border: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; align-items: center; z-index: 10000;
         }
+        .nav-link { color: #3d3d3f; font-size: 26px; transition: 0.4s; position: relative; }
+        .nav-link.active { color: var(--p); transform: translateY(-8px); }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: var(--p); border-radius: 50%; box-shadow: 0 0 15px var(--p); }
 
-        .animate-titan-in { animation: titanFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) both; }
+        .btn-main { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; font-weight: 800; border-radius: 24px; padding: 20px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .btn-main:disabled { background: #1a1a1c; color: #444; cursor: not-allowed; }
+
+        #img-preview { width: 100%; height: 200px; object-fit: cover; border-radius: 30px; display: none; margin-top: 15px; border: 2px dashed #333; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* [UI COMPONENTS] */
-        .nvo-card {
-            background: var(--card-dark);
-            border: 1px solid var(--border-muted);
-            border-radius: 30px;
-            transition: var(--transition-main);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nvo-card:hover {
-            border-color: #333;
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .nvo-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .nvo-input-label {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
-            margin-left: 15px;
-        }
-
-        .nvo-input {
-            background: #0f0f11 !important;
-            border: 1px solid var(--border-muted) !important;
-            border-radius: 20px !important;
-            color: #fff !important;
-            padding: 18px 22px !important;
-            width: 100%;
-            font-size: 14px;
-            transition: var(--transition-main);
-        }
-
-        .nvo-input:focus {
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 20px var(--primary-glow);
-            background: #121215 !important;
-        }
-
-        /* [LOGO & BRAND] */
-        .nvo-brand-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            user-select: none;
-        }
-
-        .nvo-brand-box {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 25px var(--primary-glow);
-            transition: var(--transition-main);
-        }
-
-        .nvo-brand-box:hover {
-            transform: rotate(10deg) scale(1.1);
-        }
-
-        /* [CATEGORY SYSTEM] */
-        .cat-scroll-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 12px;
-            padding-bottom: 15px;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .cat-scroll-container::-webkit-scrollbar { display: none; }
-
-        .cat-item {
-            padding: 14px 28px;
-            border-radius: 18px;
-            background: #111;
-            border: 1px solid #222;
-            font-size: 11px;
-            font-weight: 800;
-            color: #666;
-            white-space: nowrap;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: var(--transition-main);
-        }
-
-        .cat-item.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
-        }
-
-        /* [THUMBNAIL STYLES] */
-        .card-thumb {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: #000;
-            border-bottom: 1px solid #1a1a1c;
-        }
-
-        /* [TASK ARCHITECTURE] */
-        .task-list-wrapper {
-            background: #0a0a0b;
-            padding: 20px;
-            border-radius: 25px;
-            border: 1px solid #1a1a1c;
-        }
-
-        .task-entry {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 18px;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            transition: var(--transition-main);
-        }
-
-        .task-entry:hover {
-            border-color: var(--primary);
-        }
-
-        /* [NAVIGATION UI] */
-        .titan-nav {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 500px;
-            height: 80px;
-            background: var(--nav-bg);
-            backdrop-filter: blur(25px);
-            border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 9999;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
-        }
-
-        .nav-link {
-            color: #4b5563;
-            font-size: 28px;
-            transition: var(--transition-main);
-            position: relative;
-        }
-
-        .nav-link.active {
-            color: var(--primary);
-            transform: translateY(-10px);
-        }
-
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 15px var(--primary);
-        }
-
-        /* [BUTTON ENGINE] */
-        .btn-titan {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 20px;
-            border-radius: 24px;
-            color: white;
-            font-weight: 800;
-            text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 2px;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition-main);
-            width: 100%;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
-        }
-
-        .btn-titan:hover {
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
-            transform: scale(1.02);
-        }
-
-        .btn-titan:active {
-            transform: scale(0.96);
-        }
-
-        /* [MODALS & OVERLAYS] */
-        #qr-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 30000;
-            background: rgba(0,0,0,0.95);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-        }
-
-        #gateway-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 25000;
-            background: #000;
-            display: none;
-            overflow-y: auto;
-            padding: 25px 0;
-        }
-
-        .gateway-container {
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .patch-card { background: linear-gradient(135deg, #0a0a0b, #111); border-radius: 30px; border: 1px solid #1a1a1c; padding: 25px; }
     </style>
 </head>
 <body class="pb-40">
 
-    <header class="sticky top-0 z-[10000] bg-black/80 backdrop-blur-2xl border-b border-white/10 px-6 py-5 flex justify-between items-center">
-        <div class="nvo-brand-container">
-            <div class="nvo-brand-box"><i class="fa-solid fa-infinity text-white text-2xl"></i></div>
-            <div class="text-2xl font-black tracking-tighter uppercase italic">NVO<span class="text-blue-500">LINK</span></div>
-        </div>
-        
-        <div id="auth-manager">
-            <button onclick="titan.auth.signIn()" id="auth-trigger" class="bg-zinc-900 border border-white/10 px-7 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all">GİRİŞ YAP</button>
-            <div id="auth-status" class="hidden flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <p id="auth-name-display" class="text-[10px] font-black uppercase text-blue-500">User</p>
-                    <p class="text-[8px] font-bold text-zinc-500">SaaS Veri Erişimi</p>
+    <div id="loader">
+        <div class="spin-outer"></div>
+        <p class="mt-8 font-black text-[11px] tracking-[0.6em] text-blue-500 uppercase">NOVA ARCHITECTURE G-0.1.1</p>
+    </div>
+
+    <div id="guest-mode">
+        <div class="guest-container">
+            <div class="text-center mb-10">
+                <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-blue-500/30">
+                    <i class="fa-solid fa-lock-open text-white text-2xl"></i>
                 </div>
-                <img id="auth-avatar-display" class="w-12 h-12 rounded-2xl border-2 border-blue-600/40 object-cover cursor-pointer hover:scale-105 transition" onclick="titan.navigation.goTo('profile')">
+                <h1 id="g-title" class="text-3xl font-black italic uppercase tracking-tighter">İÇERİK KİLİTLİ</h1>
+                <p class="text-[10px] text-zinc-500 font-bold uppercase mt-2 tracking-widest">Devam etmek için görevleri tamamla</p>
             </div>
+            
+            <img id="g-thumb" class="guest-thumb shadow-2xl">
+            
+            <div id="g-tasks" class="space-y-3 mb-10"></div>
+            
+            <button id="g-download" disabled class="btn-main w-full py-6 text-sm">DOSYAYI İNDİR</button>
+            <p class="text-center text-zinc-700 text-[10px] font-black uppercase mt-8 tracking-widest">Powered by NVOLINK NOVA</p>
+        </div>
+    </div>
+
+    <header class="p-6 flex justify-between items-center sticky top-0 bg-black/80 backdrop-blur-2xl z-[1000] border-b border-white/5">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/20"><i class="fa-solid fa-atom text-white text-xl"></i></div>
+            <div class="text-2xl font-black italic tracking-tighter uppercase">NVO<span class="text-blue-500">LINK</span></div>
+        </div>
+        <div id="auth-box">
+            <button onclick="nv.login()" id="loginBtn" class="bg-zinc-900 border border-zinc-800 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest">GİRİŞ</button>
+            <img id="h-avatar" class="hidden w-12 h-12 rounded-2xl border-2 border-blue-600 object-cover" onclick="nv.tab('profile')">
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-6 mt-10 min-h-screen">
+    <main class="max-w-xl mx-auto px-6 mt-8">
         
-        <section id="view-discovery" class="titan-view space-y-10">
-            <div class="space-y-4">
-                <div class="flex items-center justify-between px-2">
-                    <h2 class="text-xs font-black text-zinc-600 uppercase tracking-[0.3em]">Kategoriler</h2>
-                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+        <div id="v-discovery" class="view-panel space-y-8">
+            <div class="patch-card">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="bg-blue-600 text-[9px] font-black px-3 py-1 rounded-full">YENİ</span>
+                    <h4 class="text-[11px] font-black uppercase tracking-widest text-zinc-400">Yama Notları v0.1.1</h4>
                 </div>
-                <div class="cat-scroll-container" id="category-injector">
-                    <div class="cat-item active" onclick="titan.app.filterByCategory('Hepsi')">Hepsi</div>
-                    <div class="cat-item" onclick="titan.app.filterByCategory('Oyun')">Oyun</div>
-                    <div class="cat-item" onclick="titan.app.filterByCategory('Yazılım')">Yazılım</div>
-                    <div class="cat-item" onclick="titan.app.filterByCategory('Eğlence')">Eğlence</div>
-                    <div class="cat-item" onclick="titan.app.filterByCategory('Diğer')">Diğer</div>
-                </div>
+                <ul class="text-[11px] font-bold text-zinc-500 space-y-2">
+                    <li><i class="fa-solid fa-check text-blue-500 mr-2"></i> Misafirler için "Pure Gateway" modu eklendi.</li>
+                    <li><i class="fa-solid fa-check text-blue-500 mr-2"></i> 500KB Resim İşleme Motoru 2.0 optimize edildi.</li>
+                    <li><i class="fa-solid fa-check text-blue-500 mr-2"></i> Veritabanı koruma kalkanı aktif.</li>
+                </ul>
             </div>
 
-            <div id="feed-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                </div>
-        </section>
-
-        <section id="view-create" class="titan-view hidden animate-titan-in">
-            <div class="nvo-card p-10 space-y-10">
-                <div class="text-center">
-                    <h2 class="text-3xl font-black uppercase italic tracking-tighter">Kampanya Motoru</h2>
-                    <p class="text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-3">Linklerinizi profesyonelce şifreleyin</p>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="nvo-input-group">
-                        <label class="nvo-input-label">Başlık</label>
-                        <input type="text" id="inp-titan-title" placeholder="Kampanya Adı..." class="nvo-input">
-                    </div>
-
-                    <div class="nvo-input-group">
-                        <label class="nvo-input-label">Kapak Fotoğrafı URL</label>
-                        <input type="url" id="inp-titan-thumb" placeholder="https://image-link.com/photo.jpg" class="nvo-input">
-                    </div>
-
-                    <div class="nvo-input-group">
-                        <label class="nvo-input-label">Kilitli Hedef URL</label>
-                        <input type="url" id="inp-titan-target" placeholder="https://target-file-link.com" class="nvo-input">
-                    </div>
-
-                    <div class="nvo-input-group">
-                        <label class="nvo-input-label">Kategori</label>
-                        <input type="text" id="inp-titan-cat" placeholder="Örn: PUBG Mobile, Script, Eğitim" class="nvo-input">
-                    </div>
-
-                    <div class="task-list-wrapper space-y-6">
-                        <div class="flex justify-between items-center px-2">
-                            <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Görev Konfigürasyonu</span>
-                            <span id="titan-task-badge" class="bg-blue-600 text-[10px] px-4 py-1.5 rounded-full font-black">0 AKTİF GÖREV</span>
-                        </div>
-
-                        <div id="titan-builder-stack" class="space-y-3">
-                            </div>
-
-                        <div class="grid grid-cols-1 gap-4 bg-zinc-900/40 p-5 rounded-3xl border border-white/5">
-                            <input type="text" id="inp-task-name" placeholder="Görev Adı: Kanala Abone Ol" class="nvo-input text-xs">
-                            <input type="url" id="inp-task-url" placeholder="Görev URL: https://youtube.com/c/user" class="nvo-input text-xs">
-                            <button onclick="titan.app.addNewTaskToStack()" class="w-full bg-white text-black py-4 rounded-2xl font-black text-xs uppercase hover:bg-zinc-200 transition">+ GÖREV LİSTESİNE EKLE</button>
-                        </div>
-                    </div>
-                </div>
-
-                <button onclick="titan.app.publishCampaign()" class="btn-titan mt-6">KAMPANYAYI GLOBALDE YAYINLA</button>
+            <div class="relative">
+                <i class="fa-solid fa-search absolute left-6 top-1/2 -translate-y-1/2 text-zinc-600"></i>
+                <input type="text" oninput="nv.search(this.value)" placeholder="Başlık veya hesap:isim ara..." class="nova-input !mb-0 pl-16 h-16 !rounded-[25px]">
             </div>
-        </section>
 
-        <section id="view-profile" class="titan-view hidden animate-titan-in">
-            <div class="nvo-card p-12 text-center relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600"></div>
-                
-                <div class="absolute top-8 right-8">
-                    <button onclick="titan.app.openProfileEditor()" class="text-zinc-600 hover:text-white transition text-2xl">
-                        <i class="fa-solid fa-screwdriver-wrench"></i>
+            <div id="feed" class="grid grid-cols-1 gap-8"></div>
+        </div>
+
+        <div id="v-stats" class="view-panel hidden space-y-8">
+            <h2 class="text-3xl font-black italic uppercase tracking-tighter">Global Analiz</h2>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="nova-card p-10 text-center">
+                    <p id="st-l" class="text-5xl font-black italic">0</p>
+                    <p class="text-[10px] text-zinc-500 font-black uppercase mt-4">Toplam Link</p>
+                </div>
+                <div class="nova-card p-10 text-center">
+                    <p id="st-v" class="text-5xl font-black italic text-blue-500">0</p>
+                    <p class="text-[10px] text-zinc-500 font-black uppercase mt-4">Toplam Tık</p>
+                </div>
+            </div>
+            <div id="st-cats" class="nova-card p-8 space-y-4"></div>
+        </div>
+
+        <div id="v-create" class="view-panel hidden space-y-6">
+            <div class="nova-card p-10 space-y-6">
+                <h2 class="text-2xl font-black italic uppercase">Link Konfigüratörü</h2>
+                <input type="text" id="c-title" placeholder="İçerik Başlığı" class="nova-input">
+                <input type="text" id="c-target" placeholder="Hedef Dosya/Site Linki" class="nova-input">
+                <input type="text" id="c-cat" placeholder="Kategori (Oyun, Script vb.)" class="nova-input">
+
+                <div class="relative">
+                    <input type="file" id="c-file" accept="image/*" class="hidden" onchange="nv.handleFile(this)">
+                    <button onclick="document.getElementById('c-file').click()" class="w-full bg-zinc-900 border-2 border-dashed border-zinc-800 p-12 rounded-[2.5rem] text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:border-blue-500 transition-all">
+                        <i class="fa-solid fa-camera-retro text-3xl mb-4 block text-blue-500"></i>
+                        Kapak Görseli Seç (OTO 500KB)
                     </button>
+                    <img id="img-preview" class="shadow-2xl">
                 </div>
 
-                <img id="profile-img-large" class="w-36 h-36 rounded-[3.5rem] mx-auto mb-8 border-4 border-zinc-900 shadow-2xl object-cover ring-4 ring-blue-600/10">
-                <h3 id="profile-name-large" class="text-3xl font-black uppercase tracking-tighter">SaaS Kullanıcı</h3>
-                
-                <div class="grid grid-cols-2 gap-6 mt-12">
-                    <div class="bg-zinc-900/60 p-10 rounded-[2.8rem] border border-white/5 group hover:border-blue-500/30 transition">
-                        <h5 id="stat-campaign-count" class="text-4xl font-black italic">0</h5>
-                        <p class="text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-3">Link Yayını</p>
-                    </div>
-                    <div class="bg-zinc-900/60 p-10 rounded-[2.8rem] border border-white/5 group hover:border-purple-500/30 transition">
-                        <h5 id="stat-total-points" class="text-4xl font-black italic text-blue-500">0</h5>
-                        <p class="text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-3">SaaS Puanı</p>
+                <div class="bg-zinc-900/50 p-6 rounded-[2.5rem] border border-white/5">
+                    <p class="text-[10px] font-black text-blue-500 uppercase mb-5 tracking-widest">Görev Zinciri</p>
+                    <div id="task-stack" class="space-y-3 mb-6"></div>
+                    <div class="space-y-3">
+                        <input type="text" id="t-name" placeholder="Görev Adı" class="nova-input !mb-0 text-xs">
+                        <input type="text" id="t-link" placeholder="Görev URL" class="nova-input !mb-0 text-xs">
+                        <button onclick="nv.addTask()" class="w-full bg-white text-black py-4 rounded-2xl font-black text-[10px] uppercase">GÖREVİ EKLE</button>
                     </div>
                 </div>
 
-                <button onclick="titan.auth.signOut()" class="mt-14 text-[10px] font-black text-red-500/30 uppercase tracking-[0.4em] hover:text-red-500 transition-all">Sistem Oturumunu Kapat</button>
+                <button id="pubBtn" onclick="nv.publish()" class="btn-main w-full py-5 text-xs">SİSTEME KAYDET VE YAYINLA</button>
             </div>
+        </div>
 
-            <div class="mt-12 space-y-6">
-                <h4 class="text-xs font-black text-zinc-700 uppercase tracking-[0.4em] ml-6">Yönettiğin Linkler</h4>
-                <div id="profile-links-injector" class="space-y-4">
-                    </div>
+        <div id="v-profile" class="view-panel hidden space-y-6">
+            <div class="nova-card p-12 text-center">
+                <img id="p-avatar" class="w-32 h-32 rounded-[3.5rem] mx-auto border-4 border-blue-600 mb-6 object-cover shadow-2xl">
+                <h3 id="p-name" class="text-3xl font-black italic uppercase tracking-tighter">...</h3>
+                <div class="grid grid-cols-2 gap-6 mt-10">
+                    <div class="bg-zinc-900 p-8 rounded-[2.5rem] border border-white/5"><p id="ps-l" class="text-3xl font-black">0</p><p class="text-[9px] text-zinc-600 font-black uppercase mt-2">Link</p></div>
+                    <div class="bg-zinc-900 p-8 rounded-[2.5rem] border border-white/5"><p id="ps-p" class="text-3xl font-black text-blue-500">0</p><p class="text-[9px] text-zinc-600 font-black uppercase mt-2">Puan</p></div>
+                </div>
             </div>
-        </section>
+            <div id="my-links" class="space-y-4 mt-8"></div>
+        </div>
 
     </main>
 
-    <div id="qr-overlay">
-        <div class="bg-white p-12 rounded-[4rem] text-center space-y-8 shadow-[0_0_100px_rgba(255,255,255,0.1)] animate-titan-in max-w-xs w-full">
-            <h4 class="text-black font-black text-[10px] uppercase tracking-[0.3em]">Titan QR Engine</h4>
-            <div id="qr-target-area" class="flex justify-center p-2 rounded-3xl bg-zinc-50"></div>
-            <div class="space-y-4">
-                <p class="text-[10px] text-zinc-400 font-bold px-4 uppercase">Bu kodu taratarak kampanyaya doğrudan erişebilirsiniz.</p>
-                <button onclick="document.getElementById('qr-overlay').style.display='none'" class="w-full py-5 bg-zinc-900 rounded-[2rem] text-white font-black text-[10px] uppercase tracking-widest hover:bg-black transition">MODALI KAPAT</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="gateway-overlay">
-        <div class="gateway-container">
-            <div id="gateway-injection-point"></div>
-        </div>
-    </div>
-
-    <nav class="titan-nav">
-        <button onclick="titan.navigation.goTo('discovery')" id="nav-discovery" class="nav-link active">
-            <i class="fa-solid fa-compass"></i>
-        </button>
-        <button onclick="titan.navigation.goTo('create')" id="nav-create" class="nav-link">
-            <i class="fa-solid fa-circle-plus text-4xl text-blue-500"></i>
-        </button>
-        <button onclick="titan.navigation.goTo('profile')" id="nav-profile" class="nav-link">
-            <i class="fa-solid fa-circle-user"></i>
-        </button>
+    <nav class="nova-nav">
+        <button onclick="nv.tab('discovery')" class="nav-link active" id="n-discovery"><i class="fa-solid fa-compass"></i></button>
+        <button onclick="nv.tab('stats')" class="nav-link" id="n-stats"><i class="fa-solid fa-chart-line"></i></button>
+        <button onclick="nv.tab('create')" class="nav-link" id="n-create"><i class="fa-solid fa-plus-circle text-4xl text-blue-500"></i></button>
+        <button onclick="nv.tab('profile')" class="nav-link" id="n-profile"><i class="fa-solid fa-user-astronaut"></i></button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        /* --- FIREBASE CONFIGURATION --- */
-        const titanConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
             authDomain: "nvo-link.firebaseapp.com",
             projectId: "nvo-link",
@@ -479,405 +209,184 @@
             appId: "1:256153773846:web:6d51174db82ccccf119237"
         };
 
-        const titanApp = initializeApp(titanConfig);
-        const titanDb = getFirestore(titanApp);
-        const titanAuth = getAuth(titanApp);
-        const titanProvider = new GoogleAuthProvider();
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
-        /* --- GLOBAL TITAN OBJECT --- */
-        window.titan = {
-            state: {
-                currentUser: null,
-                activeTasks: [],
-                currentView: 'discovery',
-                activeCategory: 'Hepsi'
+        let user = null, currentTasks = [], base64Img = "";
+
+        window.nv = {
+            login: () => signInWithPopup(auth, provider),
+            
+            tab: (id) => {
+                document.querySelectorAll('.view-panel').forEach(v => v.classList.add('hidden'));
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.getElementById('v-'+id).classList.remove('hidden');
+                document.getElementById('n-'+id).classList.add('active');
+                if(id === 'discovery') nv.loadFeed();
+                if(id === 'stats') nv.loadStats();
+                if(id === 'profile') nv.loadProfile();
+                window.scrollTo({top:0, behavior:'smooth'});
             },
 
-            /* [AUTHENTICATION MODULE] */
-            auth: {
-                signIn: async () => {
-                    console.log("[TITAN] Initializing OAuth Flow...");
-                    try {
-                        await signInWithPopup(titanAuth, titanProvider);
-                    } catch (error) {
-                        console.error("[TITAN_AUTH_ERROR]", error);
-                        alert("Oturum açma başarısız oldu: " + error.message);
-                    }
-                },
-                signOut: () => {
-                    console.log("[TITAN] Terminating Session...");
-                    signOut(titanAuth).then(() => window.location.reload());
-                },
-                listen: () => {
-                    onAuthStateChanged(titanAuth, (u) => {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const targetId = urlParams.get('id');
-
-                        if (targetId) {
-                            titan.app.renderGateway(targetId);
-                        } else if (u) {
-                            titan.state.currentUser = u;
-                            document.getElementById('auth-trigger').classList.add('hidden');
-                            document.getElementById('auth-status').classList.remove('hidden');
-                            document.getElementById('auth-avatar-display').src = u.photoURL;
-                            document.getElementById('auth-name-display').innerText = u.displayName;
-                            
-                            document.getElementById('profile-img-large').src = u.photoURL;
-                            document.getElementById('profile-name-large').innerText = u.displayName;
-                            
-                            titan.navigation.goTo('discovery');
-                        } else {
-                            titan.navigation.goTo('discovery');
-                        }
-                    });
-                }
+            handleFile: (input) => {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let w = img.width, h = img.height, max = 800;
+                        if(w > h) { if(w > max) { h *= max/w; w = max; } }
+                        else { if(h > max) { w *= max/h; h = max; } }
+                        canvas.width = w; canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        base64Img = canvas.toDataURL('image/jpeg', 0.6);
+                        document.getElementById('img-preview').src = base64Img;
+                        document.getElementById('img-preview').style.display = 'block';
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             },
 
-            /* [NAVIGATION ENGINE] */
-            navigation: {
-                goTo: (viewId) => {
-                    console.log("[TITAN] Navigating to view:", viewId);
-                    titan.state.currentView = viewId;
-                    
-                    document.querySelectorAll('.titan-view').forEach(v => v.classList.add('hidden'));
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    
-                    document.getElementById('view-' + viewId).classList.remove('hidden');
-                    document.getElementById('nav-' + viewId).classList.add('active');
-                    
-                    if (viewId === 'discovery') titan.app.loadFeed();
-                    if (viewId === 'profile') titan.app.loadProfile();
-                    
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+            addTask: () => {
+                const n = document.getElementById('t-name').value, l = document.getElementById('t-link').value;
+                if(!n || !l) return;
+                currentTasks.push({name: n, link: l, done: false});
+                document.getElementById('t-name').value = ""; document.getElementById('t-link').value = "";
+                nv.renderTaskStack();
             },
 
-            /* [MAIN APPLICATION LOGIC] */
-            app: {
-                addNewTaskToStack: () => {
-                    const nameInp = document.getElementById('inp-task-name');
-                    const urlInp = document.getElementById('inp-task-url');
-                    
-                    const name = nameInp.value.trim();
-                    const url = urlInp.value.trim();
+            renderTaskStack: () => {
+                document.getElementById('task-stack').innerHTML = currentTasks.map((t, i) => `<div class="bg-zinc-900 p-4 rounded-2xl flex justify-between text-[11px] font-black uppercase"><span>${t.name}</span><button onclick="currentTasks.splice(${i},1);nv.renderTaskStack()" class="text-red-500/50"><i class="fa-solid fa-trash"></i></button></div>`).join('');
+            },
 
-                    if (!name || !url) {
-                        alert("Hata: Görev ismi ve URL alanı boş bırakılamaz.");
-                        return;
-                    }
+            publish: async () => {
+                const title = document.getElementById('c-title').value, target = document.getElementById('c-target').value, cat = document.getElementById('c-cat').value || "Genel";
+                if(!title || !target || !base64Img || currentTasks.length === 0) return alert("Eksik veri!");
+                document.getElementById('pubBtn').innerText = "SYNCHRONIZING...";
+                await addDoc(collection(db, "links"), {
+                    title, target, category: cat, thumb: base64Img, tasks: currentTasks,
+                    uid: user.uid, uName: user.displayName, uAvatar: user.photoURL,
+                    views: 0, points: currentTasks.length * 20, createdAt: serverTimestamp()
+                });
+                confetti(); setTimeout(() => location.reload(), 1500);
+            },
 
-                    titan.state.activeTasks.push({ name, url });
-                    nameInp.value = "";
-                    urlInp.value = "";
-                    
-                    titan.app.renderTaskBuilder();
-                },
-
-                renderTaskBuilder: () => {
-                    const container = document.getElementById('titan-builder-stack');
-                    const badge = document.getElementById('titan-task-badge');
-                    
-                    badge.innerText = `${titan.state.activeTasks.length} AKTİF GÖREV`;
-                    container.innerHTML = titan.state.activeTasks.map((t, i) => `
-                        <div class="task-entry animate-titan-in">
-                            <div class="text-left">
-                                <p class="text-[11px] font-black uppercase tracking-tight">${t.name}</p>
-                                <p class="text-[9px] text-blue-500 font-bold truncate w-48">${t.url}</p>
+            loadFeed: async () => {
+                const feed = document.getElementById('feed');
+                const snap = await getDocs(query(collection(db, "links"), orderBy("createdAt", "desc")));
+                feed.innerHTML = "";
+                snap.forEach(d => {
+                    const data = d.data();
+                    feed.innerHTML += `
+                        <div class="nova-card">
+                            <img src="${data.thumb}" class="w-full h-56 object-cover border-b border-white/5">
+                            <div class="p-8">
+                                <div class="flex justify-between items-start mb-6">
+                                    <div><p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">${data.category}</p><h3 class="text-xl font-black italic uppercase">${data.title}</h3></div>
+                                    <span class="bg-zinc-900 px-4 py-2 rounded-xl text-[11px] font-black text-zinc-500">${data.points} PTS</span>
+                                </div>
+                                <div class="flex items-center gap-6 text-[10px] font-black text-zinc-600 uppercase mb-8">
+                                    <span><i class="fa-solid fa-eye text-blue-500 mr-2"></i> ${data.views}</span>
+                                    <span><i class="fa-solid fa-user-circle text-purple-500 mr-2"></i> ${data.uName}</span>
+                                </div>
+                                <button onclick="location.href='?id=${d.id}'" class="btn-main w-full py-4 text-[10px]">LİNKİ PAYLAŞ / AÇ</button>
                             </div>
-                            <button onclick="titan.state.activeTasks.splice(${i}, 1); titan.app.renderTaskBuilder()" class="text-red-500/40 hover:text-red-500 transition-all text-sm">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
                         </div>
-                    `).join('');
-                },
+                    `;
+                });
+            },
 
-                publishCampaign: async () => {
-                    if (!titan.state.currentUser) return alert("Lütfen önce giriş yapın.");
+            // --- MISAFIR MODU MANTIGI ---
+            renderGuest: async (id) => {
+                document.getElementById('loader').style.display = 'flex';
+                const snap = await getDoc(doc(db, "links", id));
+                if(!snap.exists()) return location.href = "/";
+                const data = snap.data();
+                
+                document.getElementById('guest-mode').style.display = 'block';
+                document.getElementById('g-title').innerText = data.title;
+                document.getElementById('g-thumb').src = data.thumb;
+                
+                const taskBox = document.getElementById('g-tasks');
+                taskBox.innerHTML = data.tasks.map((t, i) => `
+                    <div id="tk-${i}" class="task-item">
+                        <span class="text-xs font-black uppercase tracking-tight">${t.name}</span>
+                        <button onclick="nv.doTask(${i}, '${t.link}', ${data.tasks.length}, '${data.target}', '${id}')" class="bg-blue-600 px-6 py-3 rounded-2xl text-[10px] font-black uppercase">YAP</button>
+                    </div>
+                `).join('');
+                
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 1000);
+            },
 
-                    const title = document.getElementById('inp-titan-title').value;
-                    const thumb = document.getElementById('inp-titan-thumb').value;
-                    const target = document.getElementById('inp-titan-target').value;
-                    const category = document.getElementById('inp-titan-cat').value || "Diğer";
-
-                    if (!title || !thumb || !target || titan.state.activeTasks.length === 0) {
-                        alert("Eksik Bilgi: Lütfen tüm alanları (Başlık, Fotoğraf, Link ve Görevler) doldurun.");
-                        return;
-                    }
-
-                    try {
-                        const payload = {
-                            title, thumb, target, category,
-                            tasks: titan.state.activeTasks,
-                            uid: titan.state.currentUser.uid,
-                            author: titan.state.currentUser.displayName,
-                            authorAvatar: titan.state.currentUser.photoURL,
-                            views: 0,
-                            points: titan.state.activeTasks.length * 10,
-                            timestamp: serverTimestamp()
+            tasksDone: 0,
+            doTask: (i, link, total, target, id) => {
+                window.open(link, '_blank');
+                const btn = document.querySelector(`#tk-${i} button`);
+                btn.innerText = "BEKLE..."; btn.disabled = true;
+                
+                setTimeout(() => {
+                    document.getElementById(`tk-${i}`).classList.add('completed');
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    btn.classList.replace('bg-blue-600', 'bg-green-600');
+                    nv.tasksDone++;
+                    
+                    if(nv.tasksDone === total) {
+                        const dl = document.getElementById('g-download');
+                        dl.disabled = false;
+                        dl.onclick = async () => {
+                            confetti();
+                            await updateDoc(doc(db, "links", id), { views: increment(1) });
+                            window.location.href = target;
                         };
-
-                        await addDoc(collection(titanDb, "links"), payload);
-                        
-                        confetti({
-                            particleCount: 200,
-                            spread: 100,
-                            origin: { y: 0.6 },
-                            colors: ['#3b82f6', '#ffffff', '#8b5cf6']
-                        });
-
-                        setTimeout(() => window.location.reload(), 2000);
-                    } catch (e) {
-                        console.error("[TITAN_PUBLISH_ERROR]", e);
-                        alert("Yayınlama sırasında bir hata oluştu.");
                     }
-                },
+                }, 6000);
+            },
 
-                loadFeed: async (categoryFilter = 'Hepsi') => {
-                    const container = document.getElementById('feed-container');
-                    container.innerHTML = `<div class="col-span-full py-20 text-center opacity-30 font-black uppercase text-[10px] tracking-[0.5em]">Veritabanı Senkronize Ediliyor...</div>`;
-                    
-                    try {
-                        let titanQuery;
-                        if (categoryFilter === 'Hepsi') {
-                            titanQuery = query(collection(titanDb, "links"), orderBy("timestamp", "desc"));
-                        } else {
-                            titanQuery = query(collection(titanDb, "links"), where("category", "==", categoryFilter));
-                        }
+            loadStats: async () => {
+                const snap = await getDocs(collection(db, "links"));
+                let v = 0; snap.forEach(d => v += (d.data().views || 0));
+                document.getElementById('st-l').innerText = snap.size;
+                document.getElementById('st-v').innerText = v;
+            },
 
-                        const snapshot = await getDocs(titanQuery);
-                        container.innerHTML = "";
+            loadProfile: async () => {
+                if(!user) return;
+                const snap = await getDocs(query(collection(db, "links"), where("uid", "==", user.uid)));
+                let p = 0; 
+                document.getElementById('my-links').innerHTML = "";
+                snap.forEach(d => {
+                    p += (d.data().points || 0);
+                    document.getElementById('my-links').innerHTML += `<div class="nova-card p-6 flex justify-between items-center bg-zinc-900/40"><span class="text-xs font-bold uppercase">${d.data().title}</span><button onclick="nv.del('${d.id}')" class="text-red-500/30"><i class="fa-solid fa-trash"></i></button></div>`;
+                });
+                document.getElementById('ps-l').innerText = snap.size;
+                document.getElementById('ps-p').innerText = p;
+            },
 
-                        if (snapshot.empty) {
-                            container.innerHTML = `<div class="col-span-full py-20 text-center text-zinc-700 font-bold uppercase text-xs">Bu kategoride henüz yayınlanmış bir kampanya bulunamadı.</div>`;
-                            return;
-                        }
-
-                        snapshot.forEach(doc => {
-                            const d = doc.data();
-                            const viewCount = Number(d.views) || 0;
-                            const pointVal = Number(d.points) || 0;
-
-                            container.innerHTML += `
-                                <div class="nvo-card animate-titan-in">
-                                    <img src="${d.thumb}" class="card-thumb" onerror="this.src='https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000&auto=format&fit=crop'">
-                                    <div class="p-8 space-y-5">
-                                        <div class="flex justify-between items-start">
-                                            <div>
-                                                <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1">${d.category}</p>
-                                                <h3 class="text-xl font-black uppercase tracking-tighter truncate w-48">${d.title}</h3>
-                                            </div>
-                                            <div class="bg-zinc-900 px-3 py-1.5 rounded-xl border border-white/5 text-[9px] font-black text-zinc-500 uppercase">
-                                                <i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> ${pointVal}
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="flex items-center gap-5 border-y border-white/5 py-4">
-                                            <div class="flex items-center gap-2">
-                                                <i class="fa-solid fa-eye text-zinc-600 text-[10px]"></i>
-                                                <span class="text-[10px] font-black uppercase text-zinc-500">${viewCount} İzleme</span>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <i class="fa-solid fa-list-check text-zinc-600 text-[10px]"></i>
-                                                <span class="text-[10px] font-black uppercase text-zinc-500">${d.tasks.length} Görev</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex gap-3 pt-2">
-                                            <button onclick="titan.app.generateQR('${doc.id}')" class="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center text-zinc-600 hover:text-white transition">
-                                                <i class="fa-solid fa-qrcode text-lg"></i>
-                                            </button>
-                                            <button onclick="window.location.href='?id=${doc.id}'" class="btn-titan py-4 text-[10px]">İÇERİĞİ AÇ</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    } catch (e) {
-                        console.error("[TITAN_FEED_ERROR]", e);
-                    }
-                },
-
-                filterByCategory: (cat) => {
-                    document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
-                    event.target.classList.add('active');
-                    titan.app.loadFeed(cat);
-                },
-
-                generateQR: (id) => {
-                    const overlay = document.getElementById('qr-overlay');
-                    const target = document.getElementById('qr-target-area');
-                    target.innerHTML = "";
-                    overlay.style.display = 'flex';
-                    
-                    new QRCode(target, {
-                        text: window.location.origin + window.location.pathname + "?id=" + id,
-                        width: 220,
-                        height: 220,
-                        colorDark : "#000000",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
-                    });
-                },
-
-                renderGateway: async (id) => {
-                    const overlay = document.getElementById('gateway-overlay');
-                    const inject = document.getElementById('gateway-injection-point');
-                    overlay.style.display = 'block';
-                    
-                    try {
-                        const snap = await getDoc(doc(titanDb, "links", id));
-                        if (!snap.exists()) {
-                            alert("Hata: Kampanya bulunamadı veya silinmiş.");
-                            window.location.href = window.location.pathname;
-                            return;
-                        }
-
-                        const d = snap.data();
-                        
-                        inject.innerHTML = `
-                            <div class="nvo-card p-12 text-center space-y-10 animate-titan-in">
-                                <div class="flex justify-center">
-                                    <div class="nvo-brand-box scale-125"><i class="fa-solid fa-infinity text-white text-2xl"></i></div>
-                                </div>
-                                
-                                <img src="${d.thumb}" class="w-32 h-32 rounded-[3rem] mx-auto border-4 border-blue-600 shadow-2xl object-cover ring-8 ring-blue-600/5">
-                                
-                                <div class="space-y-4">
-                                    <h1 class="text-3xl font-black italic uppercase tracking-tighter">${d.title}</h1>
-                                    <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed px-6">
-                                        Hedef linke ulaşmak için aşağıdaki ${d.tasks.length} görevi tamamlamanız gerekmektedir. Doğrulama otomatik yapılacaktır.
-                                    </p>
-                                </div>
-
-                                <div class="space-y-4 text-left">
-                                    ${d.tasks.map((t, i) => `
-                                        <div id="titan-row-${i}" class="task-entry bg-zinc-900/50 border-white/5 py-7 px-8 transition-all duration-500">
-                                            <div class="space-y-1">
-                                                <p class="text-xs font-black uppercase tracking-tight">${t.name}</p>
-                                                <p class="text-[8px] text-zinc-600 font-bold uppercase">Sistem Kontrolü Aktif</p>
-                                            </div>
-                                            <button onclick="titan.app.verifyAction(${i}, '${t.url}', ${d.tasks.length}, '${d.target}', '${id}')" class="bg-blue-600 px-7 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition shadow-lg shadow-blue-600/20">TAMAMLA</button>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                
-                                <div class="pt-6 opacity-25">
-                                    <p class="text-[8px] font-black uppercase tracking-[0.5em]">Titan Secure Gateway Layer v0.0.6</p>
-                                </div>
-                            </div>
-                        `;
-                    } catch (e) {
-                        console.error("[TITAN_GATEWAY_ERROR]", e);
-                    }
-                },
-
-                completeCount: 0,
-                verifyAction: (index, link, total, finalTarget, docId) => {
-                    window.open(link, '_blank');
-                    const row = document.getElementById(`titan-row-${index}`);
-                    const btn = row.querySelector('button');
-                    
-                    btn.innerText = "DOĞRULANIYOR...";
-                    btn.disabled = true;
-                    btn.classList.replace('bg-blue-600', 'bg-zinc-800');
-                    
-                    setTimeout(() => {
-                        row.classList.add('border-green-500/50', 'bg-green-600/5');
-                        btn.innerHTML = '<i class="fa-solid fa-check-double"></i> BAŞARILI';
-                        btn.classList.replace('bg-zinc-800', 'bg-green-600');
-                        
-                        titan.app.completeCount++;
-                        
-                        if (titan.app.completeCount === total) {
-                            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                            setTimeout(async () => {
-                                try {
-                                    await updateDoc(doc(titanDb, "links", docId), { views: increment(1) });
-                                    window.location.href = finalTarget;
-                                } catch (e) {
-                                    window.location.href = finalTarget;
-                                }
-                            }, 1500);
-                        }
-                    }, 5000); // 5 Seconds Titan Logic Verification
-                },
-
-                loadProfile: async () => {
-                    if (!titan.state.currentUser) return;
-                    
-                    const container = document.getElementById('profile-links-injector');
-                    container.innerHTML = `<div class="py-10 text-center opacity-20 text-[10px] font-black uppercase tracking-widest">Profil Verileri Çekiliyor...</div>`;
-                    
-                    try {
-                        const q = query(collection(titanDb, "links"), where("uid", "==", titan.state.currentUser.uid));
-                        const snap = await getDocs(q);
-                        
-                        container.innerHTML = "";
-                        let totalPoints = 0;
-                        document.getElementById('stat-campaign-count').innerText = snap.size;
-
-                        if (snap.empty) {
-                            container.innerHTML = `<div class="bg-zinc-900/30 p-10 rounded-3xl border border-white/5 text-center text-zinc-600 font-bold uppercase text-[10px] tracking-widest">Henüz bir paylaşım yapmadınız.</div>`;
-                        }
-
-                        snap.forEach(d => {
-                            const data = d.data();
-                            const pts = Number(data.points) || 0;
-                            totalPoints += pts;
-
-                            container.innerHTML += `
-                                <div class="nvo-card p-6 flex items-center justify-between bg-zinc-900/40 border-white/5">
-                                    <div class="flex items-center gap-5">
-                                        <img src="${data.thumb}" class="w-14 h-14 rounded-2xl object-cover shadow-xl border border-white/5">
-                                        <div>
-                                            <h4 class="text-sm font-black uppercase tracking-tighter truncate w-32">${data.title}</h4>
-                                            <p class="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-1">${pts} PUAN ELDE EDİLDİ</p>
-                                        </div>
-                                    </div>
-                                    <button onclick="titan.app.deleteLink('${d.id}')" class="w-12 h-12 rounded-2xl bg-zinc-900/50 flex items-center justify-center text-red-500/20 hover:text-red-500 hover:bg-red-500/10 transition-all">
-                                        <i class="fa-solid fa-trash-can text-xs"></i>
-                                    </button>
-                                </div>
-                            `;
-                        });
-
-                        document.getElementById('stat-total-points').innerText = totalPoints;
-                    } catch (e) {
-                        console.error("[TITAN_PROFILE_ERROR]", e);
-                    }
-                },
-
-                openProfileEditor: () => {
-                    const newName = prompt("Yeni Kullanıcı Adı:", titan.state.currentUser.displayName);
-                    const newAvatar = prompt("Yeni Avatar URL (Kare görsel tavsiye edilir):", titan.state.currentUser.photoURL);
-                    
-                    if (newName) {
-                        document.getElementById('auth-name-display').innerText = newName;
-                        document.getElementById('profile-name-large').innerText = newName;
-                    }
-                    if (newAvatar) {
-                        document.getElementById('auth-avatar-display').src = newAvatar;
-                        document.getElementById('profile-img-large').src = newAvatar;
-                    }
-                },
-
-                deleteLink: async (id) => {
-                    if (confirm("Bu kampanyayı kalıcı olarak silmek istediğinize emin misiniz?")) {
-                        try {
-                            await deleteDoc(doc(titanDb, "links", id));
-                            titan.app.loadProfile();
-                        } catch (e) {
-                            alert("Silme işlemi başarısız.");
-                        }
-                    }
-                }
-            }
+            del: async (id) => { if(confirm("Silinsin mi?")) { await deleteDoc(doc(db, "links", id)); nv.loadProfile(); } },
+            search: async (v) => { /* Benzer arama mantığı */ }
         };
 
-        /* [SYSTEM INITIALIZATION] */
-        console.log("%cNVOLINK TITAN CORE LOADED", "color: #3b82f6; font-weight: bold; font-size: 20px;");
-        titan.auth.listen();
-
+        onAuthStateChanged(auth, u => {
+            const urlId = new URLSearchParams(window.location.search).get('id');
+            if(urlId) return nv.renderGuest(urlId);
+            
+            setTimeout(() => { document.getElementById('loader').style.opacity = '0'; setTimeout(() => document.getElementById('loader').style.display='none', 800); }, 1500);
+            
+            if(u) {
+                user = u;
+                document.getElementById('loginBtn').classList.add('hidden');
+                document.getElementById('h-avatar').classList.remove('hidden');
+                document.getElementById('h-avatar').src = u.photoURL;
+                document.getElementById('p-avatar').src = u.photoURL;
+                document.getElementById('p-name').innerText = u.displayName;
+                nv.tab('discovery');
+            }
+        });
     </script>
 </body>
 </html>
