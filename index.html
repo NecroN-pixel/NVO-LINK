@@ -2,512 +2,857 @@
 <!DOCTYPE html>
 <html lang="tr" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NVOLINK OMEGA | THE NEXT GEN SAAS</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000">
+    <title>NVOLINK | G-0.5.0 SYSTEM</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --p: #3b82f6; --s: #8b5cf6; --a: #00d2ff;
-            --bg: #000000; --c: #0a0a0b; --b: #1f1f22;
+            --bg: #000000;
+            --surface: #09090b;
+            --surface-light: #18181b;
+            --border: #27272a;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --accent: #8b5cf6;
+            --danger: #ef4444;
+            --warning: #eab308;
+            --success: #22c55e;
+            --text-main: #ffffff;
+            --text-dim: #a1a1aa;
         }
 
-        /* Ana İskelet */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
         
-        /* Matrix Arkaplanı */
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.1; pointer-events: none; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--p); border-radius: 10px; }
-
-        /* Animasyonlu Logo */
-        .omega-logo-box {
-            width: 55px; height: 55px;
-            background: linear-gradient(135deg, #4f46e5, #3b82f6);
-            border-radius: 18px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
-            position: relative; overflow: hidden;
-            animation: float 4s ease-in-out infinite;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            padding-bottom: 140px; /* Nav bar space */
         }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* UTILS */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* CARD SYSTEM */
+        .mega-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            isolation: isolate;
+        }
+        
+        .mega-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
 
-        /* Cam Kartlar */
-        .glass-card {
-            background: rgba(10, 10, 11, 0.8);
+        .mega-card:active { transform: scale(0.98); }
+
+        /* BUTTONS */
+        .btn-neo {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px -10px var(--primary-glow);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-neo::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.2), transparent);
+            opacity: 0; transition: 0.3s;
+        }
+        .btn-neo:active { transform: scale(0.95); box-shadow: 0 5px 15px -5px var(--primary-glow); }
+
+        /* INPUT FIELDS */
+        .input-box {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 20px;
+            width: 100%;
+            padding: 18px 24px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+
+        /* NAVIGATION */
+        .glass-nav {
+            background: rgba(9, 9, 11, 0.85);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--b);
-            border-radius: 35px;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .glass-card:hover { border-color: var(--p); transform: translateY(-5px); }
-
-        /* Butonlar */
-        .btn-omega {
-            background: linear-gradient(135deg, var(--p), var(--s));
-            padding: 18px 30px; border-radius: 22px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-            transition: 0.3s; width: 100%;
+        
+        .nav-btn {
+            color: var(--text-dim);
+            transition: 0.3s;
+            position: relative;
         }
-        .btn-omega:hover { filter: brightness(1.2); transform: scale(1.02); }
-        .btn-omega:active { transform: scale(0.98); }
-
-        /* Alt Navigasyon */
-        .omega-nav {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 450px; height: 85px;
-            background: rgba(10, 10, 11, 0.9); backdrop-filter: blur(30px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 40px;
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 9999; box-shadow: 0 25px 50px rgba(0,0,0,0.8);
-        }
-        .nav-item { color: #555; font-size: 26px; transition: 0.4s; position: relative; padding: 15px; }
-        .nav-item.active { color: var(--p); transform: translateY(-10px); }
-        .nav-item.active::after {
-            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 6px; height: 6px; background: var(--p); border-radius: 50%; box-shadow: 0 0 15px var(--p);
+        .nav-btn.active { color: var(--primary); transform: translateY(-2px); }
+        .nav-btn.active::after {
+            content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 4px; background: var(--primary); border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
         }
 
-        /* Preloader */
-        #omega-loader {
-            position: fixed; inset: 0; background: #000; z-index: 100000;
+        /* MODALS */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.3s; padding: 20px;
+        }
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
+        
+        .modal-content {
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            width: 100%; max-width: 400px;
+            padding: 30px;
+            transform: translateY(20px); transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 80vh; overflow-y: auto;
+        }
+        .modal-overlay.open .modal-content { transform: translateY(0); }
+
+        /* LOADER */
+        .loader-box {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .loading-bar { width: 250px; height: 2px; background: #111; margin-top: 30px; position: relative; overflow: hidden; }
-        .loading-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--p); box-shadow: 0 0 10px var(--p); }
-
-        /* Kategori Chip */
-        .chip {
-            padding: 12px 25px; background: #111; border: 1px solid #222; border-radius: 100px;
-            font-size: 11px; font-weight: 800; color: #777; white-space: nowrap; transition: 0.3s;
+        .scan-line {
+            width: 100%; height: 2px; background: var(--primary);
+            position: absolute; top: 0; left: 0;
+            animation: scan 2s linear infinite; box-shadow: 0 0 20px var(--primary);
         }
-        .chip.active { background: var(--p); border-color: var(--p); color: #fff; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); }
+        @keyframes scan { 0% {top:0; opacity:0;} 50% {opacity:1;} 100% {top:100%; opacity:0;} }
 
-        /* GateWay Animasyon */
-        .gw-overlay { position: fixed; inset: 0; z-index: 20000; background: #000; display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        /* TABS ANIMATION */
+        .tab-view { display: none; animation: fadeIn 0.5s ease forwards; }
+        .tab-view.active-tab { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* STATS GRID */
+        .stat-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid var(--border);
+            padding: 20px; border-radius: 24px; text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
-
-    <div id="omega-loader">
-        <div class="omega-logo-box"><i class="fa-solid fa-infinity text-2xl"></i></div>
-        <div class="loading-bar"><div class="loading-progress" id="p-bar"></div></div>
-        <p class="mt-4 text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">System Loading...</p>
+    <div id="sysLoader" class="loader-box">
+        <div class="scan-line"></div>
+        <div class="text-6xl font-black italic tracking-tighter mb-4 relative z-10">
+            NVO<span class="text-blue-500">LINK</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+            <div class="w-48 h-1 bg-zinc-900 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500 w-[0%] animate-[loadBar_2.5s_ease_forwards]"></div>
+            </div>
+            <div id="sysLog" class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest mt-2">Initializing Core...</div>
+        </div>
+        <style> @keyframes loadBar { to { width: 100%; } } </style>
     </div>
 
-    <header class="sticky top-0 z-[5000] bg-black/60 backdrop-blur-2xl border-b border-white/5 px-6 py-5">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-4 cursor-pointer" onclick="location.reload()">
-                <div class="omega-logo-box scale-75"><i class="fa-solid fa-infinity text-xl"></i></div>
-                <div class="flex flex-col leading-none">
-                    <span class="text-2xl font-black italic tracking-tighter">NVO<span class="text-blue-500">LINK</span></span>
-                    <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Omega Protocol v1</span>
-                </div>
+    <header class="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300" id="mainHeader">
+        <div class="max-w-xl mx-auto px-5 py-4 flex justify-between items-center">
+            <div class="flex flex-col cursor-pointer" onclick="app.tab('feed')">
+                <h1 class="text-2xl font-black italic tracking-tight leading-none">NVO<span class="text-blue-500">LINK</span></h1>
+                <span class="text-[8px] font-bold text-zinc-600 bg-zinc-900 px-2 py-0.5 rounded-full w-fit mt-1 border border-zinc-800">vG-0.5.0 STABLE</span>
             </div>
-            <div id="auth-box">
-                <button onclick="omegaAuth.login()" id="login-btn" class="bg-white text-black px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-tighter">Giriş Yap</button>
-                <div id="user-info" class="hidden flex items-center gap-4 bg-zinc-900/80 p-1.5 pr-5 rounded-2xl border border-white/10">
-                    <img id="u-avatar" class="w-9 h-9 rounded-xl object-cover">
-                    <div class="flex flex-col">
-                        <span id="u-name" class="text-[10px] font-black uppercase truncate max-w-[80px]"></span>
-                        <span class="text-[8px] text-blue-500 font-bold uppercase">Pro Access</span>
-                    </div>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="ui.modal('patchModal', true)" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 flex items-center justify-center hover:text-white hover:border-blue-500 transition">
+                    <i class="fa-solid fa-scroll"></i>
+                </button>
+                
+                <div id="authContainer">
+                    <button id="loginBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wide transition shadow-lg shadow-blue-900/20">
+                        Giriş Yap
+                    </button>
+                    <img id="headerAvatar" class="hidden w-10 h-10 rounded-xl border-2 border-blue-500 object-cover cursor-pointer hover:scale-105 transition" onclick="app.tab('profile')">
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-xl mx-auto px-6 pt-10 pb-40">
-        
-        <section id="discovery-header" class="space-y-6 mb-12">
-            <div class="relative group">
-                <i class="fa-solid fa-bolt absolute left-6 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-blue-500 transition"></i>
-                <input type="text" oninput="omegaApp.search(this.value)" placeholder="Ekosistemde keşfe çık..." class="w-full bg-[#0a0a0b] border border-[#1f1f22] rounded-3xl py-5 px-16 text-sm outline-none focus:border-blue-600 transition shadow-2xl">
+    <main class="max-w-xl mx-auto px-4 pt-28 pb-10 relative z-10 min-h-screen">
+
+        <section id="view-feed" class="tab-view active-tab">
+            <div class="sticky top-20 z-40 bg-black/90 pb-4 pt-2 -mt-2">
+                <div class="relative mb-4">
+                    <i class="fa-solid fa-search absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+                    <input type="text" id="searchInput" onkeyup="app.filterFeed()" placeholder="Modül, Config veya Kullanıcı ara..." class="input-box pl-12 bg-zinc-900/50 backdrop-blur-sm">
+                </div>
+                <div id="categoryScroll" class="flex gap-2 overflow-x-auto hide-scroll pb-2">
+                    </div>
             </div>
-            <div class="flex gap-3 overflow-x-auto no-scrollbar py-2" id="categories">
-                <button onclick="omegaApp.filter('Hepsi', this)" class="chip active">Hepsi</button>
-                <button onclick="omegaApp.filter('Oyun', this)" class="chip">Oyun</button>
-                <button onclick="omegaApp.filter('Yazılım', this)" class="chip">Yazılım</button>
-                <button onclick="omegaApp.filter('Eğitim', this)" class="chip">Eğitim</button>
-                <button onclick="omegaApp.filter('Script', this)" class="chip">Script</button>
+
+            <div id="feedList" class="space-y-8 mt-2 min-h-[300px]">
+                </div>
+        </section>
+
+        <section id="view-create" class="tab-view">
+            <div class="mega-card p-6 bg-zinc-900/30">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-3xl font-black italic">YENİ <span class="text-blue-500">MODÜL</span></h2>
+                    <i class="fa-solid fa-cloud-arrow-up text-2xl text-zinc-600"></i>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="relative group">
+                        <input type="file" id="upImage" accept="image/*" class="hidden" onchange="app.handleImage(this)">
+                        <div onclick="document.getElementById('upImage').click()" id="dropZone" 
+                             class="h-64 border-2 border-dashed border-zinc-700 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-500/5 transition overflow-hidden bg-black/40">
+                            
+                            <img id="previewImage" class="absolute inset-0 w-full h-full object-cover hidden">
+                            
+                            <div id="uploadPlaceholder" class="text-center p-6">
+                                <div class="w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-image text-zinc-400 text-xl"></i>
+                                </div>
+                                <p class="text-xs font-bold text-zinc-400 uppercase">Kapak Görseli Seç</p>
+                                <p class="text-[9px] text-zinc-600 mt-1">16:9 Önerilir • Max 5MB</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <input type="text" id="upTitle" placeholder="Modül Başlığı (Örn: Valorant Trigger)" class="input-box">
+                        <input type="url" id="upLink" placeholder="Hedef Link (URL)" class="input-box">
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <select id="upCat" class="input-box appearance-none cursor-pointer">
+                                </select>
+                            <input type="text" id="upTask" placeholder="Görev (Opsiyonel)" class="input-box" title="Örn: Abone Ol">
+                        </div>
+                    </div>
+
+                    <button onclick="app.deployLink()" class="btn-neo w-full py-5 mt-4 text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rocket"></i>
+                        Sisteme Enjekte Et
+                    </button>
+                    <p class="text-[9px] text-center text-zinc-600 mt-2">Linkler 30 gün sonra otomatik imha edilir.</p>
+                </div>
             </div>
         </section>
 
-        <div id="view-home" class="view-panel space-y-8"></div>
-
-        <div id="view-add" class="view-panel hidden">
-            <div class="glass-card p-10 space-y-8">
-                <div class="text-center">
-                    <h2 class="text-3xl font-black italic">YENİ KAMPANYA</h2>
-                    <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em] mt-2">Linkini güvene al ve paylaş</p>
-                </div>
+        <section id="view-profile" class="tab-view">
+            <div class="mega-card p-8 text-center relative overflow-hidden mb-8">
+                <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none"></div>
                 
-                <div onclick="document.getElementById('file-input').click()" class="h-60 bg-zinc-900/40 rounded-[40px] border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
-                    <img id="prev-img" class="hidden w-full h-full object-cover">
-                    <div id="hint-ui" class="text-center transition group-hover:scale-110">
-                        <div class="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 transition">
-                            <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
-                        </div>
-                        <p class="text-xs font-black text-zinc-500 uppercase">Kapak Görseli</p>
-                    </div>
-                </div>
-                <input type="file" id="file-input" class="hidden" accept="image/*" onchange="omegaApp.handleFile(this)">
+                <button id="btnEditProfile" onclick="ui.modal('editProfileModal', true)" class="hidden absolute top-4 right-4 w-8 h-8 rounded-full bg-zinc-800/50 backdrop-blur text-white text-xs hover:bg-blue-600 transition z-20">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
 
-                <div class="space-y-5">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-600 ml-4 uppercase">Başlık</label>
-                        <input type="text" id="in-title" placeholder="Örn: Instagram Edit Paketi" class="w-full bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 text-sm outline-none focus:border-blue-500 transition">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-600 ml-4 uppercase">Hedef Link</label>
-                        <input type="url" id="in-url" placeholder="https://..." class="w-full bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 text-sm outline-none focus:border-blue-500 transition">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-600 ml-4 uppercase">Kategori</label>
-                        <select id="in-cat" class="w-full bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 text-sm outline-none focus:border-blue-500 transition appearance-none">
-                            <option value="Oyun">Oyun</option>
-                            <option value="Yazılım">Yazılım</option>
-                            <option value="Eğitim">Eğitim</option>
-                            <option value="Script">Script</option>
-                        </select>
+                <div class="relative z-10">
+                    <img id="pAvatar" class="w-32 h-32 rounded-[30px] border-4 border-zinc-900 shadow-2xl mx-auto object-cover bg-zinc-800">
+                    <h2 id="pName" class="text-3xl font-black italic mt-5 mb-1">...</h2>
+                    <p id="pBio" class="text-xs text-zinc-400 font-medium max-w-[250px] mx-auto leading-relaxed">Veri yok.</p>
+                    
+                    <div onclick="app.shareProfile()" class="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-800 px-4 py-1.5 rounded-full mt-4 cursor-pointer hover:border-blue-500 transition">
+                        <i class="fa-solid fa-fingerprint text-blue-500 text-xs"></i>
+                        <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">PROFILI PAYLAŞ</span>
                     </div>
                 </div>
 
-                <button onclick="omegaApp.publish()" id="pub-btn" class="btn-omega">Kampanyayı Başlat</button>
-            </div>
-        </div>
-
-        <div id="view-user" class="view-panel hidden space-y-8">
-            <div class="glass-card p-10 text-center relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 to-cyan-400"></div>
-                <img id="prof-img" class="w-32 h-32 mx-auto rounded-[40px] object-cover border-4 border-black shadow-2xl mb-6">
-                <h3 id="prof-name" class="text-3xl font-black italic">---</h3>
-                <p id="prof-mail" class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-2"></p>
-                
-                <div class="grid grid-cols-2 gap-5 mt-10">
-                    <div class="bg-zinc-900/40 p-6 rounded-[30px] border border-white/5">
-                        <h4 id="stat-links" class="text-3xl font-black">0</h4>
-                        <p class="text-[9px] text-zinc-500 font-black uppercase mt-1">Paylaşımlar</p>
+                <div class="grid grid-cols-2 gap-4 mt-8 relative z-10">
+                    <div class="stat-card">
+                        <div id="pStatCount" class="text-2xl font-black text-white">0</div>
+                        <div class="text-[9px] font-bold text-zinc-500 uppercase mt-1">Aktif Link</div>
                     </div>
-                    <div class="bg-zinc-900/40 p-6 rounded-[30px] border border-white/5">
-                        <h4 id="stat-views" class="text-3xl font-black">0</h4>
-                        <p class="text-[9px] text-zinc-500 font-black uppercase mt-1">Toplam Erişim</p>
+                    <div class="stat-card">
+                        <div id="pStatViews" class="text-2xl font-black text-blue-500">0</div>
+                        <div class="text-[9px] font-bold text-zinc-500 uppercase mt-1">Erişim</div>
                     </div>
                 </div>
-                
-                <button onclick="omegaAuth.logout()" class="mt-10 text-[10px] font-black text-red-500/40 hover:text-red-500 transition uppercase tracking-widest">Oturumu Kapat</button>
             </div>
 
-            <div class="space-y-4">
-                <h3 class="text-xs font-black text-zinc-500 uppercase tracking-[0.2em] ml-5">Link Yönetimi</h3>
-                <div id="user-links-list" class="space-y-4"></div>
+            <div class="flex items-center justify-between px-2 mb-4">
+                <h3 class="font-black italic text-lg">YAYINLANANLAR</h3>
+                <span id="pListCount" class="text-xs font-bold text-zinc-600">0 Dosya</span>
             </div>
-        </div>
+            <div id="profileFeed" class="space-y-3"></div>
+        </section>
 
     </main>
 
-    <div id="qr-modal" class="hidden fixed inset-0 z-[20000] bg-black/95 backdrop-blur-xl flex items-center justify-center p-10" onclick="this.classList.add('hidden')">
-        <div class="bg-white p-8 rounded-[50px] shadow-[0_0_100px_rgba(59,130,246,0.5)]" onclick="event.stopPropagation()">
-            <div id="qr-canvas"></div>
-            <p class="text-black text-center font-black text-[10px] mt-6 uppercase tracking-widest">NVOLINK OMEGA SCANNER</p>
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] h-[70px] glass-nav flex justify-between items-center px-8 z-[8000]">
+        <button onclick="app.tab('feed')" id="nav-feed" class="nav-btn active flex flex-col items-center gap-1">
+            <i class="fa-solid fa-layer-group text-xl"></i>
+        </button>
+        
+        <button onclick="app.tab('create')" id="nav-create" class="nav-btn flex items-center justify-center w-14 h-14 bg-blue-600 rounded-full text-white shadow-lg shadow-blue-500/40 -mt-10 border-4 border-[#09090b] hover:scale-110 transition">
+            <i class="fa-solid fa-plus text-xl"></i>
+        </button>
+        
+        <button onclick="app.tab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center gap-1">
+            <i class="fa-solid fa-user-astronaut text-xl"></i>
+        </button>
+    </nav>
+
+    <div id="patchModal" class="modal-overlay">
+        <div class="modal-content relative">
+            <button onclick="ui.modal('patchModal', false)" class="absolute top-4 right-4 text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-2xl font-black italic mb-2">YAMA NOTLARI <span class="text-blue-500">vG-0.5.0</span></h3>
+            <p class="text-[10px] text-zinc-500 mb-6 uppercase tracking-widest font-bold">Build: 2024.10.25_OMEGA</p>
+            
+            <div class="space-y-4">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0"><i class="fa-solid fa-broom"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm">Auto-Wipe Sistemi</h4>
+                        <p class="text-xs text-zinc-400 mt-1">Sunucu sağlığı için 30 günden eski linkler ve dosyalar artık açılışta otomatik siliniyor.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shrink-0"><i class="fa-solid fa-wrench"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm">Admin Link Tazeleme</h4>
+                        <p class="text-xs text-zinc-400 mt-1">Patlayan linkleri silmeden onarabilirsiniz. Profilinizdeki karta tıklayıp "Bakım" modunu açın.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 shrink-0"><i class="fa-solid fa-share-nodes"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm">Public Profil ID</h4>
+                        <p class="text-xs text-zinc-400 mt-1">Artık profil linkinizi arkadaşlarınızla paylaşabilirsiniz. Onlar düzenleyemez, sadece görür.</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="ui.modal('patchModal', false)" class="w-full bg-zinc-800 py-3 rounded-xl mt-6 text-xs font-bold hover:bg-zinc-700">ANLAŞILDI</button>
         </div>
     </div>
 
-    <div id="gateway-root" class="hidden gw-overlay"></div>
+    <div id="refreshModal" class="modal-overlay">
+        <div class="modal-content border-yellow-500/30">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-3 text-yellow-500">
+                    <i class="fa-solid fa-screwdriver-wrench text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-black text-white">LİNK BAKIM MODU</h3>
+                <p class="text-xs text-zinc-500 mt-2">Bu dosyanın hedef linkini güncelleyerek yeniden çalışmasını sağlayın. Dosya silinmez.</p>
+            </div>
+            
+            <input type="hidden" id="refreshId">
+            <input type="url" id="refreshUrl" placeholder="Yeni Hedef Link (URL)" class="input-box border-yellow-500/30 focus:border-yellow-500 mb-4">
+            
+            <div class="flex gap-3">
+                <button onclick="ui.modal('refreshModal', false)" class="flex-1 py-3 bg-zinc-800 rounded-xl text-xs font-bold">İPTAL</button>
+                <button onclick="app.doRefresh()" class="flex-1 py-3 bg-yellow-600 text-black rounded-xl text-xs font-black">GÜNCELLE</button>
+            </div>
+        </div>
+    </div>
 
-    <nav class="omega-nav">
-        <button onclick="omegaApp.switchTab('home')" id="nav-home" class="nav-item active"><i class="fa-solid fa-house-chimney-window"></i></button>
-        <button onclick="omegaApp.switchTab('add')" id="nav-add" class="nav-item"><i class="fa-solid fa-plus-circle text-4xl text-blue-500"></i></button>
-        <button onclick="omegaApp.switchTab('user')" id="nav-user" class="nav-item"><i class="fa-solid fa-fingerprint"></i></button>
-    </nav>
+    <div id="gatewayModal" class="modal-overlay">
+        <div class="modal-content text-center">
+            <div id="qrContainer" class="flex justify-center mb-6 p-4 bg-white rounded-2xl w-fit mx-auto"></div>
+            <h3 class="text-xl font-black italic mb-2">ERİŞİM İZNİ</h3>
+            <p class="text-xs text-zinc-400 mb-6">Bu modüle erişmek için aşağıdaki görevi tamamlamanız veya QR kodu taratmanız gerekmektedir.</p>
+            
+            <div id="taskArea" class="hidden mb-6 bg-zinc-900 p-4 rounded-xl border border-zinc-800">
+                <span class="text-[10px] font-bold text-blue-500 uppercase block mb-2">Gerekli Görev</span>
+                <p id="taskText" class="text-sm font-bold text-white">Youtube Abone Ol</p>
+            </div>
+
+            <button id="btnGoLink" class="w-full btn-neo py-4 text-xs">
+                KİLİDİ AÇ & GİT <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+            <button onclick="ui.modal('gatewayModal', false)" class="mt-4 text-[10px] text-zinc-500 underline">Kapat</button>
+        </div>
+    </div>
+
+    <div id="editProfileModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="text-xl font-black mb-4">PROFİLİ DÜZENLE</h3>
+            <div class="space-y-3">
+                <div class="text-[10px] text-zinc-500 uppercase font-bold ml-1">Görünen İsim</div>
+                <input type="text" id="editName" class="input-box">
+                
+                <div class="text-[10px] text-zinc-500 uppercase font-bold ml-1 mt-2">Biyografi</div>
+                <textarea id="editBio" class="input-box h-24 resize-none" placeholder="Kendinden bahset..."></textarea>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="ui.modal('editProfileModal', false)" class="flex-1 bg-zinc-800 rounded-xl text-xs font-bold py-3">VAZGEÇ</button>
+                <button onclick="app.saveProfile()" class="flex-1 bg-blue-600 rounded-xl text-xs font-bold py-3">KAYDET</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, deleteDoc, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
+        // CONFIGURATION
+        const fbConfig = {
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
             authDomain: "nvo-link.firebaseapp.com",
             projectId: "nvo-link",
-            storageBucket: "nvo-link.firebasestorage.app",
-            messagingSenderId: "256153773846",
-            appId: "1:256153773846:web:6d51174db82ccccf119237"
+            storageBucket: "nvo-link.firebasestorage.app"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+        // INIT FIREBASE
+        const fApp = initializeApp(fbConfig);
+        const auth = getAuth(fApp);
+        const db = getFirestore(fApp);
         const provider = new GoogleAuthProvider();
 
-        window.omegaState = { user: null, b64: null, cat: 'Hepsi' };
+        // STATE & CONSTANTS
+        const CATEGORIES = ["Hepsi", "Script", "Config", "Exploit", "Tool", "Method", "Oyun", "Medya", "Premium"];
+        let currentUser = null;
+        let currentImageBase64 = null;
+        let viewingUserId = null; // For public profiles
 
-        // --- AUTH ENGINE ---
-        window.omegaAuth = {
-            login: async () => { try { await signInWithPopup(auth, provider); } catch(e) { console.error(e); } },
-            logout: () => signOut(auth).then(() => location.reload()),
-            listen: () => {
-                onAuthStateChanged(auth, async (u) => {
-                    const params = new URLSearchParams(window.location.search);
-                    if(params.get('id')) return omegaApp.renderGateway(params.get('id'));
+        // --- UI CONTROLLER ---
+        window.ui = {
+            log: (msg) => {
+                const el = document.getElementById('sysLog');
+                if(el) el.innerText = `> ${msg}`;
+                console.log(`[NVOLINK SYS]: ${msg}`);
+            },
+            modal: (id, open) => {
+                const m = document.getElementById(id);
+                if(open) m.classList.add('open');
+                else m.classList.remove('open');
+            },
+            toast: (msg, type='info') => {
+                alert(msg); // Basic alert for stability, can be upgraded
+            },
+            renderCats: () => {
+                const c = document.getElementById('categoryScroll');
+                const s = document.getElementById('upCat');
+                c.innerHTML = ''; s.innerHTML = '';
+                
+                CATEGORIES.forEach(cat => {
+                    // Top Bar Chips
+                    const btn = document.createElement('button');
+                    btn.className = `px-5 py-2.5 rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition border ${cat === 'Hepsi' ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-900/40' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white'}`;
+                    btn.innerText = cat;
+                    btn.onclick = () => app.setCategory(cat, btn);
+                    c.appendChild(btn);
 
-                    if(u) {
-                        window.omegaState.user = u;
-                        document.getElementById('login-btn').classList.add('hidden');
-                        document.getElementById('user-info').classList.remove('hidden');
-                        document.getElementById('u-avatar').src = u.photoURL;
-                        document.getElementById('u-name').innerText = u.displayName;
-                        document.getElementById('prof-img').src = u.photoURL;
-                        document.getElementById('prof-name').innerText = u.displayName;
-                        document.getElementById('prof-mail').innerText = u.email;
+                    // Select Option
+                    if(cat !== 'Hepsi') {
+                        const opt = document.createElement('option');
+                        opt.value = cat; opt.innerText = cat;
+                        s.appendChild(opt);
                     }
-                    omegaApp.loadFeed();
-                    omegaApp.initMatrix();
-                    omegaApp.preloader();
                 });
             }
         };
 
-        // --- CORE APP ENGINE ---
-        window.omegaApp = {
-            preloader: () => {
-                let p = 0;
-                const bar = document.getElementById('p-bar');
-                const itv = setInterval(() => {
-                    p += Math.floor(Math.random() * 15) + 5;
-                    if(p >= 100) {
-                        p = 100;
-                        clearInterval(itv);
-                        setTimeout(() => {
-                            document.getElementById('omega-loader').style.opacity = '0';
-                            setTimeout(() => document.getElementById('omega-loader').remove(), 600);
-                        }, 500);
+        // --- CORE APPLICATION LOGIC ---
+        window.app = {
+            init: async () => {
+                ui.log("Checking Protocols...");
+                ui.renderCats();
+                
+                // Check URL params for Public Profile or Link
+                const params = new URLSearchParams(location.search);
+                const uParam = params.get('u');
+                const idParam = params.get('id');
+
+                // Auth Listener
+                onAuthStateChanged(auth, (u) => {
+                    if (u) {
+                        currentUser = u;
+                        document.getElementById('loginBtn').classList.add('hidden');
+                        document.getElementById('headerAvatar').src = u.photoURL;
+                        document.getElementById('headerAvatar').classList.remove('hidden');
+                        ui.log(`Auth: ${u.displayName}`);
+                    } else {
+                        ui.log("Guest Mode Active");
                     }
-                    bar.style.width = p + '%';
-                }, 80);
+
+                    // Routing Logic
+                    if(uParam) {
+                        viewingUserId = uParam;
+                        app.tab('profile');
+                    } else if (idParam) {
+                        app.openGateway(idParam);
+                    } else {
+                        app.loadFeed();
+                        app.autoWipe(); // Run cleanup on startup
+                    }
+
+                    setTimeout(() => document.getElementById('sysLoader').style.display = 'none', 1500);
+                });
             },
 
-            initMatrix: () => {
-                const c = document.getElementById('matrix-canvas');
-                const ctx = c.getContext('2d');
-                c.width = window.innerWidth; c.height = window.innerHeight;
-                const chars = "010101NVOLINKOMEGA";
-                const drops = Array(Math.floor(c.width/20)).fill(1);
-                function draw() {
-                    ctx.fillStyle = "rgba(0,0,0,0.05)";
-                    ctx.fillRect(0,0,c.width,c.height);
-                    ctx.fillStyle = "#3b82f6";
-                    ctx.font = "15px monospace";
-                    drops.forEach((y, i) => {
-                        const txt = chars[Math.floor(Math.random()*chars.length)];
-                        ctx.fillText(txt, i*20, y*20);
-                        if(y*20 > c.height && Math.random() > 0.975) drops[i] = 0;
-                        drops[i]++;
-                    });
-                }
-                setInterval(draw, 50);
-            },
-
-            switchTab: (id) => {
-                document.querySelectorAll('.view-panel').forEach(v => v.classList.add('hidden'));
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                document.getElementById('view-'+id).classList.remove('hidden');
-                document.getElementById('nav-'+id).classList.add('active');
-                if(id === 'home') omegaApp.loadFeed();
-                if(id === 'user') omegaApp.loadProfile();
-            },
-
-            handleFile: (input) => {
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    window.omegaState.b64 = e.target.result;
-                    document.getElementById('prev-img').src = e.target.result;
-                    document.getElementById('prev-img').classList.remove('hidden');
-                    document.getElementById('hint-ui').classList.add('hidden');
-                };
-                reader.readAsDataURL(file);
-            },
-
-            publish: async () => {
-                const t = document.getElementById('in-title').value;
-                const url = document.getElementById('in-url').value;
-                const cat = document.getElementById('in-cat').value;
-                const btn = document.getElementById('pub-btn');
-
-                if(!t || !url || !window.omegaState.b64 || !window.omegaState.user) return alert("Lütfen tüm alanları doldurun!");
-
-                btn.innerText = "YAYINLANIYOR...";
-                btn.disabled = true;
+            // AUTO WIPE SYSTEM (30 DAYS)
+            autoWipe: async () => {
+                ui.log("Running Auto-Cleaner...");
+                const now = Date.now();
+                const cutoff = 30 * 24 * 60 * 60 * 1000; // 30 Days ms
+                let deletedCount = 0;
 
                 try {
-                    await addDoc(collection(db, "links"), {
-                        title: t, target: url, category: cat, image: window.omegaState.b64,
-                        uid: window.omegaState.user.uid, uName: window.omegaState.user.displayName,
-                        uAvatar: window.omegaState.user.photoURL, views: 0,
+                    const q = query(collection(db, 'links'));
+                    const snap = await getDocs(q);
+                    
+                    snap.forEach(async (d) => {
+                        const data = d.data();
+                        if(data.createdAt) {
+                            const diff = now - data.createdAt.toMillis();
+                            if(diff > cutoff) {
+                                await deleteDoc(doc(db, 'links', d.id));
+                                deletedCount++;
+                            }
+                        }
+                    });
+                    if(deletedCount > 0) console.log(`[CLEANER]: ${deletedCount} old files removed.`);
+                } catch(e) { console.error(e); }
+            },
+
+            // FEED SYSTEM
+            loadFeed: async (filterCat = 'Hepsi', search = '') => {
+                const list = document.getElementById('feedList');
+                list.innerHTML = `<div class="text-center py-20 animate-pulse"><i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-3xl"></i></div>`;
+                
+                const q = query(collection(db, 'links'), orderBy('createdAt', 'desc'));
+                const snap = await getDocs(q);
+                
+                list.innerHTML = '';
+                let count = 0;
+
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    
+                    // Filtering
+                    if(filterCat !== 'Hepsi' && data.category !== filterCat) return;
+                    if(search && !data.title.toLowerCase().includes(search.toLowerCase()) && !data.uName.toLowerCase().includes(search.toLowerCase())) return;
+
+                    count++;
+                    
+                    // Owner Check for Tools
+                    let tools = '';
+                    if(currentUser && data.uid === currentUser.uid) {
+                        tools = `
+                        <button onclick="app.refreshLinkModal('${doc.id}')" class="absolute top-4 right-4 z-20 bg-yellow-500/20 backdrop-blur-md border border-yellow-500/50 text-yellow-500 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase hover:bg-yellow-500 hover:text-black transition">
+                            <i class="fa-solid fa-wrench mr-1"></i> BAKIM
+                        </button>`;
+                    }
+
+                    list.innerHTML += `
+                    <div class="mega-card group">
+                        ${tools}
+                        <div onclick="location.href='?u=${data.uid}'" class="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md pl-1 pr-3 py-1 rounded-full border border-white/10 cursor-pointer hover:bg-black hover:border-blue-500 transition">
+                            <img src="${data.uAvatar}" class="w-6 h-6 rounded-full">
+                            <span class="text-[9px] font-bold text-zinc-200 uppercase">${data.uName}</span>
+                        </div>
+
+                        <div class="h-[280px] w-full overflow-hidden relative">
+                            <img src="${data.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:rotate-1">
+                            <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-[#09090b] to-transparent"></div>
+                        </div>
+
+                        <div class="p-6 relative z-10 -mt-6">
+                            <div class="flex justify-between items-end mb-3">
+                                <span class="bg-blue-600/20 text-blue-500 border border-blue-500/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">${data.category}</span>
+                                <span class="text-[9px] text-zinc-600 font-bold"><i class="fa-solid fa-eye mr-1"></i> ${data.views || 0}</span>
+                            </div>
+                            
+                            <h3 class="text-xl font-black italic text-white mb-6 leading-tight">${data.title}</h3>
+                            
+                            <div class="flex gap-3">
+                                <button onclick="app.openGateway('${doc.id}')" class="btn-neo flex-1 py-4 text-xs shadow-lg shadow-blue-900/20">
+                                    Modülü Başlat
+                                </button>
+                                <button onclick="app.copyLink('${doc.id}')" class="w-12 bg-zinc-800 rounded-2xl flex items-center justify-center text-zinc-400 hover:text-white transition">
+                                    <i class="fa-solid fa-share-nodes"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                if(count === 0) list.innerHTML = `<div class="text-center py-20 text-zinc-600 font-bold text-xs uppercase tracking-widest">Veri Bulunamadı</div>`;
+            },
+
+            // CREATE LINK
+            handleImage: (input) => {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        document.getElementById('previewImage').src = e.target.result;
+                        document.getElementById('previewImage').classList.remove('hidden');
+                        document.getElementById('uploadPlaceholder').classList.add('hidden');
+                        currentImageBase64 = e.target.result;
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            },
+
+            deployLink: async () => {
+                if(!currentUser) return alert("HATA: Oturum açılmadı.");
+                const t = document.getElementById('upTitle').value;
+                const l = document.getElementById('upLink').value;
+                const c = document.getElementById('upCat').value;
+                const task = document.getElementById('upTask').value;
+
+                if(!t || !l || !currentImageBase64) return alert("Eksik veri!");
+
+                ui.log("Uploading to blockchain node...");
+                
+                try {
+                    await addDoc(collection(db, 'links'), {
+                        title: t, target: l, category: c, task: task || "",
+                        image: currentImageBase64,
+                        uid: currentUser.uid,
+                        uName: currentUser.displayName,
+                        uAvatar: currentUser.photoURL,
+                        views: 0,
                         createdAt: serverTimestamp()
                     });
-                    confetti();
-                    setTimeout(() => location.reload(), 1500);
-                } catch(e) { alert("Hata oluştu!"); btn.disabled = false; btn.innerText = "Yeniden Dene"; }
+                    
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                    
+                    // Reset Form
+                    document.getElementById('upTitle').value = "";
+                    document.getElementById('upLink').value = "";
+                    document.getElementById('upTask').value = "";
+                    document.getElementById('previewImage').classList.add('hidden');
+                    document.getElementById('uploadPlaceholder').classList.remove('hidden');
+                    currentImageBase64 = null;
+                    
+                    setTimeout(() => app.tab('feed'), 1000);
+                } catch(e) { console.error(e); alert("Yükleme Hatası"); }
             },
 
-            loadFeed: async (s = "") => {
-                const cont = document.getElementById('view-home');
-                cont.innerHTML = `<div class="py-20 text-center opacity-20 font-black italic tracking-widest">DECRYPTING FEED...</div>`;
-                
-                let q = query(collection(db, "links"), orderBy("createdAt", "desc"));
-                if(window.omegaState.cat !== 'Hepsi') q = query(collection(db, "links"), where("category", "==", window.omegaState.cat), orderBy("createdAt", "desc"));
-                
-                const snap = await getDocs(q);
-                cont.innerHTML = "";
-
-                if(snap.empty) cont.innerHTML = `<div class="py-20 text-center text-zinc-600 font-bold uppercase">Henüz paylaşım yok.</div>`;
-
-                snap.forEach(d => {
-                    const data = d.data();
-                    if(s && !data.title.toLowerCase().includes(s.toLowerCase())) return;
-                    cont.innerHTML += `
-                        <div class="glass-card overflow-hidden group">
-                            <div class="relative h-64 overflow-hidden">
-                                <img src="${data.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-                                <div class="absolute top-5 left-5 bg-blue-600 text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-widest">${data.category}</div>
-                                <div class="absolute bottom-6 left-6 right-6">
-                                    <h3 class="text-2xl font-black italic leading-tight">${data.title}</h3>
-                                    <div class="flex items-center gap-2 mt-2 opacity-60">
-                                        <i class="fa-solid fa-eye text-xs"></i>
-                                        <span class="text-[10px] font-bold uppercase">${data.views || 0} Görüntülenme</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-6 flex justify-between items-center bg-zinc-900/10">
-                                <div class="flex items-center gap-3">
-                                    <img src="${data.uAvatar}" class="w-8 h-8 rounded-xl border border-white/10">
-                                    <span class="text-[10px] font-black text-zinc-500 uppercase tracking-tighter">${data.uName}</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="omegaApp.qr('${d.id}')" class="w-11 h-11 rounded-2xl bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition"><i class="fa-solid fa-qrcode"></i></button>
-                                    <button onclick="location.href='?id=${d.id}'" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase transition">Kilidi Aç</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            },
-
+            // PROFILE SYSTEM
             loadProfile: async () => {
-                if(!window.omegaState.user) return;
-                const list = document.getElementById('user-links-list');
-                const q = query(collection(db, "links"), where("uid", "==", window.omegaState.user.uid));
+                // Determine target user
+                const targetId = viewingUserId || (currentUser ? currentUser.uid : null);
+                if(!targetId) return ui.log("No profile target");
+
+                const isMe = (currentUser && targetId === currentUser.uid);
+
+                // UI Adjustments
+                if(isMe) {
+                    document.getElementById('btnEditProfile').classList.remove('hidden');
+                    document.getElementById('pName').innerText = currentUser.displayName;
+                    document.getElementById('pAvatar').src = currentUser.photoURL;
+                    // Note: Bio is simplified here. In full app, fetch from a 'users' collection.
+                } else {
+                    document.getElementById('btnEditProfile').classList.add('hidden');
+                }
+
+                const list = document.getElementById('profileFeed');
+                list.innerHTML = '<div class="text-center py-4"><i class="fa-solid fa-spinner fa-spin text-zinc-600"></i></div>';
+
+                const q = query(collection(db, 'links'), where('uid', '==', targetId));
                 const snap = await getDocs(q);
-                list.innerHTML = "";
-                let total = 0;
-                document.getElementById('stat-links').innerText = snap.size;
+
+                document.getElementById('pStatCount').innerText = snap.size;
+                let totalViews = 0;
+                list.innerHTML = '';
+
+                // If viewing someone else, try to get their name/avatar from their first post
+                if(!isMe && snap.size > 0) {
+                    const first = snap.docs[0].data();
+                    document.getElementById('pName').innerText = first.uName;
+                    document.getElementById('pAvatar').src = first.uAvatar;
+                    if(first.userBio) document.getElementById('pBio').innerText = first.userBio;
+                }
 
                 snap.forEach(d => {
                     const data = d.data();
-                    const v = data.views || 0;
-                    total += v;
-                    list.innerHTML += `
-                        <div class="glass-card p-5 flex items-center justify-between">
-                            <div class="flex items-center gap-4">
-                                <img src="${data.image}" class="w-16 h-16 rounded-2xl object-cover">
-                                <div>
-                                    <h4 class="text-sm font-black italic truncate w-32 uppercase">${data.title}</h4>
-                                    <p class="text-[9px] text-blue-500 font-black mt-1"><i class="fa-solid fa-bolt mr-1"></i> ${v} HIT</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="navigator.clipboard.writeText('${window.location.origin + window.location.pathname + '?id=' + d.id}');alert('Kopyalandı!')" class="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center text-zinc-600"><i class="fa-solid fa-link"></i></button>
-                                <button onclick="omegaApp.del('${d.id}')" class="w-10 h-10 rounded-xl bg-red-900/20 flex items-center justify-center text-red-500/40 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                document.getElementById('stat-views').innerText = total;
-            },
-
-            del: async (id) => { if(confirm("Protokol silinsin mi?")) { await deleteDoc(doc(db, "links", id)); omegaApp.loadProfile(); } },
-
-            qr: (id) => {
-                const modal = document.getElementById('qr-modal');
-                const target = document.getElementById('qr-canvas');
-                target.innerHTML = "";
-                modal.classList.remove('hidden');
-                new QRCode(target, { text: window.location.origin + window.location.pathname + "?id=" + id, width: 220, height: 220, colorDark: "#000", colorLight: "#fff" });
-            },
-
-            renderGateway: async (id) => {
-                const root = document.getElementById('gateway-root');
-                root.classList.remove('hidden');
-                const snap = await getDoc(doc(db, "links", id));
-                if(!snap.exists()) return root.innerHTML = "PROCOTOL NOT FOUND";
-                const data = snap.data();
-                await updateDoc(doc(db, "links", id), { views: increment(1) });
-
-                root.innerHTML = `
-                    <div class="w-full max-w-md mt-10 space-y-10 text-center">
-                        <div class="omega-logo-box mx-auto"><i class="fa-solid fa-infinity text-2xl"></i></div>
-                        <div class="glass-card overflow-hidden">
-                            <img src="${data.image}" class="w-full h-56 object-cover opacity-60">
-                            <div class="p-10 space-y-6">
-                                <span class="text-[9px] font-black text-blue-500 border border-blue-500/30 px-5 py-2 rounded-full uppercase tracking-widest">Security Gateway v1.0</span>
-                                <h1 class="text-3xl font-black italic">${data.title}</h1>
-                                <p class="text-zinc-500 text-xs font-medium px-4 leading-relaxed">Güvenli bağlantı oluşturuluyor. Lütfen bot olmadığınızı kanıtlamak için bekleyin.</p>
-                                <div id="gw-box" class="pt-6">
-                                    <button onclick="omegaApp.startDecryption(this, '${data.target}')" class="btn-omega">Protokolü Çöz</button>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-[10px] text-zinc-800 font-bold uppercase tracking-[0.5em]">Encrypted by NVOLINK OMEGA</p>
-                    </div>
-                `;
-            },
-
-            startDecryption: (btn, target) => {
-                let s = 10;
-                btn.disabled = true;
-                const i = setInterval(() => {
-                    btn.innerHTML = `<i class="fa-solid fa-cog fa-spin mr-3"></i> ANALYZING... ${s}`;
-                    s--;
-                    if(s < 0) {
-                        clearInterval(i);
-                        btn.innerHTML = "ERİŞİM ONAYLANDI! GİT";
-                        btn.classList.replace('btn-omega', 'bg-green-600');
-                        btn.disabled = false;
-                        confetti();
-                        btn.onclick = () => location.href = target;
+                    totalViews += (data.views || 0);
+                    
+                    let action = `<button onclick="app.openGateway('${d.id}')" class="bg-white text-black text-[9px] font-black px-3 py-1.5 rounded-lg">AÇ</button>`;
+                    if(isMe) {
+                        action = `
+                        <div class="flex gap-2">
+                            <button onclick="app.refreshLinkModal('${d.id}')" class="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-500 flex items-center justify-center"><i class="fa-solid fa-wrench text-xs"></i></button>
+                            <button onclick="app.deleteLink('${d.id}')" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>`;
                     }
-                }, 1000);
+
+                    list.innerHTML += `
+                    <div class="bg-zinc-900/40 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="${data.image}" class="w-12 h-12 rounded-xl object-cover bg-black">
+                            <div>
+                                <h4 class="font-bold text-xs text-zinc-200 line-clamp-1">${data.title}</h4>
+                                <span class="text-[9px] text-zinc-600 uppercase font-bold">${data.category} • ${data.views||0} view</span>
+                            </div>
+                        </div>
+                        ${action}
+                    </div>`;
+                });
+                
+                document.getElementById('pStatViews').innerText = totalViews;
             },
 
-            filter: (c, el) => {
-                window.omegaState.cat = c;
-                document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
-                el.classList.add('active');
-                omegaApp.loadFeed();
+            saveProfile: async () => {
+                if(!currentUser) return;
+                const name = document.getElementById('editName').value;
+                const bio = document.getElementById('editBio').value;
+                
+                if(name) {
+                    await updateProfile(currentUser, { displayName: name });
+                    // Batch update bio in user's links (Simplified)
+                    const q = query(collection(db, 'links'), where('uid', '==', currentUser.uid));
+                    const snap = await getDocs(q);
+                    snap.forEach(async d => {
+                        await updateDoc(doc(db, 'links', d.id), { uName: name, userBio: bio });
+                    });
+                    
+                    alert("Profil güncellendi!");
+                    ui.modal('editProfileModal', false);
+                    location.reload();
+                }
             },
 
-            search: (v) => omegaApp.loadFeed(v)
+            // ADMIN TOOLS (REFRESH & DELETE)
+            refreshLinkModal: (id) => {
+                document.getElementById('refreshId').value = id;
+                ui.modal('refreshModal', true);
+            },
+            
+            doRefresh: async () => {
+                const id = document.getElementById('refreshId').value;
+                const url = document.getElementById('refreshUrl').value;
+                if(!url) return alert("URL girin.");
+                
+                await updateDoc(doc(db, 'links', id), { target: url });
+                ui.toast("Bağlantı başarıyla onarıldı.");
+                ui.modal('refreshModal', false);
+                location.reload();
+            },
+
+            deleteLink: async (id) => {
+                if(confirm("Bu modülü kalıcı olarak silmek istiyor musunuz?")) {
+                    await deleteDoc(doc(db, 'links', id));
+                    app.loadProfile();
+                }
+            },
+
+            // GATEWAY & LOGIC
+            openGateway: async (id) => {
+                ui.modal('gatewayModal', true);
+                
+                // Get Link Data
+                const snap = await getDoc(doc(db, 'links', id));
+                if(!snap.exists()) return alert("Link silinmiş veya bulunamadı.");
+                
+                const data = snap.data();
+                
+                // Update Views
+                updateDoc(doc(db, 'links', id), { views: increment(1) });
+
+                // QR Generate
+                const qrBox = document.getElementById('qrContainer');
+                qrBox.innerHTML = "";
+                new QRCode(qrBox, { text: data.target, width: 128, height: 128 });
+
+                // Task Logic
+                const btn = document.getElementById('btnGoLink');
+                const taskArea = document.getElementById('taskArea');
+                
+                if(data.task) {
+                    taskArea.classList.remove('hidden');
+                    document.getElementById('taskText').innerText = data.task;
+                    btn.innerText = "GÖREVİ ONAYLA";
+                    btn.onclick = () => {
+                        alert("Görev kontrol ediliyor... (Simülasyon)");
+                        setTimeout(() => {
+                            window.location.href = data.target;
+                        }, 2000);
+                    };
+                } else {
+                    taskArea.classList.add('hidden');
+                    btn.innerText = "BAĞLANTIYA GİT";
+                    btn.onclick = () => window.location.href = data.target;
+                }
+            },
+
+            // NAVIGATION & UTILS
+            tab: (t) => {
+                // Auth Guard for Profile & Create
+                if((t === 'profile' || t === 'create') && !currentUser && !viewingUserId) {
+                    signInWithPopup(auth, provider);
+                    return;
+                }
+
+                // Reset Views
+                document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active-tab'));
+                document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+                // Activate Target
+                document.getElementById('view-'+t).classList.add('active-tab');
+                if(document.getElementById('nav-'+t)) document.getElementById('nav-'+t).classList.add('active');
+
+                // Logic Triggers
+                if(t === 'feed') { viewingUserId = null; app.loadFeed(); } // Reset view mode
+                if(t === 'profile') app.loadProfile();
+                
+                window.scrollTo(0,0);
+            },
+            
+            setCategory: (cat, btnElement) => {
+                // Visual toggle
+                const p = btnElement.parentElement;
+                Array.from(p.children).forEach(c => {
+                    c.className = "px-5 py-2.5 rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition border bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white";
+                });
+                btnElement.className = "px-5 py-2.5 rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition border bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-900/40";
+                
+                app.loadFeed(cat);
+            },
+
+            filterFeed: () => {
+                const val = document.getElementById('searchInput').value;
+                app.loadFeed('Hepsi', val);
+            },
+
+            shareProfile: () => {
+                const uid = viewingUserId || currentUser?.uid;
+                if(!uid) return;
+                const url = `${location.origin}${location.pathname}?u=${uid}`;
+                navigator.clipboard.writeText(url).then(() => alert("Profil linki kopyalandı!"));
+            },
+            
+            copyLink: (id) => {
+                const url = `${location.origin}${location.pathname}?id=${id}`;
+                navigator.clipboard.writeText(url).then(() => alert("Modül linki kopyalandı!"));
+            }
         };
 
-        omegaAuth.listen();
+        // GLOBAL START
+        document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
+        app.init();
     </script>
 </body>
 </html>
