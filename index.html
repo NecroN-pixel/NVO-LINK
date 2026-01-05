@@ -5,407 +5,412 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#000000">
-    <title>NVOLINK | G-0.5.0 SYSTEM</title>
+    <title>NVOLINK | OMEGA G-1.0.0</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg: #000000;
-            --surface: #09090b;
-            --surface-light: #18181b;
-            --border: #27272a;
+            --bg-deep: #000000;
+            --bg-panel: #0a0a0c;
+            --border: #222226;
             --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.4);
+            --primary-glow: rgba(59, 130, 246, 0.6);
             --accent: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.6);
             --danger: #ef4444;
-            --warning: #eab308;
-            --success: #22c55e;
+            --success: #10b981;
+            --gold: #fbbf24;
             --text-main: #ffffff;
-            --text-dim: #a1a1aa;
+            --text-mute: #71717a;
         }
 
+        /* RESET & BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
+            background-color: var(--bg-deep);
             color: var(--text-main);
             overflow-x: hidden;
-            padding-bottom: 140px; /* Nav bar space */
+            min-height: 100vh;
         }
 
-        /* UTILS */
+        /* CYBER GRID BACKGROUND */
+        .cyber-grid {
+            position: fixed; inset: 0; z-index: -1;
+            background-image: linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+
+        /* INFINITY LOGO ANIMATION */
+        .infinity-spin { animation: infinityPulse 3s ease-in-out infinite; display: inline-block; }
+        @keyframes infinityPulse {
+            0%, 100% { text-shadow: 0 0 10px var(--primary-glow); transform: scale(1); }
+            50% { text-shadow: 0 0 30px var(--accent-glow); transform: scale(1.1); }
+        }
+
+        /* SCROLL HIDING */
         .hide-scroll::-webkit-scrollbar { display: none; }
-        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* CARD SYSTEM */
-        .mega-card {
-            background: var(--surface);
+        /* OMEGA CARDS */
+        .omega-card {
+            background: rgba(10, 10, 12, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
             border-radius: 32px;
             overflow: hidden;
             position: relative;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            isolation: isolate;
+            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        
-        .mega-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .mega-card:active { transform: scale(0.98); }
-
-        /* BUTTONS */
-        .btn-neo {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            border: none;
-            border-radius: 20px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 10px 30px -10px var(--primary-glow);
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-neo::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(255,255,255,0.2), transparent);
+        .omega-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
             opacity: 0; transition: 0.3s;
         }
-        .btn-neo:active { transform: scale(0.95); box-shadow: 0 5px 15px -5px var(--primary-glow); }
+        .omega-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); }
+        .omega-card:hover::after { opacity: 1; }
 
-        /* INPUT FIELDS */
-        .input-box {
-            background: var(--surface-light);
-            border: 1px solid var(--border);
-            color: white;
-            border-radius: 20px;
-            width: 100%;
-            padding: 18px 24px;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
+        /* BUTTONS */
+        .btn-atomic {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white; border: none; padding: 16px;
+            border-radius: 20px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 0 20px -5px var(--primary-glow);
+            transition: 0.3s; position: relative; overflow: hidden;
         }
-        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .btn-atomic::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+        .btn-atomic:hover::before { left: 100%; }
+        .btn-atomic:active { transform: scale(0.95); box-shadow: none; }
 
-        /* NAVIGATION */
-        .glass-nav {
-            background: rgba(9, 9, 11, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        /* INPUTS */
+        .input-cyber {
+            width: 100%; background: #050506; border: 1px solid var(--border);
+            color: white; padding: 18px 24px; border-radius: 20px;
+            outline: none; transition: 0.3s; font-size: 14px;
         }
-        
-        .nav-btn {
-            color: var(--text-dim);
-            transition: 0.3s;
-            position: relative;
-        }
-        .nav-btn.active { color: var(--primary); transform: translateY(-2px); }
-        .nav-btn.active::after {
-            content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
-            width: 4px; height: 4px; background: var(--primary); border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary);
-        }
+        .input-cyber:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
 
-        /* MODALS */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: 0.3s; padding: 20px;
-        }
-        .modal-overlay.open { opacity: 1; pointer-events: all; }
-        
-        .modal-content {
-            background: #111;
-            border: 1px solid var(--border);
-            border-radius: 32px;
-            width: 100%; max-width: 400px;
-            padding: 30px;
-            transform: translateY(20px); transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            max-height: 80vh; overflow-y: auto;
-        }
-        .modal-overlay.open .modal-content { transform: translateY(0); }
-
-        /* LOADER */
-        .loader-box {
-            position: fixed; inset: 0; background: #000; z-index: 10000;
+        /* LOADER SYSTEM */
+        #boot-screen {
+            position: fixed; inset: 0; background: #000; z-index: 99999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .scan-line {
-            width: 100%; height: 2px; background: var(--primary);
-            position: absolute; top: 0; left: 0;
-            animation: scan 2s linear infinite; box-shadow: 0 0 20px var(--primary);
+        .loader-ring {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 4px solid transparent; border-top-color: var(--primary);
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+            box-shadow: 0 0 30px var(--primary-glow);
         }
-        @keyframes scan { 0% {top:0; opacity:0;} 50% {opacity:1;} 100% {top:100%; opacity:0;} }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* TABS ANIMATION */
-        .tab-view { display: none; animation: fadeIn 0.5s ease forwards; }
-        .tab-view.active-tab { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* STATS GRID */
-        .stat-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-            border: 1px solid var(--border);
-            padding: 20px; border-radius: 24px; text-align: center;
+        /* MODALS */
+        .modal-wrap {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 10000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.4s;
+            padding: 20px;
         }
+        .modal-wrap.active { opacity: 1; pointer-events: all; }
+        .modal-box {
+            background: #111; border: 1px solid var(--border); border-radius: 36px;
+            width: 100%; max-width: 420px; padding: 32px;
+            transform: scale(0.9) translateY(20px); transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+        }
+        .modal-wrap.active .modal-box { transform: scale(1) translateY(0); }
+
+        /* TABS */
+        .tab-section { display: none; animation: slideUp 0.5s ease forwards; }
+        .tab-section.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* BOTTOM NAV */
+        .glass-dock {
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
     </style>
 </head>
-<body>
+<body class="pb-36">
 
-    <div id="sysLoader" class="loader-box">
-        <div class="scan-line"></div>
-        <div class="text-6xl font-black italic tracking-tighter mb-4 relative z-10">
-            NVO<span class="text-blue-500">LINK</span>
+    <div class="cyber-grid"></div>
+
+    <div id="boot-screen">
+        <div class="relative mb-6">
+            <div class="absolute inset-0 bg-blue-500 blur-2xl opacity-20 rounded-full"></div>
+            <i class="fa-solid fa-infinity text-8xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 infinity-spin"></i>
         </div>
-        <div class="flex flex-col items-center gap-2">
-            <div class="w-48 h-1 bg-zinc-900 rounded-full overflow-hidden">
-                <div class="h-full bg-blue-500 w-[0%] animate-[loadBar_2.5s_ease_forwards]"></div>
+        <h1 class="text-3xl font-black italic tracking-tighter mb-2">NVO<span class="text-blue-500">LINK</span></h1>
+        <div class="flex flex-col items-center w-64">
+            <div class="w-full h-1 bg-zinc-900 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500 w-[0%] animate-[loadBar_2s_ease_forwards]"></div>
             </div>
-            <div id="sysLog" class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest mt-2">Initializing Core...</div>
+            <div class="flex justify-between w-full mt-2">
+                <span class="text-[9px] font-mono text-zinc-500 animate-pulse">SYSTEM CHECK...</span>
+                <span class="text-[9px] font-mono text-blue-500">G-1.0.0</span>
+            </div>
         </div>
-        <style> @keyframes loadBar { to { width: 100%; } } </style>
+        <style> @keyframes loadBar { 0% {width:0%} 100% {width:100%} } </style>
     </div>
 
-    <header class="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300" id="mainHeader">
+    <header class="fixed top-0 inset-x-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 transition-all">
         <div class="max-w-xl mx-auto px-5 py-4 flex justify-between items-center">
-            <div class="flex flex-col cursor-pointer" onclick="app.tab('feed')">
-                <h1 class="text-2xl font-black italic tracking-tight leading-none">NVO<span class="text-blue-500">LINK</span></h1>
-                <span class="text-[8px] font-bold text-zinc-600 bg-zinc-900 px-2 py-0.5 rounded-full w-fit mt-1 border border-zinc-800">vG-0.5.0 STABLE</span>
+            <div class="flex items-center gap-2 cursor-pointer" onclick="app.goHome()">
+                <div class="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center border border-blue-600/30">
+                    <i class="fa-solid fa-infinity text-blue-500 text-lg infinity-spin"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-black text-xl italic leading-none tracking-tight">NVO<span class="text-blue-500">LINK</span></span>
+                    <span class="text-[8px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Omega Edition</span>
+                </div>
             </div>
             
             <div class="flex items-center gap-3">
-                <button onclick="ui.modal('patchModal', true)" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 flex items-center justify-center hover:text-white hover:border-blue-500 transition">
-                    <i class="fa-solid fa-scroll"></i>
+                <button onclick="ui.toggleModal('patchModal')" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-blue-500 transition shadow-lg">
+                    <i class="fa-solid fa-bell"></i>
                 </button>
-                
-                <div id="authContainer">
-                    <button id="loginBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wide transition shadow-lg shadow-blue-900/20">
-                        Giriş Yap
-                    </button>
-                    <img id="headerAvatar" class="hidden w-10 h-10 rounded-xl border-2 border-blue-500 object-cover cursor-pointer hover:scale-105 transition" onclick="app.tab('profile')">
-                </div>
+                <button id="loginBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-blue-600/20 transition hover:scale-105">
+                    Giriş
+                </button>
+                <img id="headerAvatar" class="hidden w-10 h-10 rounded-xl border-2 border-blue-500 object-cover cursor-pointer hover:rotate-3 transition" onclick="app.tab('profile')" />
             </div>
         </div>
     </header>
 
-    <main class="max-w-xl mx-auto px-4 pt-28 pb-10 relative z-10 min-h-screen">
-
-        <section id="view-feed" class="tab-view active-tab">
-            <div class="sticky top-20 z-40 bg-black/90 pb-4 pt-2 -mt-2">
-                <div class="relative mb-4">
-                    <i class="fa-solid fa-search absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500"></i>
-                    <input type="text" id="searchInput" onkeyup="app.filterFeed()" placeholder="Modül, Config veya Kullanıcı ara..." class="input-box pl-12 bg-zinc-900/50 backdrop-blur-sm">
-                </div>
-                <div id="categoryScroll" class="flex gap-2 overflow-x-auto hide-scroll pb-2">
+    <main class="max-w-xl mx-auto px-4 pt-28 relative z-10">
+        
+        <section id="tab-feed" class="tab-section active space-y-6">
+            <div class="sticky top-20 z-40 -mt-2 pb-2">
+                <div class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl opacity-30 group-hover:opacity-60 transition duration-500 blur"></div>
+                    <div class="relative bg-black rounded-2xl">
+                        <i class="fa-solid fa-search absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+                        <input id="searchInput" oninput="app.filterFeed()" placeholder="Modül, Config veya Kullanıcı ara..." class="w-full bg-zinc-900/90 border border-zinc-800 rounded-2xl pl-12 pr-4 py-4 text-sm outline-none text-white focus:bg-black transition placeholder:text-zinc-600" />
                     </div>
+                </div>
+                <div id="catScroll" class="flex gap-2 overflow-x-auto hide-scroll mt-4 pb-2"></div>
             </div>
 
-            <div id="feedList" class="space-y-8 mt-2 min-h-[300px]">
-                </div>
+            <div id="feedList" class="space-y-8 min-h-[400px]"></div>
         </section>
 
-        <section id="view-create" class="tab-view">
-            <div class="mega-card p-6 bg-zinc-900/30">
-                <div class="flex items-center justify-between mb-6">
+        <section id="tab-create" class="tab-section">
+            <div class="omega-card p-6 bg-gradient-to-b from-zinc-900/50 to-black">
+                <div class="flex items-center justify-between mb-8">
                     <h2 class="text-3xl font-black italic">YENİ <span class="text-blue-500">MODÜL</span></h2>
-                    <i class="fa-solid fa-cloud-arrow-up text-2xl text-zinc-600"></i>
+                    <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center animate-pulse">
+                        <i class="fa-solid fa-cloud-bolt text-2xl text-blue-500"></i>
+                    </div>
                 </div>
 
-                <div class="space-y-4">
-                    <div class="relative group">
-                        <input type="file" id="upImage" accept="image/*" class="hidden" onchange="app.handleImage(this)">
-                        <div onclick="document.getElementById('upImage').click()" id="dropZone" 
-                             class="h-64 border-2 border-dashed border-zinc-700 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-500/5 transition overflow-hidden bg-black/40">
-                            
-                            <img id="previewImage" class="absolute inset-0 w-full h-full object-cover hidden">
-                            
-                            <div id="uploadPlaceholder" class="text-center p-6">
-                                <div class="w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">
-                                    <i class="fa-solid fa-image text-zinc-400 text-xl"></i>
-                                </div>
-                                <p class="text-xs font-bold text-zinc-400 uppercase">Kapak Görseli Seç</p>
-                                <p class="text-[9px] text-zinc-600 mt-1">16:9 Önerilir • Max 5MB</p>
-                            </div>
+                <div class="space-y-5">
+                    <input type="file" id="upImage" accept="image/*" class="hidden" onchange="app.handleImg(this)">
+                    <div onclick="document.getElementById('upImage').click()" class="relative h-64 border-2 border-dashed border-zinc-700 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-500/5 transition overflow-hidden group">
+                        <img id="prevImg" class="absolute inset-0 w-full h-full object-cover hidden transition duration-700 group-hover:scale-105">
+                        <div id="upPlace" class="text-center p-6 transition group-hover:scale-110">
+                            <i class="fa-solid fa-image text-4xl text-zinc-600 mb-3"></i>
+                            <p class="text-xs font-bold text-zinc-500 uppercase">Görsel Yükle</p>
                         </div>
                     </div>
 
-                    <div class="grid gap-4">
-                        <input type="text" id="upTitle" placeholder="Modül Başlığı (Örn: Valorant Trigger)" class="input-box">
-                        <input type="url" id="upLink" placeholder="Hedef Link (URL)" class="input-box">
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <select id="upCat" class="input-box appearance-none cursor-pointer">
-                                </select>
-                            <input type="text" id="upTask" placeholder="Görev (Opsiyonel)" class="input-box" title="Örn: Abone Ol">
-                        </div>
+                    <input id="upTitle" placeholder="Modül Başlığı" class="input-cyber" />
+                    <input id="upLink" placeholder="Hedef Link (URL)" class="input-cyber" />
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="upCat" class="input-cyber appearance-none"></select>
+                        <input id="upTask" placeholder="Görev (Opsiyonel)" class="input-cyber" />
                     </div>
 
-                    <button onclick="app.deployLink()" class="btn-neo w-full py-5 mt-4 text-sm flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-rocket"></i>
-                        Sisteme Enjekte Et
+                    <button onclick="app.deploy()" class="btn-atomic w-full mt-4 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-rocket"></i> SİSTEME ENJEKTE ET
                     </button>
-                    <p class="text-[9px] text-center text-zinc-600 mt-2">Linkler 30 gün sonra otomatik imha edilir.</p>
+                    <p class="text-[10px] text-zinc-600 text-center font-mono">Otomatik Silinme: 30 Gün</p>
                 </div>
             </div>
         </section>
 
-        <section id="view-profile" class="tab-view">
-            <div class="mega-card p-8 text-center relative overflow-hidden mb-8">
-                <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none"></div>
-                
-                <button id="btnEditProfile" onclick="ui.modal('editProfileModal', true)" class="hidden absolute top-4 right-4 w-8 h-8 rounded-full bg-zinc-800/50 backdrop-blur text-white text-xs hover:bg-blue-600 transition z-20">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
-
-                <div class="relative z-10">
-                    <img id="pAvatar" class="w-32 h-32 rounded-[30px] border-4 border-zinc-900 shadow-2xl mx-auto object-cover bg-zinc-800">
-                    <h2 id="pName" class="text-3xl font-black italic mt-5 mb-1">...</h2>
-                    <p id="pBio" class="text-xs text-zinc-400 font-medium max-w-[250px] mx-auto leading-relaxed">Veri yok.</p>
-                    
-                    <div onclick="app.shareProfile()" class="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-800 px-4 py-1.5 rounded-full mt-4 cursor-pointer hover:border-blue-500 transition">
-                        <i class="fa-solid fa-fingerprint text-blue-500 text-xs"></i>
-                        <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">PROFILI PAYLAŞ</span>
-                    </div>
+        <section id="tab-profile" class="tab-section">
+            <div class="omega-card p-8 text-center relative mb-8 overflow-visible">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-600 to-yellow-400 text-black px-4 py-1 rounded-full text-[10px] font-black uppercase shadow-lg shadow-yellow-500/30 z-20 flex items-center gap-2">
+                    <i class="fa-solid fa-crown"></i>
+                    <span>Reputasyon: <span id="repScore">0.0</span></span>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mt-8 relative z-10">
-                    <div class="stat-card">
-                        <div id="pStatCount" class="text-2xl font-black text-white">0</div>
-                        <div class="text-[9px] font-bold text-zinc-500 uppercase mt-1">Aktif Link</div>
+                <div class="relative z-10 mt-4">
+                    <div class="relative w-32 h-32 mx-auto">
+                        <div class="absolute inset-0 bg-blue-500 rounded-[30px] blur-xl opacity-40"></div>
+                        <img id="pAvatar" class="relative w-full h-full rounded-[30px] border-4 border-zinc-900 object-cover shadow-2xl">
+                        <button id="btnEdit" onclick="ui.toggleModal('editModal')" class="absolute -bottom-2 -right-2 w-10 h-10 bg-zinc-800 rounded-xl border border-zinc-700 text-white flex items-center justify-center hover:bg-blue-600 transition">
+                            <i class="fa-solid fa-pen text-xs"></i>
+                        </button>
                     </div>
-                    <div class="stat-card">
-                        <div id="pStatViews" class="text-2xl font-black text-blue-500">0</div>
-                        <div class="text-[9px] font-bold text-zinc-500 uppercase mt-1">Erişim</div>
+                    
+                    <h2 id="pName" class="text-3xl font-black italic mt-6">Misafir</h2>
+                    <p id="pBio" class="text-xs text-zinc-400 mt-2 font-medium max-w-[250px] mx-auto">Veri akışı yok.</p>
+
+                    <button onclick="app.shareProfile()" class="mt-6 bg-zinc-900 border border-zinc-800 px-6 py-2 rounded-full text-[10px] font-bold uppercase hover:border-blue-500 transition">
+                        <i class="fa-solid fa-share-nodes mr-2"></i> Profili Paylaş
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+                        <div id="statCount" class="text-3xl font-black text-white">0</div>
+                        <div class="text-[9px] font-bold text-zinc-600 uppercase">Dosya</div>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+                        <div id="statViews" class="text-3xl font-black text-blue-500">0</div>
+                        <div class="text-[9px] font-bold text-zinc-600 uppercase">Görüntülenme</div>
                     </div>
                 </div>
             </div>
 
             <div class="flex items-center justify-between px-2 mb-4">
-                <h3 class="font-black italic text-lg">YAYINLANANLAR</h3>
-                <span id="pListCount" class="text-xs font-bold text-zinc-600">0 Dosya</span>
+                <h3 class="font-black italic text-lg">YAYIN AKIŞI</h3>
+                <div class="h-[1px] bg-zinc-800 flex-1 ml-4"></div>
             </div>
-            <div id="profileFeed" class="space-y-3"></div>
+            <div id="profileFeed" class="space-y-4"></div>
         </section>
 
     </main>
 
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] h-[70px] glass-nav flex justify-between items-center px-8 z-[8000]">
-        <button onclick="app.tab('feed')" id="nav-feed" class="nav-btn active flex flex-col items-center gap-1">
-            <i class="fa-solid fa-layer-group text-xl"></i>
+    <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] h-[72px] glass-dock flex justify-between items-center px-10 z-[8000]">
+        <button onclick="app.tab('feed')" id="nav-feed" class="nav-item active flex flex-col items-center gap-1 text-zinc-500 transition duration-300">
+            <i class="fa-solid fa-layer-group text-2xl"></i>
         </button>
         
-        <button onclick="app.tab('create')" id="nav-create" class="nav-btn flex items-center justify-center w-14 h-14 bg-blue-600 rounded-full text-white shadow-lg shadow-blue-500/40 -mt-10 border-4 border-[#09090b] hover:scale-110 transition">
-            <i class="fa-solid fa-plus text-xl"></i>
+        <button onclick="app.tab('create')" id="nav-create" class="flex items-center justify-center w-16 h-16 bg-blue-600 rounded-[22px] text-white shadow-xl shadow-blue-500/40 -mt-10 border-4 border-[#0a0a0c] hover:scale-110 hover:rotate-3 transition duration-300">
+            <i class="fa-solid fa-plus text-2xl"></i>
         </button>
         
-        <button onclick="app.tab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center gap-1">
-            <i class="fa-solid fa-user-astronaut text-xl"></i>
+        <button onclick="app.tab('profile')" id="nav-profile" class="nav-item flex flex-col items-center gap-1 text-zinc-500 transition duration-300">
+            <i class="fa-solid fa-user-astronaut text-2xl"></i>
         </button>
     </nav>
 
-    <div id="patchModal" class="modal-overlay">
-        <div class="modal-content relative">
-            <button onclick="ui.modal('patchModal', false)" class="absolute top-4 right-4 text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 class="text-2xl font-black italic mb-2">YAMA NOTLARI <span class="text-blue-500">vG-0.5.0</span></h3>
-            <p class="text-[10px] text-zinc-500 mb-6 uppercase tracking-widest font-bold">Build: 2024.10.25_OMEGA</p>
+    <div id="gateModal" class="modal-wrap">
+        <div class="modal-box text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
             
+            <div class="relative w-fit mx-auto mb-6 p-4 bg-white rounded-3xl shadow-xl">
+                <div id="qrPlace"></div>
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center border-2 border-white">
+                        <i class="fa-solid fa-infinity text-blue-500 text-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-black italic mb-2">ERİŞİM <span class="text-blue-500">KİLİDİ</span></h3>
+            <p class="text-xs text-zinc-400 mb-6 px-4">Bu modüle erişmek için aşağıdaki görevi tamamlamanız gerekmektedir. Puanlamayı unutmayın!</p>
+
+            <div id="taskBox" class="hidden mb-6 bg-zinc-900/80 p-5 rounded-2xl border border-zinc-800 text-left flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-brands fa-youtube"></i> </div>
+                <div>
+                    <div class="text-[10px] font-bold text-zinc-500 uppercase">GÖREV</div>
+                    <div id="taskText" class="font-bold text-sm text-white">Abone Ol</div>
+                </div>
+            </div>
+
+            <button id="btnGateAction" class="btn-atomic w-full text-sm">BAĞLANTIYI AÇ</button>
+            <button onclick="ui.toggleModal('gateModal')" class="mt-4 text-xs text-zinc-600 font-bold hover:text-white transition">KAPAT</button>
+        </div>
+    </div>
+
+    <div id="rateModal" class="modal-wrap">
+        <div class="modal-box text-center">
+            <i class="fa-solid fa-star text-4xl text-yellow-500 mb-4 animate-bounce"></i>
+            <h3 class="text-xl font-black mb-2">DENEYİMİNİ PUANLA</h3>
+            <p class="text-xs text-zinc-500 mb-6">Bu dosya çalışıyor mu? Topluluk için puanla.</p>
+            
+            <div class="flex justify-center gap-3 mb-8">
+                <button onclick="app.submitRate(1)" class="text-3xl text-zinc-700 hover:text-yellow-500 transition"><i class="fa-solid fa-star"></i></button>
+                <button onclick="app.submitRate(2)" class="text-3xl text-zinc-700 hover:text-yellow-500 transition"><i class="fa-solid fa-star"></i></button>
+                <button onclick="app.submitRate(3)" class="text-3xl text-zinc-700 hover:text-yellow-500 transition"><i class="fa-solid fa-star"></i></button>
+                <button onclick="app.submitRate(4)" class="text-3xl text-zinc-700 hover:text-yellow-500 transition"><i class="fa-solid fa-star"></i></button>
+                <button onclick="app.submitRate(5)" class="text-3xl text-zinc-700 hover:text-yellow-500 transition"><i class="fa-solid fa-star"></i></button>
+            </div>
+            <input type="hidden" id="rateId">
+            <button onclick="ui.toggleModal('rateModal')" class="w-full bg-zinc-800 py-3 rounded-xl font-bold text-xs">ŞİMDİLİK GEÇ</button>
+        </div>
+    </div>
+
+    <div id="repairModal" class="modal-wrap">
+        <div class="modal-box border-yellow-500/30">
+            <div class="w-16 h-16 rounded-full bg-yellow-500/10 text-yellow-500 flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-screwdriver-wrench text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-black text-center mb-1">LİNK TAMİR İSTASYONU</h3>
+            <p class="text-[10px] text-zinc-500 text-center mb-6 uppercase tracking-widest">G-1.0.0 Repair Tool</p>
+            
+            <input type="hidden" id="repairId">
             <div class="space-y-4">
-                <div class="flex gap-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0"><i class="fa-solid fa-broom"></i></div>
-                    <div>
-                        <h4 class="font-bold text-sm">Auto-Wipe Sistemi</h4>
-                        <p class="text-xs text-zinc-400 mt-1">Sunucu sağlığı için 30 günden eski linkler ve dosyalar artık açılışta otomatik siliniyor.</p>
-                    </div>
+                <div>
+                    <label class="text-[10px] font-bold text-zinc-500 ml-2">YENİ HEDEF URL</label>
+                    <input id="repairUrl" class="input-cyber border-yellow-500/30 focus:border-yellow-500" placeholder="https://...">
                 </div>
-                <div class="flex gap-3">
-                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shrink-0"><i class="fa-solid fa-wrench"></i></div>
-                    <div>
-                        <h4 class="font-bold text-sm">Admin Link Tazeleme</h4>
-                        <p class="text-xs text-zinc-400 mt-1">Patlayan linkleri silmeden onarabilirsiniz. Profilinizdeki karta tıklayıp "Bakım" modunu açın.</p>
-                    </div>
-                </div>
-                <div class="flex gap-3">
-                    <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 shrink-0"><i class="fa-solid fa-share-nodes"></i></div>
-                    <div>
-                        <h4 class="font-bold text-sm">Public Profil ID</h4>
-                        <p class="text-xs text-zinc-400 mt-1">Artık profil linkinizi arkadaşlarınızla paylaşabilirsiniz. Onlar düzenleyemez, sadece görür.</p>
-                    </div>
-                </div>
+                <button onclick="app.execRepair()" class="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-black font-black rounded-xl transition uppercase">
+                    Linki Güncelle
+                </button>
             </div>
-            <button onclick="ui.modal('patchModal', false)" class="w-full bg-zinc-800 py-3 rounded-xl mt-6 text-xs font-bold hover:bg-zinc-700">ANLAŞILDI</button>
+            <button onclick="ui.toggleModal('repairModal')" class="mt-4 w-full text-xs text-zinc-500 font-bold">İPTAL</button>
         </div>
     </div>
 
-    <div id="refreshModal" class="modal-overlay">
-        <div class="modal-content border-yellow-500/30">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-3 text-yellow-500">
-                    <i class="fa-solid fa-screwdriver-wrench text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-black text-white">LİNK BAKIM MODU</h3>
-                <p class="text-xs text-zinc-500 mt-2">Bu dosyanın hedef linkini güncelleyerek yeniden çalışmasını sağlayın. Dosya silinmez.</p>
-            </div>
-            
-            <input type="hidden" id="refreshId">
-            <input type="url" id="refreshUrl" placeholder="Yeni Hedef Link (URL)" class="input-box border-yellow-500/30 focus:border-yellow-500 mb-4">
-            
-            <div class="flex gap-3">
-                <button onclick="ui.modal('refreshModal', false)" class="flex-1 py-3 bg-zinc-800 rounded-xl text-xs font-bold">İPTAL</button>
-                <button onclick="app.doRefresh()" class="flex-1 py-3 bg-yellow-600 text-black rounded-xl text-xs font-black">GÜNCELLE</button>
+    <div id="editModal" class="modal-wrap">
+        <div class="modal-box">
+            <h3 class="text-xl font-black mb-6">PROFİL DÜZENLEME</h3>
+            <div class="space-y-4">
+                <input id="editName" class="input-cyber" placeholder="Kullanıcı Adı">
+                <textarea id="editBio" class="input-cyber h-32 resize-none" placeholder="Biyografi (Max 150)"></textarea>
+                <button onclick="app.saveProfile()" class="btn-atomic w-full">KAYDET</button>
+                <button onclick="ui.toggleModal('editModal')" class="w-full bg-zinc-800 py-3 rounded-xl font-bold text-xs">İPTAL</button>
             </div>
         </div>
     </div>
 
-    <div id="gatewayModal" class="modal-overlay">
-        <div class="modal-content text-center">
-            <div id="qrContainer" class="flex justify-center mb-6 p-4 bg-white rounded-2xl w-fit mx-auto"></div>
-            <h3 class="text-xl font-black italic mb-2">ERİŞİM İZNİ</h3>
-            <p class="text-xs text-zinc-400 mb-6">Bu modüle erişmek için aşağıdaki görevi tamamlamanız veya QR kodu taratmanız gerekmektedir.</p>
+    <div id="patchModal" class="modal-wrap">
+        <div class="modal-box">
+            <h3 class="text-2xl font-black italic mb-2">OMEGA <span class="text-blue-500">G-1.0.0</span></h3>
+            <p class="text-[10px] text-zinc-500 mb-6 font-mono">BUILD: GOD_MODE_ENABLED</p>
             
-            <div id="taskArea" class="hidden mb-6 bg-zinc-900 p-4 rounded-xl border border-zinc-800">
-                <span class="text-[10px] font-bold text-blue-500 uppercase block mb-2">Gerekli Görev</span>
-                <p id="taskText" class="text-sm font-bold text-white">Youtube Abone Ol</p>
-            </div>
-
-            <button id="btnGoLink" class="w-full btn-neo py-4 text-xs">
-                KİLİDİ AÇ & GİT <i class="fa-solid fa-arrow-right ml-2"></i>
-            </button>
-            <button onclick="ui.modal('gatewayModal', false)" class="mt-4 text-[10px] text-zinc-500 underline">Kapat</button>
-        </div>
-    </div>
-
-    <div id="editProfileModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 class="text-xl font-black mb-4">PROFİLİ DÜZENLE</h3>
-            <div class="space-y-3">
-                <div class="text-[10px] text-zinc-500 uppercase font-bold ml-1">Görünen İsim</div>
-                <input type="text" id="editName" class="input-box">
-                
-                <div class="text-[10px] text-zinc-500 uppercase font-bold ml-1 mt-2">Biyografi</div>
-                <textarea id="editBio" class="input-box h-24 resize-none" placeholder="Kendinden bahset..."></textarea>
-            </div>
-            <div class="flex gap-3 mt-6">
-                <button onclick="ui.modal('editProfileModal', false)" class="flex-1 bg-zinc-800 rounded-xl text-xs font-bold py-3">VAZGEÇ</button>
-                <button onclick="app.saveProfile()" class="flex-1 bg-blue-600 rounded-xl text-xs font-bold py-3">KAYDET</button>
-            </div>
+            <ul class="space-y-3 mb-6">
+                <li class="flex items-center gap-3 text-sm text-zinc-300">
+                    <i class="fa-solid fa-check text-green-500"></i> Link Repair v2 (Fixed)
+                </li>
+                <li class="flex items-center gap-3 text-sm text-zinc-300">
+                    <i class="fa-solid fa-check text-green-500"></i> Infinity Logo & QR Update
+                </li>
+                <li class="flex items-center gap-3 text-sm text-zinc-300">
+                    <i class="fa-solid fa-check text-green-500"></i> Reputasyon Puanlama Sistemi
+                </li>
+                <li class="flex items-center gap-3 text-sm text-zinc-300">
+                    <i class="fa-solid fa-check text-green-500"></i> Auto-Wipe (30 Gün Temizlik)
+                </li>
+                <li class="flex items-center gap-3 text-sm text-zinc-300">
+                    <i class="fa-solid fa-check text-green-500"></i> Cyber Grid Arayüzü
+                </li>
+            </ul>
+            <button onclick="ui.toggleModal('patchModal')" class="w-full bg-zinc-800 py-3 rounded-xl font-bold text-xs">SİSTEME DÖN</button>
         </div>
     </div>
 
@@ -414,7 +419,6 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, deleteDoc, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURATION
         const fbConfig = {
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
             authDomain: "nvo-link.firebaseapp.com",
@@ -422,437 +426,376 @@
             storageBucket: "nvo-link.firebasestorage.app"
         };
 
-        // INIT FIREBASE
-        const fApp = initializeApp(fbConfig);
-        const auth = getAuth(fApp);
-        const db = getFirestore(fApp);
+        const appFB = initializeApp(fbConfig);
+        const auth = getAuth(appFB);
+        const db = getFirestore(appFB);
         const provider = new GoogleAuthProvider();
 
-        // STATE & CONSTANTS
         const CATEGORIES = ["Hepsi", "Script", "Config", "Exploit", "Tool", "Method", "Oyun", "Medya", "Premium"];
-        let currentUser = null;
-        let currentImageBase64 = null;
-        let viewingUserId = null; // For public profiles
+        let user = null;
+        let img64 = null;
+        let viewingUid = null;
 
-        // --- UI CONTROLLER ---
         window.ui = {
-            log: (msg) => {
-                const el = document.getElementById('sysLog');
-                if(el) el.innerText = `> ${msg}`;
-                console.log(`[NVOLINK SYS]: ${msg}`);
+            toggleModal: (id) => {
+                const el = document.getElementById(id);
+                el.classList.toggle('active');
             },
-            modal: (id, open) => {
-                const m = document.getElementById(id);
-                if(open) m.classList.add('open');
-                else m.classList.remove('open');
-            },
-            toast: (msg, type='info') => {
-                alert(msg); // Basic alert for stability, can be upgraded
-            },
-            renderCats: () => {
-                const c = document.getElementById('categoryScroll');
-                const s = document.getElementById('upCat');
-                c.innerHTML = ''; s.innerHTML = '';
-                
-                CATEGORIES.forEach(cat => {
-                    // Top Bar Chips
-                    const btn = document.createElement('button');
-                    btn.className = `px-5 py-2.5 rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition border ${cat === 'Hepsi' ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-900/40' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white'}`;
-                    btn.innerText = cat;
-                    btn.onclick = () => app.setCategory(cat, btn);
-                    c.appendChild(btn);
-
-                    // Select Option
-                    if(cat !== 'Hepsi') {
-                        const opt = document.createElement('option');
-                        opt.value = cat; opt.innerText = cat;
-                        s.appendChild(opt);
-                    }
-                });
-            }
+            toast: (msg) => alert(msg) // Placeholder for more advanced toast
         };
 
-        // --- CORE APPLICATION LOGIC ---
         window.app = {
             init: async () => {
-                ui.log("Checking Protocols...");
-                ui.renderCats();
+                // Categories
+                const catScroll = document.getElementById('catScroll');
+                const catSelect = document.getElementById('upCat');
                 
-                // Check URL params for Public Profile or Link
+                CATEGORIES.forEach(c => {
+                    // Feed Chips
+                    const btn = document.createElement('button');
+                    btn.className = `px-5 py-2 rounded-full text-[10px] font-bold uppercase whitespace-nowrap border transition ${c==='Hepsi' ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/30' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white'}`;
+                    btn.innerText = c;
+                    btn.onclick = () => app.setCat(c, btn);
+                    catScroll.appendChild(btn);
+
+                    // Select Options
+                    if(c !== 'Hepsi') {
+                        const opt = document.createElement('option');
+                        opt.value = c; opt.innerText = c;
+                        catSelect.appendChild(opt);
+                    }
+                });
+
+                // URL Check
                 const params = new URLSearchParams(location.search);
-                const uParam = params.get('u');
-                const idParam = params.get('id');
+                if(params.get('u')) { viewingUid = params.get('u'); app.tab('profile'); }
+                else if(params.get('id')) { app.openGate(params.get('id')); }
+                else { app.loadFeed(); app.autoWipe(); }
+            },
 
-                // Auth Listener
-                onAuthStateChanged(auth, (u) => {
-                    if (u) {
-                        currentUser = u;
-                        document.getElementById('loginBtn').classList.add('hidden');
-                        document.getElementById('headerAvatar').src = u.photoURL;
-                        document.getElementById('headerAvatar').classList.remove('hidden');
-                        ui.log(`Auth: ${u.displayName}`);
-                    } else {
-                        ui.log("Guest Mode Active");
+            // --- AUTO WIPE SYSTEM (30 DAYS) ---
+            autoWipe: async () => {
+                const now = Date.now();
+                const limit = 30 * 24 * 60 * 60 * 1000;
+                const q = query(collection(db, 'links'));
+                const s = await getDocs(q);
+                s.forEach(async d => {
+                    const data = d.data();
+                    if(data.createdAt && (now - data.createdAt.toMillis() > limit)) {
+                        await deleteDoc(doc(db, 'links', d.id));
+                        console.log('Auto-Wiped:', d.id);
                     }
-
-                    // Routing Logic
-                    if(uParam) {
-                        viewingUserId = uParam;
-                        app.tab('profile');
-                    } else if (idParam) {
-                        app.openGateway(idParam);
-                    } else {
-                        app.loadFeed();
-                        app.autoWipe(); // Run cleanup on startup
-                    }
-
-                    setTimeout(() => document.getElementById('sysLoader').style.display = 'none', 1500);
                 });
             },
 
-            // AUTO WIPE SYSTEM (30 DAYS)
-            autoWipe: async () => {
-                ui.log("Running Auto-Cleaner...");
-                const now = Date.now();
-                const cutoff = 30 * 24 * 60 * 60 * 1000; // 30 Days ms
-                let deletedCount = 0;
-
-                try {
-                    const q = query(collection(db, 'links'));
-                    const snap = await getDocs(q);
-                    
-                    snap.forEach(async (d) => {
-                        const data = d.data();
-                        if(data.createdAt) {
-                            const diff = now - data.createdAt.toMillis();
-                            if(diff > cutoff) {
-                                await deleteDoc(doc(db, 'links', d.id));
-                                deletedCount++;
-                            }
-                        }
-                    });
-                    if(deletedCount > 0) console.log(`[CLEANER]: ${deletedCount} old files removed.`);
-                } catch(e) { console.error(e); }
-            },
-
-            // FEED SYSTEM
-            loadFeed: async (filterCat = 'Hepsi', search = '') => {
+            // --- FEED SYSTEM ---
+            loadFeed: async (cat='Hepsi', term='') => {
                 const list = document.getElementById('feedList');
-                list.innerHTML = `<div class="text-center py-20 animate-pulse"><i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-3xl"></i></div>`;
+                list.innerHTML = '<div class="text-center py-20 animate-pulse"><i class="fa-solid fa-infinity text-4xl text-blue-500 infinity-spin"></i></div>';
                 
                 const q = query(collection(db, 'links'), orderBy('createdAt', 'desc'));
                 const snap = await getDocs(q);
-                
                 list.innerHTML = '';
-                let count = 0;
+                
+                snap.forEach(d => {
+                    const x = d.data();
+                    if(cat!=='Hepsi' && x.category!==cat) return;
+                    if(term && !x.title.toLowerCase().includes(term.toLowerCase()) && !x.uName.toLowerCase().includes(term.toLowerCase())) return;
 
-                snap.forEach(doc => {
-                    const data = doc.data();
+                    // Rating Calc
+                    const rating = x.voteCount ? (x.totalStars / x.voteCount).toFixed(1) : 'Yeni';
                     
-                    // Filtering
-                    if(filterCat !== 'Hepsi' && data.category !== filterCat) return;
-                    if(search && !data.title.toLowerCase().includes(search.toLowerCase()) && !data.uName.toLowerCase().includes(search.toLowerCase())) return;
-
-                    count++;
-                    
-                    // Owner Check for Tools
+                    // Admin Tools
                     let tools = '';
-                    if(currentUser && data.uid === currentUser.uid) {
+                    if(user && x.uid === user.uid) {
                         tools = `
-                        <button onclick="app.refreshLinkModal('${doc.id}')" class="absolute top-4 right-4 z-20 bg-yellow-500/20 backdrop-blur-md border border-yellow-500/50 text-yellow-500 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase hover:bg-yellow-500 hover:text-black transition">
-                            <i class="fa-solid fa-wrench mr-1"></i> BAKIM
-                        </button>`;
+                        <div class="absolute top-4 right-4 z-20 flex gap-2">
+                            <button onclick="app.prepRepair('${d.id}')" class="bg-yellow-500 text-black px-3 py-1 rounded-lg text-[9px] font-black uppercase shadow-lg shadow-yellow-500/20 hover:scale-105 transition"><i class="fa-solid fa-wrench mr-1"></i>DÜZELT</button>
+                        </div>`;
                     }
 
                     list.innerHTML += `
-                    <div class="mega-card group">
+                    <div class="omega-card group">
                         ${tools}
-                        <div onclick="location.href='?u=${data.uid}'" class="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md pl-1 pr-3 py-1 rounded-full border border-white/10 cursor-pointer hover:bg-black hover:border-blue-500 transition">
-                            <img src="${data.uAvatar}" class="w-6 h-6 rounded-full">
-                            <span class="text-[9px] font-bold text-zinc-200 uppercase">${data.uName}</span>
+                        <div onclick="location.href='?u=${x.uid}'" class="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-md pl-1 pr-3 py-1 rounded-full border border-white/10 flex items-center gap-2 cursor-pointer hover:border-blue-500 transition">
+                            <img src="${x.uAvatar}" class="w-6 h-6 rounded-full border border-white/20">
+                            <span class="text-[9px] font-bold uppercase text-zinc-200">${x.uName}</span>
+                        </div>
+                        
+                        <div class="h-64 overflow-hidden relative">
+                            <img src="${x.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:rotate-1">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-transparent"></div>
                         </div>
 
-                        <div class="h-[280px] w-full overflow-hidden relative">
-                            <img src="${data.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:rotate-1">
-                            <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-[#09090b] to-transparent"></div>
-                        </div>
-
-                        <div class="p-6 relative z-10 -mt-6">
+                        <div class="p-6 relative -mt-10 z-10">
                             <div class="flex justify-between items-end mb-3">
-                                <span class="bg-blue-600/20 text-blue-500 border border-blue-500/30 px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest">${data.category}</span>
-                                <span class="text-[9px] text-zinc-600 font-bold"><i class="fa-solid fa-eye mr-1"></i> ${data.views || 0}</span>
+                                <span class="bg-blue-600/20 text-blue-400 border border-blue-600/30 px-2 py-1 rounded text-[9px] font-black uppercase">${x.category}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-[9px] font-bold text-yellow-500"><i class="fa-solid fa-star mr-1"></i>${rating}</span>
+                                    <span class="text-[9px] font-bold text-zinc-500"><i class="fa-solid fa-eye mr-1"></i>${x.views||0}</span>
+                                </div>
                             </div>
                             
-                            <h3 class="text-xl font-black italic text-white mb-6 leading-tight">${data.title}</h3>
+                            <h3 class="text-xl font-black italic mb-6 text-white leading-tight">${x.title}</h3>
                             
                             <div class="flex gap-3">
-                                <button onclick="app.openGateway('${doc.id}')" class="btn-neo flex-1 py-4 text-xs shadow-lg shadow-blue-900/20">
-                                    Modülü Başlat
+                                <button onclick="app.openGate('${d.id}')" class="btn-atomic flex-1 py-4 text-xs shadow-lg shadow-blue-600/20">
+                                    MODÜLÜ BAŞLAT
                                 </button>
-                                <button onclick="app.copyLink('${doc.id}')" class="w-12 bg-zinc-800 rounded-2xl flex items-center justify-center text-zinc-400 hover:text-white transition">
+                                <button onclick="app.copyLink('${d.id}')" class="w-14 bg-zinc-800 rounded-2xl text-zinc-400 hover:text-white transition flex items-center justify-center">
                                     <i class="fa-solid fa-share-nodes"></i>
                                 </button>
                             </div>
                         </div>
                     </div>`;
                 });
-
-                if(count === 0) list.innerHTML = `<div class="text-center py-20 text-zinc-600 font-bold text-xs uppercase tracking-widest">Veri Bulunamadı</div>`;
+                if(!list.innerHTML) list.innerHTML = '<div class="text-center py-20 text-zinc-600 text-xs font-bold uppercase tracking-widest">Sistemde Veri Yok</div>';
             },
 
-            // CREATE LINK
-            handleImage: (input) => {
-                if (input.files && input.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        document.getElementById('previewImage').src = e.target.result;
-                        document.getElementById('previewImage').classList.remove('hidden');
-                        document.getElementById('uploadPlaceholder').classList.add('hidden');
-                        currentImageBase64 = e.target.result;
+            // --- DEPLOY ---
+            handleImg: (input) => {
+                if(input.files[0]) {
+                    const r = new FileReader();
+                    r.onload = e => {
+                        document.getElementById('prevImg').src = e.target.result;
+                        document.getElementById('prevImg').classList.remove('hidden');
+                        document.getElementById('upPlace').classList.add('hidden');
+                        img64 = e.target.result;
                     };
-                    reader.readAsDataURL(input.files[0]);
+                    r.readAsDataURL(input.files[0]);
                 }
             },
-
-            deployLink: async () => {
-                if(!currentUser) return alert("HATA: Oturum açılmadı.");
+            deploy: async () => {
+                if(!user) return alert('Giriş Yapmalısın!');
                 const t = document.getElementById('upTitle').value;
                 const l = document.getElementById('upLink').value;
                 const c = document.getElementById('upCat').value;
                 const task = document.getElementById('upTask').value;
 
-                if(!t || !l || !currentImageBase64) return alert("Eksik veri!");
+                if(!t || !l || !img64) return alert('Eksik bilgi!');
 
-                ui.log("Uploading to blockchain node...");
-                
                 try {
                     await addDoc(collection(db, 'links'), {
-                        title: t, target: l, category: c, task: task || "",
-                        image: currentImageBase64,
-                        uid: currentUser.uid,
-                        uName: currentUser.displayName,
-                        uAvatar: currentUser.photoURL,
-                        views: 0,
+                        title: t, target: l, category: c, task: task||'',
+                        image: img64, uid: user.uid, uName: user.displayName, uAvatar: user.photoURL,
+                        views: 0, voteCount: 0, totalStars: 0,
                         createdAt: serverTimestamp()
                     });
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                     
-                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                    
-                    // Reset Form
-                    document.getElementById('upTitle').value = "";
-                    document.getElementById('upLink').value = "";
-                    document.getElementById('upTask').value = "";
-                    document.getElementById('previewImage').classList.add('hidden');
-                    document.getElementById('uploadPlaceholder').classList.remove('hidden');
-                    currentImageBase64 = null;
-                    
-                    setTimeout(() => app.tab('feed'), 1000);
-                } catch(e) { console.error(e); alert("Yükleme Hatası"); }
+                    // Reset
+                    document.getElementById('upTitle').value='';
+                    document.getElementById('upLink').value='';
+                    document.getElementById('prevImg').classList.add('hidden');
+                    document.getElementById('upPlace').classList.remove('hidden');
+                    img64 = null;
+                    app.tab('feed');
+                } catch(e) { alert('Hata: '+e.message); }
             },
 
-            // PROFILE SYSTEM
-            loadProfile: async () => {
-                // Determine target user
-                const targetId = viewingUserId || (currentUser ? currentUser.uid : null);
-                if(!targetId) return ui.log("No profile target");
+            // --- REPAIR SYSTEM V2 (FIXED) ---
+            prepRepair: (id) => {
+                document.getElementById('repairId').value = id;
+                ui.toggleModal('repairModal');
+            },
+            execRepair: async () => {
+                const id = document.getElementById('repairId').value;
+                const url = document.getElementById('repairUrl').value;
+                
+                if(!id) return alert('ID Hatası!');
+                if(!url) return alert('Yeni URL gir!');
 
-                const isMe = (currentUser && targetId === currentUser.uid);
+                try {
+                    await updateDoc(doc(db, 'links', id), { target: url });
+                    alert('LİNK ONARILDI! Başarıyla güncellendi.');
+                    ui.toggleModal('repairModal');
+                    location.reload();
+                } catch(e) { alert('Onarım Başarısız: ' + e.message); }
+            },
 
-                // UI Adjustments
-                if(isMe) {
-                    document.getElementById('btnEditProfile').classList.remove('hidden');
-                    document.getElementById('pName').innerText = currentUser.displayName;
-                    document.getElementById('pAvatar').src = currentUser.photoURL;
-                    // Note: Bio is simplified here. In full app, fetch from a 'users' collection.
+            // --- GATEWAY & RATING ---
+            openGate: async (id) => {
+                ui.toggleModal('gateModal');
+                const snap = await getDoc(doc(db, 'links', id));
+                if(!snap.exists()) return alert('Link silinmiş!');
+                
+                const data = snap.data();
+                await updateDoc(doc(db, 'links', id), { views: increment(1) });
+
+                // QR
+                const qrDiv = document.getElementById('qrPlace');
+                qrDiv.innerHTML = '';
+                new QRCode(qrDiv, { text: data.target, width: 150, height: 150 });
+
+                // Task
+                const btn = document.getElementById('btnGateAction');
+                if(data.task) {
+                    document.getElementById('taskBox').classList.remove('hidden');
+                    document.getElementById('taskText').innerText = data.task;
+                    btn.innerText = "GÖREVİ ONAYLA";
+                    btn.onclick = () => {
+                        // Simulate task check
+                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> KONTROL...';
+                        setTimeout(() => {
+                            window.open(data.target, '_blank');
+                            ui.toggleModal('gateModal');
+                            // Open Rate Modal
+                            document.getElementById('rateId').value = id;
+                            setTimeout(() => ui.toggleModal('rateModal'), 1000);
+                        }, 2000);
+                    }
                 } else {
-                    document.getElementById('btnEditProfile').classList.add('hidden');
+                    document.getElementById('taskBox').classList.add('hidden');
+                    btn.innerText = "BAĞLANTIYA GİT";
+                    btn.onclick = () => {
+                        window.open(data.target, '_blank');
+                        ui.toggleModal('gateModal');
+                        document.getElementById('rateId').value = id;
+                        setTimeout(() => ui.toggleModal('rateModal'), 1000);
+                    }
+                }
+            },
+            
+            submitRate: async (stars) => {
+                const id = document.getElementById('rateId').value;
+                if(!id) return;
+                
+                // Simple local check to prevent spam
+                if(localStorage.getItem('voted_'+id)) return alert('Zaten oy verdin!');
+                
+                await updateDoc(doc(db, 'links', id), {
+                    voteCount: increment(1),
+                    totalStars: increment(stars)
+                });
+                
+                localStorage.setItem('voted_'+id, '1');
+                ui.toggleModal('rateModal');
+                confetti();
+                alert('Teşekkürler! Puan kaydedildi.');
+            },
+
+            // --- PROFILE ---
+            loadProfile: async () => {
+                const uid = viewingUid || (user ? user.uid : null);
+                if(!uid) return;
+
+                const isMe = (user && uid === user.uid);
+                if(isMe) {
+                    document.getElementById('btnEdit').classList.remove('hidden');
+                    document.getElementById('pName').innerText = user.displayName;
+                    document.getElementById('pAvatar').src = user.photoURL;
+                } else {
+                    document.getElementById('btnEdit').classList.add('hidden');
                 }
 
                 const list = document.getElementById('profileFeed');
-                list.innerHTML = '<div class="text-center py-4"><i class="fa-solid fa-spinner fa-spin text-zinc-600"></i></div>';
-
-                const q = query(collection(db, 'links'), where('uid', '==', targetId));
-                const snap = await getDocs(q);
-
-                document.getElementById('pStatCount').innerText = snap.size;
-                let totalViews = 0;
                 list.innerHTML = '';
+                
+                const q = query(collection(db, 'links'), where('uid', '==', uid));
+                const s = await getDocs(q);
+                
+                document.getElementById('statCount').innerText = s.size;
+                let totalViews = 0;
+                let totalRep = 0;
+                let fileCount = 0;
 
-                // If viewing someone else, try to get their name/avatar from their first post
-                if(!isMe && snap.size > 0) {
-                    const first = snap.docs[0].data();
-                    document.getElementById('pName').innerText = first.uName;
-                    document.getElementById('pAvatar').src = first.uAvatar;
-                    if(first.userBio) document.getElementById('pBio').innerText = first.userBio;
+                if(!isMe && s.size > 0) {
+                    const f = s.docs[0].data();
+                    document.getElementById('pName').innerText = f.uName;
+                    document.getElementById('pAvatar').src = f.uAvatar;
+                    if(f.userBio) document.getElementById('pBio').innerText = f.userBio;
                 }
 
-                snap.forEach(d => {
-                    const data = d.data();
-                    totalViews += (data.views || 0);
-                    
-                    let action = `<button onclick="app.openGateway('${d.id}')" class="bg-white text-black text-[9px] font-black px-3 py-1.5 rounded-lg">AÇ</button>`;
-                    if(isMe) {
-                        action = `
-                        <div class="flex gap-2">
-                            <button onclick="app.refreshLinkModal('${d.id}')" class="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-500 flex items-center justify-center"><i class="fa-solid fa-wrench text-xs"></i></button>
-                            <button onclick="app.deleteLink('${d.id}')" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>
-                        </div>`;
-                    }
+                s.forEach(d => {
+                    const x = d.data();
+                    totalViews += (x.views||0);
+                    if(x.voteCount > 0) totalRep += (x.totalStars / x.voteCount);
+                    fileCount++;
+
+                    let acts = isMe 
+                        ? `<button onclick="app.prepRepair('${d.id}')" class="text-yellow-500 bg-yellow-500/10 w-8 h-8 rounded-lg mr-2"><i class="fa-solid fa-wrench"></i></button>
+                           <button onclick="app.delLink('${d.id}')" class="text-red-500 bg-red-500/10 w-8 h-8 rounded-lg"><i class="fa-solid fa-trash"></i></button>`
+                        : `<button onclick="app.openGate('${d.id}')" class="bg-white text-black px-4 py-2 rounded-lg text-xs font-black">AÇ</button>`;
 
                     list.innerHTML += `
                     <div class="bg-zinc-900/40 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <img src="${data.image}" class="w-12 h-12 rounded-xl object-cover bg-black">
+                            <img src="${x.image}" class="w-12 h-12 rounded-xl object-cover bg-black">
                             <div>
-                                <h4 class="font-bold text-xs text-zinc-200 line-clamp-1">${data.title}</h4>
-                                <span class="text-[9px] text-zinc-600 uppercase font-bold">${data.category} • ${data.views||0} view</span>
+                                <h4 class="font-bold text-sm text-white line-clamp-1">${x.title}</h4>
+                                <div class="flex gap-2 text-[10px] text-zinc-500 font-bold uppercase mt-1">
+                                    <span>${x.category}</span>
+                                    <span class="text-yellow-500"><i class="fa-solid fa-star"></i> ${x.voteCount ? (x.totalStars/x.voteCount).toFixed(1) : '-'}</span>
+                                </div>
                             </div>
                         </div>
-                        ${action}
+                        <div>${acts}</div>
                     </div>`;
                 });
                 
-                document.getElementById('pStatViews').innerText = totalViews;
+                document.getElementById('statViews').innerText = totalViews;
+                const rep = fileCount > 0 ? (totalRep / fileCount).toFixed(1) : '0.0';
+                document.getElementById('repScore').innerText = rep;
             },
 
             saveProfile: async () => {
-                if(!currentUser) return;
-                const name = document.getElementById('editName').value;
-                const bio = document.getElementById('editBio').value;
-                
-                if(name) {
-                    await updateProfile(currentUser, { displayName: name });
-                    // Batch update bio in user's links (Simplified)
-                    const q = query(collection(db, 'links'), where('uid', '==', currentUser.uid));
-                    const snap = await getDocs(q);
-                    snap.forEach(async d => {
-                        await updateDoc(doc(db, 'links', d.id), { uName: name, userBio: bio });
-                    });
+                const n = document.getElementById('editName').value;
+                const b = document.getElementById('editBio').value;
+                if(n) {
+                    await updateProfile(user, { displayName: n });
+                    // Batch update fake (Real app needs user doc)
+                    const q = query(collection(db, 'links'), where('uid','==',user.uid));
+                    const s = await getDocs(q);
+                    s.forEach(async d => await updateDoc(doc(db,'links',d.id), { uName: n, userBio: b }));
                     
-                    alert("Profil güncellendi!");
-                    ui.modal('editProfileModal', false);
+                    alert('Profil Güncellendi!');
                     location.reload();
                 }
             },
-
-            // ADMIN TOOLS (REFRESH & DELETE)
-            refreshLinkModal: (id) => {
-                document.getElementById('refreshId').value = id;
-                ui.modal('refreshModal', true);
-            },
+            delLink: async (id) => { if(confirm('Silmek istediğine emin misin?')) { await deleteDoc(doc(db,'links',id)); app.loadProfile(); } },
             
-            doRefresh: async () => {
-                const id = document.getElementById('refreshId').value;
-                const url = document.getElementById('refreshUrl').value;
-                if(!url) return alert("URL girin.");
-                
-                await updateDoc(doc(db, 'links', id), { target: url });
-                ui.toast("Bağlantı başarıyla onarıldı.");
-                ui.modal('refreshModal', false);
-                location.reload();
-            },
-
-            deleteLink: async (id) => {
-                if(confirm("Bu modülü kalıcı olarak silmek istiyor musunuz?")) {
-                    await deleteDoc(doc(db, 'links', id));
-                    app.loadProfile();
-                }
-            },
-
-            // GATEWAY & LOGIC
-            openGateway: async (id) => {
-                ui.modal('gatewayModal', true);
-                
-                // Get Link Data
-                const snap = await getDoc(doc(db, 'links', id));
-                if(!snap.exists()) return alert("Link silinmiş veya bulunamadı.");
-                
-                const data = snap.data();
-                
-                // Update Views
-                updateDoc(doc(db, 'links', id), { views: increment(1) });
-
-                // QR Generate
-                const qrBox = document.getElementById('qrContainer');
-                qrBox.innerHTML = "";
-                new QRCode(qrBox, { text: data.target, width: 128, height: 128 });
-
-                // Task Logic
-                const btn = document.getElementById('btnGoLink');
-                const taskArea = document.getElementById('taskArea');
-                
-                if(data.task) {
-                    taskArea.classList.remove('hidden');
-                    document.getElementById('taskText').innerText = data.task;
-                    btn.innerText = "GÖREVİ ONAYLA";
-                    btn.onclick = () => {
-                        alert("Görev kontrol ediliyor... (Simülasyon)");
-                        setTimeout(() => {
-                            window.location.href = data.target;
-                        }, 2000);
-                    };
-                } else {
-                    taskArea.classList.add('hidden');
-                    btn.innerText = "BAĞLANTIYA GİT";
-                    btn.onclick = () => window.location.href = data.target;
-                }
-            },
-
-            // NAVIGATION & UTILS
+            // --- UTILS ---
             tab: (t) => {
-                // Auth Guard for Profile & Create
-                if((t === 'profile' || t === 'create') && !currentUser && !viewingUserId) {
-                    signInWithPopup(auth, provider);
-                    return;
-                }
-
-                // Reset Views
-                document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active-tab'));
-                document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-                // Activate Target
-                document.getElementById('view-'+t).classList.add('active-tab');
-                if(document.getElementById('nav-'+t)) document.getElementById('nav-'+t).classList.add('active');
-
-                // Logic Triggers
-                if(t === 'feed') { viewingUserId = null; app.loadFeed(); } // Reset view mode
-                if(t === 'profile') app.loadProfile();
+                if((t==='create'||t==='profile') && !user && !viewingUid) return signInWithPopup(auth,provider);
                 
+                document.querySelectorAll('.tab-section').forEach(x => x.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+                document.getElementById('tab-'+t).classList.add('active');
+                if(document.getElementById('nav-'+t)) document.getElementById('nav-'+t).classList.add('active');
+                
+                if(t==='feed') { viewingUid=null; app.loadFeed(); }
+                if(t==='profile') app.loadProfile();
                 window.scrollTo(0,0);
             },
-            
-            setCategory: (cat, btnElement) => {
-                // Visual toggle
-                const p = btnElement.parentElement;
-                Array.from(p.children).forEach(c => {
-                    c.className = "px-5 py-2.5 rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition border bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white";
-                });
-                btnElement.className = "px-5 py-2.5 rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition border bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-900/40";
-                
-                app.loadFeed(cat);
+            setCat: (c, btn) => {
+                Array.from(btn.parentElement.children).forEach(el=>el.className="px-5 py-2 rounded-full text-[10px] font-bold uppercase whitespace-nowrap border transition bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white");
+                btn.className="px-5 py-2 rounded-full text-[10px] font-bold uppercase whitespace-nowrap border transition bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/30";
+                app.loadFeed(c);
             },
-
-            filterFeed: () => {
-                const val = document.getElementById('searchInput').value;
-                app.loadFeed('Hepsi', val);
-            },
-
+            filterFeed: () => { app.loadFeed('Hepsi', document.getElementById('searchInput').value); },
+            goHome: () => { viewingUid=null; app.tab('feed'); },
             shareProfile: () => {
-                const uid = viewingUserId || currentUser?.uid;
-                if(!uid) return;
-                const url = `${location.origin}${location.pathname}?u=${uid}`;
-                navigator.clipboard.writeText(url).then(() => alert("Profil linki kopyalandı!"));
+                const u = viewingUid || user?.uid;
+                navigator.clipboard.writeText(`${location.origin}?u=${u}`).then(()=>alert('Profil Linki Kopyalandı!'));
             },
-            
             copyLink: (id) => {
-                const url = `${location.origin}${location.pathname}?id=${id}`;
-                navigator.clipboard.writeText(url).then(() => alert("Modül linki kopyalandı!"));
+                navigator.clipboard.writeText(`${location.origin}?id=${id}`).then(()=>alert('Modül Linki Kopyalandı!'));
             }
         };
 
-        // GLOBAL START
-        document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
-        app.init();
+        // AUTH LISTENER
+        loginBtn.onclick = () => signInWithPopup(auth, provider);
+        onAuthStateChanged(auth, u => {
+            if(u) {
+                user = u;
+                loginBtn.classList.add('hidden');
+                headerAvatar.src = u.photoURL;
+                headerAvatar.classList.remove('hidden');
+            }
+            app.init();
+            setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 2000);
+        });
+
     </script>
 </body>
 </html>
