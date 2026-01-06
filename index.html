@@ -1,332 +1,265 @@
+
 <!DOCTYPE html>
 <html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#000000">
-    <title>NVOLINK | G-1.6.0 GOD MODE</title>
+    <title>NVOLINK | G-1.6.1 RELOAD</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script> 
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* --- CORE SYSTEM --- */
         :root {
-            --bg: #030303;
-            --glass: rgba(15, 15, 20, 0.75);
+            --bg: #050505;
+            --glass: rgba(10, 10, 15, 0.85);
             --border: rgba(255,255,255,0.08);
-            --primary: #00f3ff; /* Cyber Blue */
-            --admin-gold: #ffd700;
+            --primary: #00f3ff;
+            --secondary: #7000ff;
             --danger: #ff003c;
-            --neon-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            --gold: #ffd700;
         }
         
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; user-select: none; }
         body { 
             font-family: 'Rajdhani', sans-serif; 
-            background: var(--bg); 
-            color: #e0e0e0; 
-            overflow-x: hidden; 
-            cursor: crosshair; /* Gamer cursor */
+            background: var(--bg); color: #e0e0e0; 
+            overflow-x: hidden; cursor: crosshair;
         }
 
-        /* --- MATRIX RAIN CANVAS --- */
-        #matrix-canvas {
-            position: fixed; inset: 0; z-index: -2; opacity: 0.15; pointer-events: none;
+        /* --- BOOT LOADER --- */
+        #boot-screen {
+            position: fixed; inset: 0; z-index: 99999; background: #000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'Courier New', monospace;
+        }
+        .terminal-text { color: var(--primary); font-size: 12px; margin-bottom: 5px; opacity: 0; animation: textFade 0.1s forwards; }
+        @keyframes textFade { to { opacity: 1; } }
+
+        /* --- MATRIX BG --- */
+        #matrix-canvas { position: fixed; inset: 0; z-index: -2; opacity: 0.1; pointer-events: none; }
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        /* --- SCANLINE EFFECT (CRT) --- */
-        .scanlines {
-            position: fixed; inset: 0; z-index: 9999; pointer-events: none;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            opacity: 0.4;
-        }
-
-        /* --- GLITCH TEXT --- */
-        .glitch { position: relative; color: white; }
-        .glitch::before, .glitch::after {
-            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        }
-        .glitch::before { left: 2px; text-shadow: -1px 0 var(--danger); clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
-        .glitch::after { left: -2px; text-shadow: -1px 0 var(--primary); clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
-        @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 30px, 0); } 100% { clip: rect(80px, 9999px, 100px, 0); } }
-        @keyframes glitch-anim2 { 0% { clip: rect(40px, 9999px, 60px, 0); } 100% { clip: rect(20px, 9999px, 10px, 0); } }
-
-        /* --- UI COMPONENTS --- */
+        /* --- UI ELEMENTS --- */
         .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            background: var(--glass); backdrop-filter: blur(15px);
             border: 1px solid var(--border);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
-
-        .neon-btn {
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-            transition: 0.3s;
-            position: relative; overflow: hidden;
-        }
-        .neon-btn:hover { background: var(--primary); color: black; box-shadow: var(--neon-shadow); }
         
-        .admin-btn {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid var(--admin-gold);
-            color: var(--admin-gold);
+        .neon-btn {
+            background: rgba(0, 243, 255, 0.05); border: 1px solid var(--primary);
+            color: var(--primary); text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.3s; position: relative; overflow: hidden;
         }
-        .admin-btn:hover { background: var(--admin-gold); color: black; box-shadow: 0 0 15px var(--admin-gold); }
+        .neon-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
 
-        /* --- INPUT FIX (V2) --- */
         .input-cyber {
             width: 100%; background: #0a0a0a; border: 1px solid #333;
-            color: white; padding: 15px; border-radius: 4px;
-            font-family: 'Courier New', monospace; outline: none;
-            transition: 0.3s; z-index: 50; position: relative;
+            color: white; padding: 15px; border-radius: 4px; outline: none;
+            font-family: 'Rajdhani', sans-serif; transition: 0.3s;
         }
         .input-cyber:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,243,255,0.2); }
 
-        /* --- SCROLLBAR --- */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
-        /* --- TOAST & NOTIFICATIONS --- */
+        /* --- NOTIFICATIONS --- */
         .toast-box {
             animation: slideInRight 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            border-left: 4px solid var(--primary);
+            background: rgba(0,0,0,0.9); border-left: 4px solid var(--primary);
         }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        /* --- XP BAR --- */
-        .xp-track { width: 100%; height: 6px; background: #222; border-radius: 10px; overflow: hidden; }
-        .xp-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #fff); width: 0%; transition: 1s; }
-
-        /* --- GOD MODE BADGE --- */
-        .god-badge {
-            background: linear-gradient(45deg, #ffd700, #ffaa00, #ffd700);
-            background-size: 200% 200%;
-            animation: goldShine 3s infinite;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            font-weight: 900; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-        }
-        @keyframes goldShine { 0% {background-position: 0% 50%} 50% {background-position: 100% 50%} 100% {background-position: 0% 50%} }
-        
-        /* --- TAB ANIMATIONS --- */
-        .tab-view { display: none; opacity: 0; transform: translateY(20px); transition: 0.4s; }
+        /* --- TAB SYSTEM --- */
+        .tab-view { display: none; opacity: 0; transform: translateY(10px); transition: 0.4s; }
         .tab-view.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* --- ADMIN PANEL OVERLAY --- */
-        #adminPanel {
-            position: fixed; bottom: 100px; right: 20px; z-index: 9990;
-            transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* --- ADMIN BADGE --- */
+        .badge-god {
+            background: linear-gradient(45deg, #ffd700, #ff8800); -webkit-background-clip: text; color: transparent;
+            font-weight: 900; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
-        #adminPanel.visible { transform: scale(1); }
+
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; }
     </style>
 </head>
 <body class="pb-32" oncontextmenu="return false;">
 
-    <canvas id="matrix-canvas"></canvas>
-    <div class="scanlines"></div>
-    <div id="toast-container" class="fixed top-5 right-5 z-[10000] flex flex-col gap-3"></div>
-
-    <audio id="ui-click" src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-click-900.mp3"></audio>
-    <audio id="ui-hover" src="https://assets.mixkit.co/sfx/preview/mixkit-futuristic-technology-hum-2126.mp3"></audio>
-    <audio id="ui-success" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
-
-    <div id="loader" class="fixed inset-0 z-[10001] bg-black flex flex-col items-center justify-center transition-opacity duration-700">
-        <i class="fa-solid fa-infinity text-6xl text-cyan-400 animate-spin" style="animation-duration: 3s;"></i>
-        <div class="mt-4 font-mono text-cyan-500 text-xs">SYSTEM INITIALIZING...</div>
-        <div class="w-48 h-1 bg-gray-900 mt-2 rounded overflow-hidden">
-            <div class="h-full bg-cyan-500 animate-[width_2s_ease-out_forwards]" style="width:0%"></div>
+    <div id="boot-screen">
+        <div id="boot-log" class="w-80 h-48 overflow-hidden mb-4 border-l-2 border-cyan-500 pl-4"></div>
+        <div class="w-64 h-1 bg-gray-900 rounded overflow-hidden">
+            <div id="boot-bar" class="h-full bg-cyan-500 w-0 transition-all duration-[2000ms]"></div>
         </div>
-        <style> @keyframes width { to { width: 100%; } } </style>
     </div>
 
-    <header class="fixed top-0 inset-x-0 z-50 glass-panel border-b-0 border-b border-white/5">
+    <canvas id="matrix-canvas"></canvas>
+    <div class="grid-overlay"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[10000] flex flex-col gap-3"></div>
+
+    <header class="fixed top-0 w-full z-50 glass-panel border-b-0 border-b border-white/5 bg-black/80">
         <div class="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3" onclick="app.playSound('click'); app.nav('feed')">
-                <div class="w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-lg border border-cyan-500/30 shadow-[0_0_15px_rgba(0,243,255,0.3)]">
-                    <i class="fa-solid fa-infinity text-2xl text-cyan-400"></i>
-                </div>
+            <div class="flex items-center gap-3 cursor-pointer" onclick="app.nav('feed')">
+                <i class="fa-solid fa-infinity text-3xl text-cyan-400 animate-pulse"></i>
                 <div>
-                    <h1 class="text-xl font-bold tracking-wider glitch" data-text="NVOLINK">NVOLINK</h1>
-                    <span class="text-[9px] text-gray-500 tracking-[0.4em] uppercase font-bold">G-1.6.0 GOD</span>
+                    <h1 class="text-xl font-bold italic tracking-tighter text-white">NVOLINK</h1>
+                    <span class="text-[9px] text-cyan-500 font-bold tracking-[0.3em] block">RELOAD 1.6.1</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3">
-                <button onclick="ui.toggleSearch()" class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:text-cyan-400 transition">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+            <div class="flex items-center gap-2">
+                <button onclick="ui.togglePatchNotes()" class="w-8 h-8 rounded bg-white/5 text-gray-400 hover:text-white border border-white/5">
+                    <i class="fa-solid fa-scroll"></i>
                 </button>
-                
-                <button id="loginBtn" class="neon-btn px-4 py-2 text-[10px] rounded hover:bg-cyan-400 hover:text-black">
-                    <i class="fa-solid fa-power-off mr-1"></i> GİRİŞ
-                </button>
-                <div id="userBadge" class="hidden flex items-center gap-2 bg-white/5 px-2 py-1 rounded-full border border-white/10 cursor-pointer" onclick="app.nav('profile')">
-                    <img id="userImg" class="w-6 h-6 rounded-full object-cover">
-                    <span id="userLevel" class="text-[9px] font-bold text-yellow-500">Lvl 1</span>
+                <button id="loginBtn" class="neon-btn px-4 py-1.5 text-[10px] font-bold rounded">GİRİŞ</button>
+                <div id="userBadge" class="hidden items-center gap-2 bg-white/5 px-2 py-1 rounded border border-white/10" onclick="app.nav('profile')">
+                    <img id="userImg" class="w-6 h-6 rounded object-cover">
                 </div>
             </div>
-        </div>
-        
-        <div id="searchBar" class="hidden border-t border-white/10 bg-black/90 p-4 absolute w-full">
-            <input type="text" id="searchInput" oninput="app.filterFeed()" placeholder="Komut veya Modül Ara..." class="input-cyber" autofocus>
         </div>
     </header>
 
-    <main class="max-w-2xl mx-auto pt-24 px-4 relative z-10 min-h-screen">
-        
+    <main class="max-w-2xl mx-auto pt-24 px-4 relative z-10">
+
         <div id="tab-feed" class="tab-view active">
+            <div class="relative mb-6">
+                <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                <input type="text" id="searchInput" onkeyup="app.filterFeed()" placeholder="Sistemde ara..." class="input-cyber pl-10 rounded-full bg-black/50">
+            </div>
+
             <div id="cat-scroll" class="flex gap-2 overflow-x-auto pb-4 mb-2 hide-scroll"></div>
-            
-            <div id="feed-list" class="space-y-6 pb-20">
-                </div>
+            <div id="feed-list" class="space-y-6 pb-10 min-h-[300px]"></div>
         </div>
 
         <div id="tab-create" class="tab-view">
-            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10">
-                    <i class="fa-solid fa-upload text-9xl"></i>
-                </div>
-
-                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-                    <span class="text-cyan-400">///</span> MODÜL YÜKLE
-                </h2>
+            <div class="glass-panel p-6 rounded-2xl border-t-2 border-cyan-500 relative">
+                <h2 class="text-2xl font-black mb-1">YENİ MODÜL</h2>
+                <div class="text-[10px] text-gray-500 mb-6 font-mono">SERVER: EU-CENTRAL-1 // UPLINK: SECURE</div>
 
                 <div class="space-y-4">
-                    <div class="relative group cursor-pointer" onclick="document.getElementById('fileUp').click()">
+                    <div id="limitInfo" class="bg-blue-900/20 border border-blue-500/30 p-2 rounded text-[10px] text-blue-300 flex justify-between">
+                        <span>LİMİT DURUMU:</span>
+                        <span id="limitCount" class="font-bold text-white">HESAPLANIYOR...</span>
+                    </div>
+
+                    <div class="relative group" onclick="document.getElementById('fileUp').click()">
                         <input type="file" id="fileUp" class="hidden" accept="image/*" onchange="app.handleFile(this)">
-                        <div id="dropZone" class="h-40 border-2 border-dashed border-gray-700 rounded-lg flex flex-col items-center justify-center bg-black/50 hover:border-cyan-500 transition group-hover:bg-cyan-500/5">
+                        <div class="h-40 border-2 border-dashed border-gray-700 rounded-lg flex flex-col items-center justify-center bg-black/40 hover:border-cyan-500 transition cursor-pointer">
                             <img id="prevImg" class="absolute inset-0 w-full h-full object-cover rounded-lg hidden opacity-60">
-                            <i class="fa-solid fa-image text-3xl mb-2 text-gray-500 group-hover:text-cyan-400 transition"></i>
-                            <span class="text-xs text-gray-500 font-mono">GÖRSEL SEÇ</span>
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-600 group-hover:text-cyan-400"></i>
                         </div>
                     </div>
 
-                    <div class="space-y-3">
-                        <input id="inTitle" type="text" placeholder="MODÜL BAŞLIĞI" class="input-cyber">
-                        <input id="inLink" type="url" placeholder="HEDEF URL (https://)" class="input-cyber">
-                        <div class="flex gap-2">
-                            <select id="inCat" class="input-cyber w-1/2 cursor-pointer text-gray-400"></select>
-                            <input id="inTask" type="text" placeholder="GÖREV (OPSİYONEL)" class="input-cyber w-1/2">
-                        </div>
+                    <input id="inTitle" type="text" placeholder="MODÜL ADI" class="input-cyber">
+                    <input id="inLink" type="url" placeholder="HEDEF URL (https://)" class="input-cyber">
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <select id="inCat" class="input-cyber text-gray-400"></select>
+                        <input id="inTask" type="text" placeholder="GÖREV (OPS)" class="input-cyber">
                     </div>
 
-                    <button onclick="app.upload()" class="neon-btn w-full py-4 text-sm mt-4 rounded hover:bg-cyan-400 hover:text-black">
-                        <i class="fa-solid fa-satellite-dish mr-2"></i> SİSTEME GÖNDER
+                    <button onclick="app.upload()" class="neon-btn w-full py-4 text-sm font-bold rounded mt-2">
+                        <i class="fa-solid fa-rocket mr-2"></i> BAŞLAT
                     </button>
-                    <div class="text-[9px] text-gray-600 text-center font-mono mt-2">IP ADRESİNİZ LOGLANIYOR: <span id="fakeIp">192.168.X.X</span></div>
                 </div>
             </div>
         </div>
 
         <div id="tab-profile" class="tab-view">
-            <div class="glass-panel p-8 rounded-2xl text-center relative overflow-hidden border-t-4 border-cyan-500">
-                <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/10 to-transparent pointer-events-none"></div>
+            <div class="glass-panel p-8 rounded-2xl text-center mb-6 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
                 
-                <img id="pAvatar" class="w-32 h-32 rounded-full border-4 border-black mx-auto shadow-[0_0_20px_rgba(0,243,255,0.4)] object-cover">
+                <img id="pAvatar" class="w-28 h-28 rounded-full border-4 border-[#0a0a0a] mx-auto shadow-2xl object-cover">
+                <h2 id="pName" class="text-2xl font-black mt-4 text-white tracking-wide">...</h2>
+                <div id="pBadges" class="flex justify-center gap-2 mt-2"></div>
                 
-                <h2 id="pName" class="text-3xl font-bold mt-4 glitch relative inline-block" data-text="...">...</h2>
-                <div id="pBadgeArea" class="mt-2 flex justify-center gap-2">
-                    </div>
-
-                <div class="mt-6 max-w-xs mx-auto text-left">
-                    <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1">
-                        <span>LEVEL <span id="lvlNum">1</span></span>
-                        <span id="xpText">0/100 XP</span>
-                    </div>
-                    <div class="xp-track">
-                        <div id="xpBar" class="xp-fill"></div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-4 mt-8 border-t border-white/10 pt-6">
+                <div class="flex justify-center gap-8 mt-6 border-t border-white/5 pt-4">
                     <div>
-                        <div id="stFiles" class="text-2xl font-bold text-white">0</div>
-                        <div class="text-[9px] text-gray-500 uppercase tracking-widest">DOSYA</div>
+                        <div id="stFiles" class="text-xl font-bold text-white">0</div>
+                        <div class="text-[9px] text-gray-500 uppercase">Dosya</div>
                     </div>
                     <div>
-                        <div id="stViews" class="text-2xl font-bold text-cyan-400">0</div>
-                        <div class="text-[9px] text-gray-500 uppercase tracking-widest">GÖRÜNTÜLENME</div>
-                    </div>
-                    <div>
-                        <div id="stLikes" class="text-2xl font-bold text-red-500">0</div>
-                        <div class="text-[9px] text-gray-500 uppercase tracking-widest">BEĞENİ</div>
+                        <div id="stViews" class="text-xl font-bold text-cyan-400">0</div>
+                        <div class="text-[9px] text-gray-500 uppercase">Erişim</div>
                     </div>
                 </div>
             </div>
 
-            <h3 class="mt-8 mb-4 text-xs font-bold text-gray-500 flex items-center gap-2">
-                <i class="fa-solid fa-database"></i> YÜKLENENLER
-            </h3>
-            <div id="profile-feed" class="space-y-4"></div>
+            <div class="flex justify-between items-center mb-4 px-2">
+                <h3 class="text-xs font-bold text-gray-500">PAYLAŞILANLAR</h3>
+                <span id="profileLimitBadge" class="text-[9px] bg-white/5 px-2 py-1 rounded text-gray-400"></span>
+            </div>
+            <div id="profile-feed" class="space-y-3"></div>
         </div>
 
     </main>
 
-    <div id="adminPanel" class="glass-panel p-4 rounded-xl border border-yellow-500/50 w-64">
-        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-yellow-500/20">
-            <i class="fa-solid fa-skull text-yellow-500 animate-pulse"></i>
-            <span class="text-xs font-bold text-yellow-500 tracking-widest">GOD MODE</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-            <button onclick="admin.wipeAll()" class="bg-red-900/50 text-red-400 text-[9px] p-2 rounded hover:bg-red-500 hover:text-white transition">WIPE DATA</button>
-            <button onclick="admin.broadcast()" class="bg-blue-900/50 text-blue-400 text-[9px] p-2 rounded hover:bg-blue-500 hover:text-white transition">BROADCAST</button>
-            <button onclick="admin.banMode()" class="bg-yellow-900/50 text-yellow-400 text-[9px] p-2 rounded hover:bg-yellow-500 hover:text-white transition col-span-2">BAN HAMMER</button>
-        </div>
+    <div id="adminPanel" class="fixed bottom-24 right-4 hidden z-50">
+        <button onclick="admin.nuke()" class="bg-red-600 text-white w-10 h-10 rounded-full shadow-lg border-2 border-black flex items-center justify-center animate-pulse">
+            <i class="fa-solid fa-biohazard"></i>
+        </button>
     </div>
 
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 flex items-center gap-8 shadow-2xl z-50">
-        <button onclick="app.nav('feed')" id="nav-feed" class="text-cyan-400 text-xl hover:scale-125 transition"><i class="fa-solid fa-house-signal"></i></button>
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-3 flex items-center gap-8 shadow-2xl z-40">
+        <button onclick="app.nav('feed')" id="nav-feed" class="text-cyan-400 text-xl transition hover:-translate-y-1"><i class="fa-solid fa-layer-group"></i></button>
         <div class="w-px h-6 bg-white/10"></div>
-        <button onclick="app.nav('create')" class="bg-cyan-500 text-black w-12 h-12 rounded-full -mt-8 flex items-center justify-center border-4 border-black hover:scale-110 hover:rotate-90 transition shadow-[0_0_20px_rgba(0,243,255,0.6)]">
+        <button onclick="app.nav('create')" class="bg-gradient-to-tr from-cyan-600 to-blue-600 text-white w-12 h-12 rounded-xl -mt-8 flex items-center justify-center border-4 border-[#050505] shadow-lg shadow-cyan-500/20 hover:scale-105 transition">
             <i class="fa-solid fa-plus text-xl font-bold"></i>
         </button>
         <div class="w-px h-6 bg-white/10"></div>
-        <button onclick="app.nav('profile')" id="nav-profile" class="text-gray-500 text-xl hover:scale-125 hover:text-cyan-400 transition"><i class="fa-solid fa-user-astronaut"></i></button>
+        <button onclick="app.nav('profile')" id="nav-profile" class="text-gray-500 text-xl transition hover:-translate-y-1 hover:text-white"><i class="fa-regular fa-id-card"></i></button>
     </nav>
 
-    <div id="modalGate" class="fixed inset-0 z-[9000] bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-sm rounded-2xl p-6 text-center relative border-t border-cyan-500">
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-500 text-black text-[9px] font-bold px-3 py-1 rounded-b">SECURE LINK</div>
+    <div id="modalGate" class="fixed inset-0 z-[9000] bg-black/95 hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-sm rounded-xl p-6 text-center border border-cyan-500/30">
+            <div id="qr-area" class="bg-white p-2 rounded w-fit mx-auto mb-4"></div>
+            <h3 class="text-xl font-bold text-white mb-2">GÜVENLİ BAĞLANTI</h3>
             
-            <div id="qr-area" class="bg-white p-2 rounded-lg w-fit mx-auto mt-4 mb-4"></div>
-            
-            <h3 class="text-xl font-bold text-white mb-2">ERİŞİM KİLİDİ</h3>
-            <p id="gateTask" class="text-sm text-yellow-400 font-mono mb-6 hidden"><i class="fa-solid fa-triangle-exclamation"></i> GÖREV: <span id="gateTaskText"></span></p>
+            <div id="gateTaskBox" class="hidden bg-yellow-500/10 border border-yellow-500/20 p-3 rounded mb-4">
+                <div class="text-[9px] font-bold text-yellow-500 uppercase mb-1">GÖREV GEREKLİ</div>
+                <div id="gateTaskText" class="text-sm font-bold text-white">Youtube Abone Ol</div>
+            </div>
 
-            <div class="flex gap-2">
-                <button id="btnGateOpen" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white py-3 rounded font-bold text-sm transition">BAĞLANTIYI AÇ</button>
-                <button onclick="ui.closeModals()" class="px-4 bg-gray-800 rounded text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="mt-6 pt-4 border-t border-white/5 text-left">
-                <div class="text-[10px] font-bold text-gray-500 mb-2">YORUMLAR (BETA)</div>
-                <div id="miniComments" class="space-y-2 max-h-32 overflow-y-auto"></div>
-                <div class="mt-2 flex gap-2">
-                    <input id="commentInput" placeholder="Yorum yaz..." class="bg-transparent border-b border-gray-700 text-xs w-full p-1 text-white outline-none focus:border-cyan-500">
-                    <button onclick="app.postComment()" class="text-cyan-500 text-xs font-bold">GÖNDER</button>
-                </div>
-            </div>
+            <button id="btnGateAction" class="w-full bg-cyan-600 py-3 rounded font-bold text-xs uppercase mb-3">BAĞLANTIYA GİT</button>
+            <button onclick="ui.closeModals()" class="text-xs text-gray-500 hover:text-white">KAPAT</button>
         </div>
     </div>
 
-    <div id="modalRepair" class="fixed inset-0 z-[9000] bg-black/90 hidden flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-sm p-6 rounded-xl border border-yellow-500/30">
-            <h3 class="text-lg font-bold text-yellow-500 mb-4">LİNK TAMİR İSTASYONU</h3>
-            <input id="repairUrl" placeholder="YENİ URL..." class="input-cyber border-yellow-500/30 text-yellow-100">
-            <div class="flex justify-end gap-2 mt-4">
-                <button onclick="ui.closeModals()" class="text-xs font-bold text-gray-500 p-2">İPTAL</button>
-                <button onclick="admin.doRepair()" class="bg-yellow-600 text-black font-bold text-xs px-4 py-2 rounded hover:bg-yellow-500">ONAR</button>
+    <div id="modalPatch" class="fixed inset-0 z-[9000] bg-black/90 hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md p-6 rounded-xl relative">
+            <button onclick="ui.togglePatchNotes()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-black italic mb-4">G-1.6.1 <span class="text-cyan-500">RELOAD</span></h2>
+            
+            <div class="space-y-3 text-sm text-gray-300 font-mono h-64 overflow-y-auto pr-2">
+                <div class="p-2 bg-white/5 rounded border-l-2 border-green-500">
+                    <strong class="text-white block">LİMİT SİSTEMİ AKTİF</strong>
+                    Normal Üyeler: 10 Link<br>
+                    Doğrulanmış: 20 Link<br>
+                    Admin (Necron): Sınırsız
+                </div>
+                <div class="p-2 bg-white/5 rounded border-l-2 border-blue-500">
+                    <strong class="text-white block">PROFİL HATASI GİDERİLDİ</strong>
+                    Artık başkalarının profiline girince boş sayfa çıkmıyor.
+                </div>
+                <div class="p-2 bg-white/5 rounded border-l-2 border-purple-500">
+                    <strong class="text-white block">YENİ BOOT LOADER</strong>
+                    Sisteme giriş animasyonu terminal tarzı yapıldı.
+                </div>
+                 <div class="p-2 bg-white/5 rounded border-l-2 border-red-500">
+                    <strong class="text-white block">GÜVENLİK YAMASI</strong>
+                    Database query hataları ve form donmaları fixlendi.
+                </div>
             </div>
         </div>
     </div>
@@ -334,9 +267,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, deleteDoc, doc, updateDoc, increment, getDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, deleteDoc, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIG
+        // --- CONFIG ---
         const appFB = initializeApp({
             apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0",
             authDomain: "nvo-link.firebaseapp.com",
@@ -347,415 +280,362 @@
         const db = getFirestore(appFB);
         const provider = new GoogleAuthProvider();
 
-        // GLOBALS
+        // --- CONSTANTS ---
         const ADMIN_EMAIL = "necron.offical@gmail.com";
-        const CATS = ["Hepsi", "Script", "Config", "Exploit", "Tool", "Oyun", "Premium", "Method"];
+        const VERIFIED_USERS = ["test@gmail.com"]; // Manuel doğrulanmış kullanıcı listesi (Örnek)
+        const CATS = ["Hepsi", "Script", "Config", "Tool", "Oyun", "Method", "Premium"];
+        
         let user = null;
         let img64 = null;
-        let currentLinkID = null;
-        let repairID = null;
 
-        // --- MATRIX RAIN EFFECT ---
+        // --- MATRIX RAIN ---
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#0F0';
-            ctx.font = fontSize + 'px monospace';
-            for(let i=0; i<drops.length; i++) {
-                const text = chars[Math.floor(Math.random()*chars.length)];
-                ctx.fillText(text, i*fontSize, drops[i]*fontSize);
-                if(drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const chars = '01XYZ'; const drops = Array(Math.floor(canvas.width/14)).fill(1);
+        setInterval(() => {
+            ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#0ff'; ctx.font = '14px monospace';
+            drops.forEach((y, i) => {
+                ctx.fillText(chars[Math.floor(Math.random()*5)], i*14, y*14);
+                if(y*14>canvas.height && Math.random()>0.98) drops[i]=0;
                 drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 50);
+            });
+        }, 50);
 
-        // --- SOUND ENGINE ---
+        // --- APP ENGINE ---
         window.app = {
-            playSound: (id) => {
-                const audio = document.getElementById('ui-'+id);
-                if(audio) { audio.currentTime = 0; audio.play().catch(()=>{}); }
-            },
-            
             init: () => {
-                // Generate Categories
-                const cScroll = document.getElementById('cat-scroll');
-                const cSelect = document.getElementById('inCat');
-                cScroll.innerHTML = ''; cSelect.innerHTML = '';
-                
+                // Categories
+                const s = document.getElementById('cat-scroll');
+                const sel = document.getElementById('inCat');
+                s.innerHTML=''; sel.innerHTML='';
                 CATS.forEach(c => {
-                    // Feed Chip
-                    const btn = document.createElement('button');
-                    btn.className = `px-4 py-2 rounded border border-white/10 text-[10px] font-bold uppercase whitespace-nowrap bg-black/50 hover:border-cyan-500 hover:text-cyan-400 transition ${c==='Hepsi' ? 'border-cyan-500 text-cyan-400 bg-cyan-500/10' : ''}`;
-                    btn.innerText = c;
-                    btn.onclick = (e) => {
-                        app.playSound('click');
-                        document.querySelectorAll('#cat-scroll button').forEach(b => b.classList.remove('border-cyan-500','text-cyan-400','bg-cyan-500/10'));
-                        e.target.classList.add('border-cyan-500','text-cyan-400','bg-cyan-500/10');
-                        app.loadFeed(c);
-                    };
-                    cScroll.appendChild(btn);
-
-                    // Select Option
-                    if(c!=='Hepsi') {
-                        const opt = document.createElement('option');
-                        opt.value = c; opt.innerText = c;
-                        cSelect.appendChild(opt);
-                    }
+                    s.innerHTML += `<button onclick="app.loadFeed('${c}')" class="px-4 py-1.5 rounded bg-white/5 border border-white/10 text-[10px] font-bold uppercase hover:bg-cyan-500/20 hover:text-cyan-400 transition whitespace-nowrap">${c}</button>`;
+                    if(c!=='Hepsi') sel.innerHTML += `<option value="${c}">${c}</option>`;
                 });
 
-                // Fake IP
-                document.getElementById('fakeIp').innerText = `192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-
-                // Initial Load
-                app.loadFeed();
-                
-                // URL Params
-                const params = new URLSearchParams(location.search);
-                if(params.get('u')) app.nav('profile', params.get('u'));
-                if(params.get('id')) app.openGate(params.get('id'));
+                // Check URL
+                const p = new URLSearchParams(location.search);
+                if(p.get('id')) app.openGate(p.get('id'));
             },
 
-            // --- NAVIGATION ---
-            nav: (tab, targetUid) => {
-                if((tab==='create' || tab==='profile') && !user && !targetUid) return ui.toast('GİRİŞ YAPMALISIN!', 'error');
+            nav: (t, uid) => {
+                if((t==='create' || t==='profile') && !user && !uid) return ui.toast('Giriş Yapmalısın!', 'error');
                 
                 document.querySelectorAll('.tab-view').forEach(e => e.classList.remove('active'));
-                document.getElementById('tab-'+tab).classList.add('active');
+                document.getElementById('tab-'+t).classList.add('active');
                 
-                document.getElementById('nav-feed').className = tab==='feed' ? 'text-cyan-400 text-xl' : 'text-gray-500 text-xl';
-                document.getElementById('nav-profile').className = tab==='profile' ? 'text-cyan-400 text-xl' : 'text-gray-500 text-xl';
+                document.getElementById('nav-feed').className = t==='feed'?'text-cyan-400 text-xl':'text-gray-500 text-xl';
+                document.getElementById('nav-profile').className = t==='profile'?'text-cyan-400 text-xl':'text-gray-500 text-xl';
 
-                if(tab==='feed') app.loadFeed();
-                if(tab==='profile') app.loadProfile(targetUid);
-                window.scrollTo(0,0);
+                if(t==='feed') app.loadFeed();
+                if(t==='profile') app.loadProfile(uid); // Fixed Profile Nav
+                if(t==='create') app.checkLimits(); // Update limits text
             },
 
-            // --- FEED SYSTEM ---
-            loadFeed: async (cat='Hepsi', term='') => {
+            // --- CORE: FEED ---
+            loadFeed: async (cat='Hepsi') => {
                 const list = document.getElementById('feed-list');
                 list.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-cyan-500 text-2xl"></i></div>`;
                 
-                const q = query(collection(db, 'links'), orderBy('createdAt', 'desc'));
+                try {
+                    const q = query(collection(db, 'links'), orderBy('createdAt', 'desc'));
+                    const snap = await getDocs(q);
+                    list.innerHTML = '';
+
+                    snap.forEach(d => {
+                        const x = d.data();
+                        if(cat!=='Hepsi' && x.category!==cat) return;
+                        
+                        // Badge logic
+                        let badge = '';
+                        if(x.uEmail === ADMIN_EMAIL) badge = '<i class="fa-solid fa-skull text-yellow-500 ml-1" title="NECRON ADMIN"></i>';
+                        else if(VERIFIED_USERS.includes(x.uEmail)) badge = '<i class="fa-solid fa-circle-check text-blue-500 ml-1"></i>';
+
+                        // Delete button (Owner or Admin)
+                        let delBtn = '';
+                        if(user && (user.uid === x.uid || user.email === ADMIN_EMAIL)) {
+                            delBtn = `<button onclick="app.deleteLink('${d.id}')" class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-[9px] z-20 hover:scale-110"><i class="fa-solid fa-trash"></i></button>`;
+                        }
+
+                        const div = document.createElement('div');
+                        div.className = "glass-panel rounded-xl overflow-hidden relative group";
+                        div.innerHTML = `
+                            ${delBtn}
+                            <div class="h-44 relative cursor-pointer overflow-hidden" onclick="app.openGate('${d.id}')">
+                                <img src="${x.image}" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                                <div class="absolute bottom-3 left-3 right-3">
+                                    <span class="bg-cyan-500 text-black px-1.5 py-0.5 rounded text-[9px] font-black uppercase">${x.category}</span>
+                                    <h3 class="text-white font-bold mt-1 leading-tight text-sm">${x.title}</h3>
+                                </div>
+                            </div>
+                            <div class="p-3 flex items-center justify-between bg-[#080808]">
+                                <div class="flex items-center gap-2 cursor-pointer" onclick="app.nav('profile', '${x.uid}')">
+                                    <img src="${x.uAvatar}" class="w-6 h-6 rounded-full border border-gray-800">
+                                    <span class="text-[10px] text-gray-400 font-bold hover:text-white">${x.uName} ${badge}</span>
+                                </div>
+                                <div class="text-[10px] text-gray-600 font-bold"><i class="fa-solid fa-eye mr-1"></i>${x.views||0}</div>
+                            </div>
+                        `;
+                        VanillaTilt.init(div, { max:5, speed:400, glare:true, "max-glare":0.2 });
+                        list.appendChild(div);
+                    });
+                } catch(e) { console.error(e); list.innerHTML = `<div class="text-red-500 text-center text-xs">Bağlantı Hatası</div>`; }
+            },
+
+            // --- CORE: UPLOAD & LIMITS ---
+            checkLimits: async () => {
+                if(!user) return;
+                const txt = document.getElementById('limitCount');
+                txt.innerText = "KONTROL EDİLİYOR...";
+                
+                const q = query(collection(db, 'links'), where('uid', '==', user.uid));
                 const snap = await getDocs(q);
-                list.innerHTML = '';
+                const count = snap.size;
+                
+                let limit = 10;
+                let status = "NORMAL ÜYE";
+                
+                if(user.email === ADMIN_EMAIL) { limit = 9999; status = "NECRON (GOD MODE)"; }
+                else if(VERIFIED_USERS.includes(user.email)) { limit = 20; status = "DOĞRULANMIŞ"; }
 
-                snap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    if(cat!=='Hepsi' && data.category!==cat) return;
-                    if(term && !data.title.toLowerCase().includes(term.toLowerCase())) return;
-
-                    // Badges Logic
-                    let badges = '';
-                    if(data.uEmail === ADMIN_EMAIL) badges += `<i class="fa-solid fa-crown text-yellow-500 text-[10px] ml-1" title="Owner"></i>`;
-                    else if(data.isVerified) badges += `<i class="fa-solid fa-circle-check text-blue-500 text-[10px] ml-1"></i>`;
-
-                    // Admin Actions
-                    let adminActs = '';
-                    if(user && (user.email === ADMIN_EMAIL || user.uid === data.uid)) {
-                        adminActs = `<button onclick="admin.prepRepair('${docSnap.id}')" class="absolute top-2 right-2 bg-yellow-500 text-black px-2 rounded text-[9px] font-bold z-20 hover:scale-110">DÜZELT</button>`;
-                    }
-
-                    // Card HTML
-                    const item = document.createElement('div');
-                    item.className = "glass-panel rounded-xl overflow-hidden group relative hover:border-cyan-500/50 transition duration-300";
-                    item.innerHTML = `
-                        ${adminActs}
-                        <div class="h-48 overflow-hidden relative cursor-pointer" onclick="app.openGate('${docSnap.id}')">
-                            <img src="${data.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 group-hover:rotate-1">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-                            <div class="absolute bottom-3 left-3 right-3">
-                                <span class="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded text-[9px] font-bold uppercase backdrop-blur-sm">${data.category}</span>
-                                <h3 class="text-lg font-bold text-white leading-tight mt-1 drop-shadow-md">${data.title}</h3>
-                            </div>
-                        </div>
-                        <div class="p-3 bg-[#080808] flex items-center justify-between">
-                            <div class="flex items-center gap-2 cursor-pointer" onclick="app.nav('profile','${data.uid}')">
-                                <img src="${data.uAvatar}" class="w-6 h-6 rounded-full border border-gray-700">
-                                <span class="text-[10px] font-bold text-gray-400 hover:text-white">${data.uName} ${badges}</span>
-                            </div>
-                            <div class="flex gap-3 text-[10px] font-bold text-gray-500">
-                                <span><i class="fa-solid fa-eye mr-1"></i>${data.views||0}</span>
-                                <span><i class="fa-solid fa-heart mr-1 hover:text-red-500 cursor-pointer" onclick="app.like('${docSnap.id}')"></i>${data.likes||0}</span>
-                            </div>
-                        </div>
-                    `;
-                    VanillaTilt.init(item, { max: 5, speed: 400, glare: true, "max-glare": 0.2 });
-                    list.appendChild(item);
-                });
+                const color = count >= limit ? 'text-red-500' : 'text-green-500';
+                txt.innerHTML = `<span class="${color}">${count}</span> / ${limit === 9999 ? '∞' : limit} (${status})`;
+                
+                return { count, limit };
             },
 
-            // --- UPLOAD ---
-            handleFile: (input) => {
-                if(input.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        document.getElementById('prevImg').src = e.target.result;
-                        document.getElementById('prevImg').classList.remove('hidden');
-                        img64 = e.target.result;
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                }
-            },
             upload: async () => {
-                if(!user) return ui.toast('Giriş Yap!', 'error');
+                if(!user) return ui.toast('Giriş Yapmalısın!', 'error');
+                
+                // 1. Check Limit
+                const limits = await app.checkLimits();
+                if(limits.count >= limits.limit) {
+                    ui.toast(`LİMİT DOLDU! (${limits.limit} adet)`, 'error');
+                    return;
+                }
+
+                // 2. Validate Form
                 const t = document.getElementById('inTitle').value;
                 const l = document.getElementById('inLink').value;
                 const c = document.getElementById('inCat').value;
                 const task = document.getElementById('inTask').value;
 
-                if(!t || !l || !img64) return ui.toast('Eksik Bilgi!', 'error');
+                if(!t || !l || !img64) return ui.toast('Lütfen tüm alanları doldur!', 'error');
 
                 try {
+                    ui.toast('Sisteme yükleniyor...', 'info');
                     await addDoc(collection(db, 'links'), {
                         title: t, target: l, category: c, task: task||'',
                         image: img64, uid: user.uid, uName: user.displayName, uAvatar: user.photoURL, uEmail: user.email,
-                        views: 0, likes: 0, createdAt: serverTimestamp(), comments: []
+                        views: 0, createdAt: serverTimestamp()
                     });
                     
-                    // Add XP
-                    app.addXP(50);
-                    
-                    ui.toast('BAŞARILI! SİSTEME EKLENDİ.', 'success');
-                    app.playSound('success');
-                    confetti();
+                    ui.toast('BAŞARILI! DOSYA EKLENDİ.', 'success');
                     app.nav('feed');
-                    // Reset form
-                    document.getElementById('inTitle').value = "";
-                    document.getElementById('inLink').value = "";
+                    // Reset
+                    document.getElementById('inTitle').value='';
+                    document.getElementById('inLink').value='';
                     img64 = null;
-                } catch(e) { ui.toast(e.message, 'error'); }
+                } catch(e) {
+                    ui.toast('HATA: ' + e.message, 'error');
+                }
             },
 
-            // --- GATEWAY ---
-            openGate: async (id) => {
-                currentLinkID = id;
-                const modal = document.getElementById('modalGate');
-                modal.classList.remove('hidden');
+            handleFile: (el) => {
+                const f = el.files[0];
+                if(f) {
+                    const r = new FileReader();
+                    r.onload = e => {
+                        document.getElementById('prevImg').src = e.target.result;
+                        document.getElementById('prevImg').classList.remove('hidden');
+                        img64 = e.target.result;
+                    };
+                    r.readAsDataURL(f);
+                }
+            },
+
+            // --- CORE: PROFILE (FIXED) ---
+            loadProfile: async (targetUid) => {
+                // If targetUid is null, try to use current user
+                const uid = targetUid || user?.uid;
                 
-                const snap = await getDoc(doc(db, 'links', id));
-                if(!snap.exists()) return ui.toast('Link Silinmiş!', 'error');
-                
-                const data = snap.data();
-                await updateDoc(doc(db, 'links', id), { views: increment(1) });
-                
-                // QR
-                document.getElementById('qr-area').innerHTML = '';
-                new QRCode(document.getElementById('qr-area'), { text: data.target, width: 120, height: 120 });
-                
-                // Task
-                const btn = document.getElementById('btnGateOpen');
-                const taskTxt = document.getElementById('gateTaskText');
-                const taskArea = document.getElementById('gateTask');
-                
-                if(data.task) {
-                    taskArea.classList.remove('hidden');
-                    taskTxt.innerText = data.task;
-                    btn.innerText = "GÖREVİ ONAYLA";
-                    btn.onclick = () => {
-                        app.playSound('click');
-                        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> KONTROL...`;
-                        setTimeout(() => {
-                            window.open(data.target, '_blank');
-                            modal.classList.add('hidden');
-                            app.addXP(10); // Reward viewer
-                        }, 2000);
-                    }
-                } else {
-                    taskArea.classList.add('hidden');
-                    btn.innerText = "BAĞLANTIYI AÇ";
-                    btn.onclick = () => window.open(data.target, '_blank');
+                if(!uid) {
+                    ui.toast('Kullanıcı bulunamadı', 'error');
+                    app.nav('feed');
+                    return;
                 }
 
-                // Load Comments
-                app.loadComments(data.comments || []);
-            },
+                const list = document.getElementById('profile-feed');
+                list.innerHTML = '<div class="text-center py-4 text-xs text-gray-500">Veriler çekiliyor...</div>';
 
-            // --- COMMENT SYSTEM ---
-            loadComments: (arr) => {
-                const box = document.getElementById('miniComments');
-                box.innerHTML = '';
-                if(arr.length === 0) box.innerHTML = '<div class="text-[10px] text-gray-600 italic">Henüz yorum yok. İlk sen yaz!</div>';
-                
-                arr.forEach(c => {
-                    box.innerHTML += `
-                    <div class="mb-2 pb-2 border-b border-gray-800 last:border-0">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-cyan-500">${c.user}</span>
-                            <span class="text-[9px] text-gray-600">${new Date(c.time).toLocaleTimeString()}</span>
-                        </div>
-                        <div class="text-[11px] text-gray-300">${c.text}</div>
-                    </div>`;
-                });
-            },
-            postComment: async () => {
-                if(!user) return ui.toast('Giriş Yapmalısın!', 'error');
-                const txt = document.getElementById('commentInput').value;
-                if(!txt) return;
-
-                const newC = { user: user.displayName, text: txt, time: Date.now() };
-                await updateDoc(doc(db, 'links', currentLinkID), {
-                    comments: arrayUnion(newC)
-                });
-                document.getElementById('commentInput').value = '';
-                ui.toast('Yorum Gönderildi', 'success');
-                // Reload gate to see comment (simplified)
-                app.openGate(currentLinkID);
-            },
-
-            // --- PROFILE & XP ---
-            loadProfile: async (targetUid) => {
-                const uid = targetUid || user?.uid;
-                if(!uid) return;
-                
+                // Query specific UID
                 const q = query(collection(db, 'links'), where('uid', '==', uid));
-                const snaps = await getDocs(q);
-                
-                let totalViews = 0, totalLikes = 0;
-                let userData = { name: 'Misafir', avatar: '', email: '' };
+                const snap = await getDocs(q);
 
-                // Try to get user data from a link doc
-                if(snaps.size > 0) {
-                    const d = snaps.docs[0].data();
+                let totalViews = 0;
+                let userData = { name: 'Bilinmeyen', avatar: '', email: '' };
+
+                if(snap.size > 0) {
+                    const d = snap.docs[0].data();
                     userData = { name: d.uName, avatar: d.uAvatar, email: d.uEmail };
                 } else if(user && user.uid === uid) {
                     userData = { name: user.displayName, avatar: user.photoURL, email: user.email };
                 }
 
+                // Render Header
                 document.getElementById('pName').innerText = userData.name;
-                document.getElementById('pAvatar').src = userData.avatar;
+                document.getElementById('pAvatar').src = userData.avatar || 'https://via.placeholder.com/150';
                 
-                // Badges
-                const badgeArea = document.getElementById('pBadgeArea');
-                badgeArea.innerHTML = '';
-                if(userData.email === ADMIN_EMAIL) badgeArea.innerHTML += `<span class="god-badge text-xs border border-yellow-500/50 px-2 rounded">NECRON ADMIN</span>`;
-                
-                // Feed
-                const list = document.getElementById('profile-feed');
+                const badges = document.getElementById('pBadges');
+                badges.innerHTML = '';
+                if(userData.email === ADMIN_EMAIL) badges.innerHTML = `<span class="badge-god text-[10px] border border-yellow-500 px-2 rounded">NECRON</span>`;
+                else if(VERIFIED_USERS.includes(userData.email)) badges.innerHTML = `<span class="text-blue-500 font-bold text-[10px] border border-blue-500 px-2 rounded">VERIFIED</span>`;
+
+                // Render List
                 list.innerHTML = '';
-                snaps.forEach(d => {
+                snap.forEach(d => {
                     const x = d.data();
-                    totalViews += (x.views||0);
-                    totalLikes += (x.likes||0);
+                    totalViews += (x.views || 0);
                     
-                    let act = `<button onclick="navigator.clipboard.writeText('${location.origin}?id=${d.id}')" class="text-xs text-gray-500"><i class="fa-solid fa-share-nodes"></i></button>`;
-                    if(user && (user.email === ADMIN_EMAIL || user.uid === uid)) {
-                        act += `<button onclick="admin.deleteLink('${d.id}')" class="ml-3 text-xs text-red-500"><i class="fa-solid fa-trash"></i></button>`;
+                    let del = '';
+                    if(user && (user.uid === uid || user.email === ADMIN_EMAIL)) {
+                        del = `<button onclick="app.deleteLink('${d.id}')" class="text-red-500 text-xs ml-2"><i class="fa-solid fa-trash"></i></button>`;
                     }
 
                     list.innerHTML += `
-                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
+                    <div class="flex items-center justify-between p-3 bg-white/5 rounded border border-white/5">
                         <div class="flex items-center gap-3">
                             <img src="${x.image}" class="w-10 h-10 rounded object-cover">
                             <div>
                                 <div class="text-xs font-bold text-white">${x.title}</div>
-                                <div class="text-[9px] text-gray-500">${x.views} Views</div>
+                                <div class="text-[9px] text-gray-500">${x.views} Görüntülenme</div>
                             </div>
                         </div>
-                        <div>${act}</div>
+                        <div class="flex items-center gap-2">
+                             <button onclick="navigator.clipboard.writeText('${location.origin}?id=${d.id}')" class="text-gray-500 text-xs"><i class="fa-solid fa-link"></i></button>
+                             ${del}
+                        </div>
                     </div>`;
                 });
 
-                document.getElementById('stFiles').innerText = snaps.size;
+                document.getElementById('stFiles').innerText = snap.size;
                 document.getElementById('stViews').innerText = totalViews;
-                document.getElementById('stLikes').innerText = totalLikes;
+                
+                // Limit Badge on Profile
+                let pLimit = "10 LİMİT";
+                if(userData.email === ADMIN_EMAIL) pLimit = "SINIRSIZ";
+                else if(VERIFIED_USERS.includes(userData.email)) pLimit = "20 LİMİT";
+                document.getElementById('profileLimitBadge').innerText = pLimit;
+            },
 
-                // Fake Level Calculation
-                const lvl = Math.floor(totalViews / 50) + 1;
-                const xp = totalViews % 50; // Simple logic
-                document.getElementById('lvlNum').innerText = lvl;
-                document.getElementById('xpText').innerText = `${xp*2}% XP`;
-                document.getElementById('xpBar').style.width = `${xp*2}%`;
-            },
-            
-            addXP: (amount) => {
-                // Just visual for now
-                ui.toast(`+${amount} XP KAZANILDI`, 'success');
-            },
-            like: async (id) => {
-                await updateDoc(doc(db,'links',id), { likes: increment(1) });
-                app.playSound('click');
-                ui.toast('BEĞENİLDİ ❤️', 'success');
-            }
-        };
-
-        // --- ADMIN MODULE ---
-        window.admin = {
-            prepRepair: (id) => { repairID = id; document.getElementById('modalRepair').classList.remove('hidden'); },
-            doRepair: async () => {
-                const url = document.getElementById('repairUrl').value;
-                if(url && repairID) {
-                    await updateDoc(doc(db, 'links', repairID), { target: url });
-                    ui.toast('LİNK ONARILDI (ADMIN)', 'success');
-                    ui.closeModals();
-                    app.loadFeed();
-                }
-            },
             deleteLink: async (id) => {
-                if(confirm('NECRON: Bu veriyi kalıcı olarak silmek istiyor musun?')) {
+                if(confirm('Dosyayı kalıcı olarak silmek istiyor musun?')) {
                     await deleteDoc(doc(db, 'links', id));
-                    ui.toast('VERİ SİLİNDİ', 'error');
-                    app.nav('profile'); // Refresh
+                    ui.toast('Dosya Silindi', 'info');
+                    // Refresh current view
+                    if(document.getElementById('tab-profile').classList.contains('active')) {
+                        const uid = user ? user.uid : null; // Basit refresh
+                        app.loadProfile(uid); 
+                    } else {
+                        app.loadFeed();
+                    }
                 }
             },
-            wipeAll: () => alert('BU ÖZELLİK GÜVENLİK NEDENİYLE KAPALI.'),
-            broadcast: () => {
-                const msg = prompt('SİSTEM MESAJI YAZ:');
-                if(msg) alert(`[SİSTEM MESAJI]\n\n${msg}`);
-            },
-            banMode: () => ui.toast('BAN HAMMER ACTIVE (Click User)', 'error')
-        };
 
-        window.ui = {
-            toast: (msg, type) => {
-                const t = document.createElement('div');
-                t.className = `toast-box p-3 rounded bg-[#111] border border-white/10 shadow-xl text-xs font-bold flex items-center gap-2 ${type==='error'?'border-l-red-500 text-red-400':'border-l-cyan-500 text-cyan-400'}`;
-                t.innerHTML = `<i class="fa-solid ${type==='error'?'fa-triangle-exclamation':'fa-check-circle'}"></i> ${msg}`;
-                document.getElementById('toast-container').appendChild(t);
-                setTimeout(()=>t.remove(), 3000);
-            },
-            toggleSearch: () => {
-                const bar = document.getElementById('searchBar');
-                bar.classList.toggle('hidden');
-                if(!bar.classList.contains('hidden')) document.getElementById('searchInput').focus();
-            },
-            closeModals: () => {
-                document.getElementById('modalGate').classList.add('hidden');
-                document.getElementById('modalRepair').classList.add('hidden');
+            openGate: async (id) => {
+                ui.toggleModal('modalGate');
+                const snap = await getDoc(doc(db, 'links', id));
+                if(!snap.exists()) return ui.toast('Link bulunamadı', 'error');
+                
+                const d = snap.data();
+                await updateDoc(doc(db, 'links', id), { views: increment(1) });
+
+                document.getElementById('qr-area').innerHTML = '';
+                new QRCode(document.getElementById('qr-area'), { text: d.target, width:100, height:100 });
+
+                const btn = document.getElementById('btnGateAction');
+                if(d.task) {
+                    document.getElementById('gateTaskBox').classList.remove('hidden');
+                    document.getElementById('gateTaskText').innerText = d.task;
+                    btn.innerText = "GÖREVİ ONAYLA";
+                    btn.onclick = () => {
+                        btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> KONTROL EDİLİYOR...";
+                        setTimeout(() => window.location.href = d.target, 2000);
+                    }
+                } else {
+                    document.getElementById('gateTaskBox').classList.add('hidden');
+                    btn.innerText = "BAĞLANTIYA GİT";
+                    btn.onclick = () => window.location.href = d.target;
+                }
             }
         };
 
-        app.filterFeed = () => app.loadFeed('Hepsi', document.getElementById('searchInput').value);
+        // --- UI UTILS ---
+        window.ui = {
+            toast: (m,t) => {
+                const d = document.createElement('div');
+                d.className = `toast-box p-3 text-xs font-bold text-white flex items-center gap-2 rounded ${t==='error'?'border-red-500 text-red-400':''}`;
+                d.innerHTML = m;
+                document.getElementById('toast-container').appendChild(d);
+                setTimeout(()=>d.remove(), 3000);
+            },
+            toggleModal: (id) => document.getElementById(id).classList.remove('hidden'),
+            closeModals: () => document.querySelectorAll('[id^="modal"]').forEach(e => e.classList.add('hidden')),
+            togglePatchNotes: () => {
+                const el = document.getElementById('modalPatch');
+                el.classList.contains('hidden') ? el.classList.remove('hidden') : el.classList.add('hidden');
+            }
+        };
 
-        // AUTH
+        // --- ADMIN TOOLS ---
+        window.admin = {
+            nuke: () => alert('BU ÖZELLİK DEVRE DIŞI BIRAKILDI.')
+        };
+
+        // --- AUTH & BOOT ---
         document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
+        
+        // Boot Sequence
+        const bootLog = document.getElementById('boot-log');
+        const logs = ["SYSTEM_INIT...", "CONNECTING_DB...", "BYPASSING_FIREWALL...", "LOADING_KERNEL...", "NECRON_ACCESS_GRANTED"];
+        let logIndex = 0;
+        
+        const bootInt = setInterval(() => {
+            if(logIndex < logs.length) {
+                const div = document.createElement('div');
+                div.className = "terminal-text";
+                div.innerText = "> " + logs[logIndex];
+                bootLog.appendChild(div);
+                logIndex++;
+            } else {
+                clearInterval(bootInt);
+            }
+        }, 300);
+
         onAuthStateChanged(auth, u => {
+            document.getElementById('boot-bar').style.width = "100%";
+            
+            setTimeout(() => {
+                document.getElementById('boot-screen').style.opacity = '0';
+                setTimeout(()=>document.getElementById('boot-screen').style.display='none', 500);
+            }, 2200);
+
             if(u) {
                 user = u;
                 document.getElementById('loginBtn').classList.add('hidden');
                 document.getElementById('userBadge').classList.remove('hidden');
                 document.getElementById('userBadge').classList.add('flex');
                 document.getElementById('userImg').src = u.photoURL;
-                
-                // GOD MODE CHECK
-                if(u.email === ADMIN_EMAIL) {
-                    document.getElementById('adminPanel').classList.add('visible');
-                    ui.toast('HOŞGELDİN, NECRON.', 'success');
-                }
+                if(u.email === ADMIN_EMAIL) document.getElementById('adminPanel').classList.remove('hidden');
+                ui.toast('Sisteme hoşgeldin.', 'success');
             }
             app.init();
-            setTimeout(() => document.getElementById('loader').style.opacity = '0', 1500);
-            setTimeout(() => document.getElementById('loader').style.display = 'none', 2200);
+            app.loadFeed();
         });
+
     </script>
 </body>
 </html>
