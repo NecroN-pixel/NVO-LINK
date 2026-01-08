@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#000000">
-    <title>NVOLINK | G-1.6.3 TASK MASTER</title>
+    <title>NVOLINK | SYSTEM BOOT</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -14,834 +14,425 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CORE VISUALS --- */
-        :root {
-            --bg: #050505;
-            --glass: rgba(20, 20, 25, 0.9);
-            --border: rgba(255,255,255,0.08);
-            --primary: #00f3ff;
-            --gold: #ffd700;
-            --success: #00ff9d;
-            --danger: #ff003c;
-        }
+        /* --- CORE --- */
+        :root { --bg: #050505; --primary: #00f3ff; --glass: rgba(20, 20, 25, 0.95); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: #e0e0e0; overflow-x: hidden; }
+
+        /* --- LOADER ANIMATIONS --- */
+        #loader { transition: opacity 0.8s ease-out, visibility 0.8s; }
+        .loader-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; user-select: none; }
-        body { 
-            font-family: 'Rajdhani', sans-serif; 
-            background: var(--bg); color: #e0e0e0; 
-            overflow-x: hidden; cursor: crosshair;
+        .scanline {
+            width: 100%; height: 2px; background: var(--primary); opacity: 0.5;
+            animation: scan 2s linear infinite; position: absolute; z-index: 5;
+        }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+
+        .logo-pulse { animation: pulseGlow 2s infinite alternate; }
+        @keyframes pulseGlow { 
+            0% { filter: drop-shadow(0 0 5px #00f3ff); transform: scale(1); } 
+            100% { filter: drop-shadow(0 0 20px #00f3ff); transform: scale(1.05); } 
         }
 
-        /* --- DYNAMIC BG --- */
-        .grid-floor {
-            position: fixed; inset: 0; z-index: -2;
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: gridMove 30s linear infinite;
+        .loading-bar-fill {
+            width: 0%; height: 100%; background: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            animation: fillBar 2.5s ease-in-out forwards;
         }
-        @keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 0 1000px; } }
+        @keyframes fillBar { 0% { width: 0%; } 40% { width: 30%; } 70% { width: 80%; } 100% { width: 100%; } }
 
-        /* --- COMPONENTS --- */
-        .glass-panel {
-            background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.8);
-        }
-        
+        /* --- STANDARD UI --- */
+        .glass-panel { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .neon-btn {
-            background: rgba(0, 243, 255, 0.05); border: 1px solid var(--primary);
-            color: var(--primary); text-transform: uppercase; letter-spacing: 1px;
+            background: rgba(0, 243, 255, 0.05); border: 1px solid var(--primary); color: var(--primary);
             transition: 0.3s; position: relative; overflow: hidden;
         }
         .neon-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
         .neon-btn:disabled { border-color: #333; color: #555; background: transparent; box-shadow: none; cursor: not-allowed; }
-
+        
         .input-cyber {
-            width: 100%; background: #0a0a0a; border: 1px solid #333;
-            color: white; padding: 12px; font-family: 'Rajdhani', sans-serif; 
-            transition: 0.3s; border-left: 2px solid var(--border); outline: none;
+            width: 100%; background: #000; border: 1px solid #333; color: white; padding: 12px;
+            font-family: 'Rajdhani', sans-serif; outline: none; transition: 0.3s;
         }
-        .input-cyber:focus { border-left-color: var(--primary); background: #0f0f0f; border-color: #444; }
+        .input-cyber:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,243,255,0.2); }
 
-        /* --- FRAMES --- */
-        .frame-admin {
-            position: relative; border: 2px solid transparent; border-radius: 50%;
-            background-image: linear-gradient(#000, #000), linear-gradient(to right, #ffd700, #ff003c, #00f3ff);
-            background-origin: border-box; background-clip: content-box, border-box;
-            animation: spinBorder 4s linear infinite;
-        }
-        @keyframes spinBorder { 100% { filter: hue-rotate(360deg); } }
-        .frame-verified { border: 2px solid #3b82f6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); border-radius: 50%; }
+        .tab-view { display: none; opacity: 0; animation: fadeIn 0.4s forwards; }
+        .tab-view.active { display: block; }
+        @keyframes fadeIn { to { opacity: 1; } }
 
-        /* --- TASK SYSTEM UI --- */
-        .task-row {
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-            padding: 10px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 8px; transition: 0.3s;
-        }
-        .task-row.completed { border-color: var(--success); background: rgba(0, 255, 157, 0.05); }
-        .task-icon { width: 32px; height: 32px; display: flex; items-center; justify-content: center; background: #000; border-radius: 6px; margin-right: 10px; font-size: 16px; }
-
-        /* --- TAB TRANSITIONS --- */
-        .tab-view { display: none; opacity: 0; transform: translateY(10px); transition: 0.3s ease-out; }
-        .tab-view.active { display: block; opacity: 1; transform: translateY(0); }
-
-        /* --- QR --- */
-        .qr-frame { background: white; padding: 10px; border-radius: 12px; position: relative; }
-        .qr-logo-overlay { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 32px; height: 32px; background: #000; border-radius: 6px; 
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid #fff; z-index: 10;
-        }
-
-        /* --- SCROLL --- */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+        /* Tasks */
+        .task-row { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05); }
+        .task-row.completed { border-color: #00ff9d; background: rgba(0, 255, 157, 0.05); }
     </style>
 </head>
-<body class="pb-36">
+<body class="pb-32">
 
-    <div class="grid-floor"></div>
-    <div id="loader" class="fixed inset-0 z-[99999] bg-black flex flex-col items-center justify-center">
-        <div class="text-5xl font-black italic tracking-tighter text-cyan-500 animate-pulse">NVO<span class="text-white">LINK</span></div>
-        <div class="text-[9px] font-mono text-gray-500 mt-2 tracking-[0.5em]">SYSTEM LOADING</div>
-        <div class="w-48 h-0.5 bg-gray-800 mt-6 rounded overflow-hidden">
-            <div class="h-full bg-cyan-500 animate-[width_1.2s_ease-out_forwards]" style="width:0%"></div>
+    <div id="loader" class="fixed inset-0 z-[99999] bg-[#000] flex flex-col items-center justify-center">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20"><div class="scanline"></div></div>
+        
+        <div class="relative w-24 h-24 mb-6 flex items-center justify-center logo-pulse">
+            <div class="absolute inset-0 border-2 border-cyan-500/30 rounded-full animate-[spin_10s_linear_infinite]"></div>
+            <div class="absolute inset-2 border border-cyan-500/50 rounded-full animate-[spin_5s_linear_infinite_reverse]"></div>
+            <i class="fa-solid fa-dragon text-5xl text-cyan-400 drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]"></i>
         </div>
-        <style> @keyframes width { to { width: 100%; } } </style>
+
+        <div class="text-3xl font-black italic tracking-tighter text-white mb-1">NVO<span class="text-cyan-500">LINK</span></div>
+        <div class="text-[9px] font-mono text-cyan-500 tracking-[0.6em] mb-8 animate-pulse">SYSTEM INITIALIZED</div>
+
+        <div class="w-64 h-1 bg-gray-900 rounded-full overflow-hidden relative border border-gray-800">
+            <div class="loading-bar-fill"></div>
+        </div>
+        
+        <div class="absolute bottom-10 text-[8px] text-gray-600 font-mono">V1.6.4 // SECURE CONNECTION</div>
     </div>
 
-    <header class="fixed top-0 inset-x-0 z-50 glass-panel border-b-0 border-b border-white/5 h-16">
-        <div class="max-w-2xl mx-auto px-4 h-full flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="app.nav('feed')">
-                <div class="w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-lg border border-cyan-500/20">
-                    <i class="fa-solid fa-infinity text-xl text-cyan-400"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white leading-none">NVO<span class="text-cyan-500">LINK</span></h1>
-                    <span class="text-[8px] text-gray-500 font-bold tracking-widest block mt-0.5">G-1.6.3 TASK MASTER</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <button id="authBtn" onclick="auth.login()" class="neon-btn px-4 py-1.5 text-[10px] font-bold rounded">GİRİŞ</button>
-                <div id="userBadge" class="hidden cursor-pointer relative" onclick="app.nav('profile')">
-                    <img id="headerAvatar" class="w-9 h-9 rounded-full object-cover border-2 border-transparent">
-                    <div id="headerVerified" class="absolute -bottom-1 -right-1 bg-blue-500 text-white text-[8px] w-3.5 h-3.5 flex items-center justify-center rounded-full hidden border border-black"><i class="fa-solid fa-check"></i></div>
-                </div>
-            </div>
+    <header class="fixed top-0 inset-x-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/5 h-16 flex items-center justify-between px-4">
+        <div class="flex items-center gap-3" onclick="app.nav('feed')">
+            <i class="fa-solid fa-dragon text-2xl text-cyan-400"></i>
+            <h1 class="text-xl font-bold tracking-tight text-white">NVO<span class="text-cyan-500">LINK</span></h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="authBtn" onclick="auth.login()" class="neon-btn px-4 py-1.5 text-[10px] font-bold rounded">GİRİŞ</button>
+            <img id="headerAvatar" class="w-9 h-9 rounded-full border border-cyan-500/30 hidden cursor-pointer" onclick="app.nav('profile')">
         </div>
     </header>
 
-    <div class="fixed bottom-24 right-4 z-40 group cursor-pointer" onclick="ui.toggleModal('modalPatch')">
-        <div class="flex items-center gap-2">
-            <div class="bg-black/90 text-cyan-400 text-[9px] font-bold px-3 py-1 rounded border border-cyan-500/30 transform scale-0 group-hover:scale-100 transition origin-right">
-                YAMA NOTLARI: V1.6.3
-            </div>
-            <div class="w-10 h-10 rounded-full bg-cyan-500/10 border border-cyan-500 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(0,243,255,0.3)] hover:bg-cyan-500 hover:text-black transition">
-                <i class="fa-solid fa-scroll"></i>
-            </div>
-        </div>
-    </div>
-
-    <main class="max-w-2xl mx-auto pt-24 px-4 relative z-10 min-h-screen">
-
+    <main class="max-w-2xl mx-auto pt-24 px-4 min-h-screen">
+        
         <div id="tab-feed" class="tab-view active">
             <div class="relative mb-6">
-                <input type="text" id="searchInput" onkeyup="app.filterFeed()" placeholder="Komut, Script veya Kullanıcı Ara..." class="input-cyber pl-10 rounded-full bg-black/60 border-zinc-800 focus:border-cyan-500">
+                <input type="text" id="searchInput" onkeyup="app.filterFeed()" placeholder="Ara..." class="input-cyber rounded-full pl-10 border-zinc-800">
                 <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
             </div>
             <div id="cat-scroll" class="flex gap-2 overflow-x-auto pb-4 mb-2 hide-scroll"></div>
-            <div id="feed-list" class="space-y-6 pb-20"></div>
+            <div id="feed-list" class="space-y-6"></div>
         </div>
 
         <div id="tab-create" class="tab-view">
-            <div class="glass-panel p-6 rounded-2xl border-t-2 border-cyan-500 relative">
-                <h2 class="text-2xl font-black mb-1 flex items-center gap-2">
-                    <span class="text-cyan-500">///</span> MODÜL OLUŞTUR
-                </h2>
-                <div class="text-[10px] text-gray-500 mb-6 font-mono">SECURE UPLOAD PROTOCOL V3</div>
+            <div class="glass-panel p-6 rounded-xl border-t-2 border-cyan-500">
+                <h2 class="text-xl font-black mb-4 text-white flex items-center gap-2"><i class="fa-solid fa-plus text-cyan-500"></i> YENİ GÖREV</h2>
                 
-                <div class="space-y-4">
-                    <div class="relative group cursor-pointer" onclick="document.getElementById('fileUp').click()">
-                        <input type="file" id="fileUp" class="hidden" accept="image/*" onchange="imgEngine.process(this, 'prevImg', 'main')">
-                        <div class="h-44 border-2 border-dashed border-gray-700 rounded-xl flex flex-col items-center justify-center bg-black/40 hover:border-cyan-500 transition overflow-hidden relative">
-                            <img id="prevImg" class="absolute inset-0 w-full h-full object-cover hidden opacity-80">
-                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-500 mb-2 group-hover:text-cyan-400 z-10 transition"></i>
-                            <span class="text-xs text-gray-500 z-10 font-bold uppercase">KAPAK GÖRSELİ SEÇ</span>
-                            <span class="text-[8px] text-gray-600 z-10 mt-1">AUTO-COMPRESSOR AKTİF</span>
+                <div onclick="document.getElementById('fileUp').click()" class="h-40 border-2 border-dashed border-gray-700 rounded-xl flex flex-col items-center justify-center bg-black/50 hover:border-cyan-500 transition cursor-pointer relative overflow-hidden mb-4 group">
+                    <img id="prevImg" class="absolute inset-0 w-full h-full object-cover hidden opacity-60">
+                    <i class="fa-solid fa-camera text-2xl text-gray-500 group-hover:text-cyan-400 z-10"></i>
+                    <input type="file" id="fileUp" class="hidden" accept="image/*" onchange="imgEngine.process(this)">
+                </div>
+
+                <div class="space-y-3">
+                    <input id="inTitle" type="text" placeholder="Başlık" class="input-cyber rounded">
+                    <input id="inLink" type="url" placeholder="Kilitli Link (Ödül)" class="input-cyber rounded">
+                    <select id="inCat" class="input-cyber rounded text-gray-400"></select>
+
+                    <div class="bg-black/40 p-3 rounded border border-white/10">
+                        <div class="text-xs font-bold text-cyan-500 mb-2 uppercase">Görev Listesi</div>
+                        <div class="flex gap-2 mb-2">
+                            <input id="tName" placeholder="Örn: Abone Ol" class="input-cyber text-xs rounded w-1/3">
+                            <input id="tLink" placeholder="Link (youtube.com/...)" class="input-cyber text-xs rounded w-2/3">
+                            <button onclick="app.addTask()" class="bg-cyan-600 px-3 rounded text-white hover:bg-cyan-500"><i class="fa-solid fa-plus"></i></button>
                         </div>
+                        <div id="taskListPreview" class="space-y-1"></div>
                     </div>
 
-                    <input id="inTitle" type="text" placeholder="MODÜL BAŞLIĞI" class="input-cyber rounded">
-                    <input id="inLink" type="url" placeholder="KİLİTLİ HEDEF LİNK (URL)" class="input-cyber rounded">
-                    <select id="inCat" class="input-cyber rounded text-gray-400 cursor-pointer"></select>
-
-                    <div class="bg-black/30 p-4 rounded-xl border border-white/5">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-xs font-bold text-gray-300 flex items-center gap-2"><i class="fa-solid fa-list-check text-cyan-500"></i> GÖREV YÖNETİCİSİ</span>
-                        </div>
-                        
-                        <div class="flex gap-2 mb-3">
-                            <input id="taskNameIn" placeholder="Görev Adı (Örn: Abone Ol)" class="input-cyber text-xs p-2 rounded w-1/3">
-                            <input id="taskLinkIn" placeholder="Görev Linki (Örn: youtube.com/...)" class="input-cyber text-xs p-2 rounded w-2/3">
-                            <button onclick="app.addTaskToList()" class="bg-cyan-600 text-white px-3 rounded text-xs font-bold hover:bg-cyan-500"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-
-                        <div id="task-preview-list" class="space-y-2">
-                            </div>
-                    </div>
-
-                    <button onclick="app.upload()" class="neon-btn w-full py-4 text-sm font-bold rounded mt-2">
-                        <i class="fa-solid fa-rocket mr-2"></i> YAYINLA
-                    </button>
+                    <button onclick="app.upload()" class="neon-btn w-full py-3 rounded font-bold mt-2">YAYINLA</button>
                 </div>
             </div>
         </div>
 
         <div id="tab-profile" class="tab-view">
-            <div class="glass-panel p-8 rounded-2xl text-center relative overflow-hidden mb-6">
-                <button id="btnEditProfile" onclick="ui.toggleModal('modalEditProfile')" class="absolute top-4 right-4 text-gray-500 hover:text-white hidden transition">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-
-                <div class="relative inline-block mb-4 group">
-                    <img id="pAvatar" class="w-28 h-28 rounded-full border-4 border-[#050505] object-cover shadow-[0_0_30px_rgba(0,0,0,0.6)]">
-                    <div id="pFrame" class="absolute -inset-1.5 rounded-full pointer-events-none"></div>
+            <div class="glass-panel p-6 rounded-xl text-center mb-6">
+                <img id="pAvatar" class="w-24 h-24 rounded-full mx-auto border-4 border-[#0a0a0a] shadow-lg mb-2">
+                <h2 id="pName" class="text-2xl font-bold text-white">...</h2>
+                <div class="flex justify-center gap-4 mt-4 text-xs">
+                    <div class="bg-white/5 px-3 py-1 rounded">PAYLAŞIM: <span id="stCount" class="text-cyan-400 font-bold">0</span></div>
+                    <div class="bg-white/5 px-3 py-1 rounded">GÖRÜNTÜLENME: <span id="stViews" class="text-cyan-400 font-bold">0</span></div>
                 </div>
-                
-                <h2 id="pName" class="text-3xl font-black text-white tracking-tight">...</h2>
-                <div id="pBadges" class="flex justify-center gap-2 mt-2 min-h-[20px]"></div>
-
-                <div class="grid grid-cols-3 gap-4 mt-8 border-t border-white/5 pt-6">
-                    <div class="bg-white/5 p-2 rounded-lg">
-                        <div id="stFiles" class="text-xl font-bold text-white">0</div>
-                        <div class="text-[9px] text-gray-500 font-bold uppercase">PAYLAŞIM</div>
-                    </div>
-                    <div class="bg-white/5 p-2 rounded-lg">
-                        <div id="stViews" class="text-xl font-bold text-cyan-400">0</div>
-                        <div class="text-[9px] text-gray-500 font-bold uppercase">ERİŞİM</div>
-                    </div>
-                    <div class="bg-white/5 p-2 rounded-lg">
-                        <div id="stRating" class="text-xl font-bold text-yellow-500">0.0</div>
-                        <div class="text-[9px] text-gray-500 font-bold uppercase">PUAN</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mb-4 px-2">
-                <h3 class="text-xs font-bold text-gray-500 flex items-center gap-2"><i class="fa-solid fa-database"></i> ARŞİV</h3>
-                <span id="pLimitBadge" class="text-[9px] bg-white/5 px-2 py-1 rounded text-gray-400 border border-white/5">...</span>
             </div>
             <div id="profile-feed" class="space-y-3"></div>
+            <button onclick="auth.logout()" class="w-full border border-red-900 text-red-500 py-3 rounded mt-6 hover:bg-red-900/20">ÇIKIŞ YAP</button>
         </div>
 
     </main>
 
-    <div id="adminPanelBtn" class="fixed bottom-24 left-4 z-40 hidden">
-        <button onclick="ui.toggleModal('modalAdmin')" class="w-12 h-12 rounded-full bg-black border border-yellow-500 text-yellow-500 flex items-center justify-center animate-pulse shadow-[0_0_20px_rgba(255,215,0,0.2)]">
-            <i class="fa-solid fa-crown text-xl"></i>
-        </button>
-    </div>
-
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#080808]/95 backdrop-blur-2xl border border-white/10 rounded-2xl px-8 py-4 flex items-center gap-10 shadow-2xl z-40">
-        <button onclick="app.nav('feed')" id="nav-feed" class="text-cyan-400 text-xl hover:scale-125 transition duration-300"><i class="fa-solid fa-layer-group"></i></button>
-        <div class="w-px h-6 bg-white/10"></div>
-        <button onclick="app.nav('create')" class="bg-gradient-to-tr from-cyan-600 to-blue-600 text-white w-14 h-14 rounded-xl -mt-10 flex items-center justify-center border-4 border-[#050505] shadow-[0_0_25px_rgba(0,243,255,0.4)] hover:-translate-y-2 transition duration-300 group">
-            <i class="fa-solid fa-plus text-2xl group-hover:rotate-90 transition duration-300"></i>
-        </button>
-        <div class="w-px h-6 bg-white/10"></div>
-        <button onclick="app.nav('profile')" id="nav-profile" class="text-gray-500 text-xl hover:scale-125 hover:text-white transition duration-300"><i class="fa-regular fa-id-card"></i></button>
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#080808]/90 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-3 flex items-center gap-8 shadow-2xl z-40">
+        <button onclick="app.nav('feed')" class="text-2xl text-cyan-400 hover:scale-110 transition"><i class="fa-solid fa-house"></i></button>
+        <button onclick="app.nav('create')" class="bg-cyan-600 text-white w-12 h-12 rounded-xl -mt-8 flex items-center justify-center shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:-translate-y-1 transition"><i class="fa-solid fa-plus text-xl"></i></button>
+        <button onclick="app.nav('profile')" class="text-2xl text-gray-500 hover:text-white hover:scale-110 transition"><i class="fa-solid fa-user"></i></button>
     </nav>
 
-    <div id="modalGate" class="fixed inset-0 z-[9000] bg-black/95 hidden flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-sm rounded-2xl p-6 relative border border-cyan-500/20 max-h-[90vh] overflow-y-auto">
-            <button onclick="ui.closeModals()" class="absolute top-4 right-4 text-gray-600 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            
+    <div id="modalGate" class="fixed inset-0 z-[9000] bg-black/95 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-sm rounded-xl p-6 relative border border-cyan-500/30">
+            <button onclick="ui.closeModals()" class="absolute top-3 right-3 text-gray-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             <div class="text-center mb-6">
-                <div class="inline-block p-1 bg-white rounded-xl mb-4">
-                    <div id="qr-container"></div>
-                </div>
-                <div class="flex justify-center gap-2 mb-2">
-                    <button onclick="qrEngine.download()" class="text-[10px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded text-gray-300 font-bold transition">
-                        <i class="fa-solid fa-download mr-1"></i> QR İNDİR
-                    </button>
-                    <button onclick="qrEngine.toggleTheme()" class="text-[10px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded text-gray-300 font-bold transition">
-                        <i class="fa-solid fa-palette mr-1"></i> TEMA
-                    </button>
-                </div>
-                <h3 class="text-xl font-black text-white">GÖREV MERKEZİ</h3>
-                <p class="text-[10px] text-gray-500 uppercase tracking-widest">ERİŞİM İÇİN TAMAMLA</p>
+                <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-2 text-cyan-400 text-2xl border border-cyan-500/20"><i class="fa-solid fa-lock"></i></div>
+                <h3 class="text-xl font-bold text-white">GÖREV MERKEZİ</h3>
+                <p class="text-[10px] text-gray-500">LİNKE GİTMEK İÇİN GÖREVLERİ TAMAMLA</p>
             </div>
-
-            <div id="gateTaskList" class="space-y-3 mb-6">
-                </div>
-
-            <button id="btnGateGo" class="w-full bg-zinc-800 text-gray-500 py-4 rounded-xl font-black text-sm transition cursor-not-allowed" disabled>
-                <i class="fa-solid fa-lock mr-2"></i> BAĞLANTI KİLİTLİ
-            </button>
-        </div>
-    </div>
-
-    <div id="modalRate" class="fixed inset-0 z-[9100] bg-black/90 hidden flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-xs p-8 rounded-2xl text-center border-t-4 border-yellow-500">
-            <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/20">
-                <i class="fa-solid fa-star text-3xl text-yellow-500 animate-bounce"></i>
-            </div>
-            <h3 class="text-2xl font-black text-white mb-2">DEĞERLENDİR</h3>
-            <p class="text-xs text-gray-400 mb-6">Bu modül işine yaradı mı?</p>
-            
-            <div class="flex justify-center gap-3 mb-8" id="starContainer">
-                <i class="fa-solid fa-star text-2xl cursor-pointer text-gray-700 hover:text-yellow-500 transition" onclick="app.setRating(1)"></i>
-                <i class="fa-solid fa-star text-2xl cursor-pointer text-gray-700 hover:text-yellow-500 transition" onclick="app.setRating(2)"></i>
-                <i class="fa-solid fa-star text-2xl cursor-pointer text-gray-700 hover:text-yellow-500 transition" onclick="app.setRating(3)"></i>
-                <i class="fa-solid fa-star text-2xl cursor-pointer text-gray-700 hover:text-yellow-500 transition" onclick="app.setRating(4)"></i>
-                <i class="fa-solid fa-star text-2xl cursor-pointer text-gray-700 hover:text-yellow-500 transition" onclick="app.setRating(5)"></i>
-            </div>
-            
-            <button onclick="app.submitRating()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-black py-3 rounded-xl transition">GÖNDER</button>
-            <button onclick="ui.closeModals()" class="mt-4 text-xs text-gray-500 hover:text-white font-bold">DAHA SONRA</button>
-        </div>
-    </div>
-
-    <div id="modalPatch" class="fixed inset-0 z-[9200] bg-[#050505] hidden flex flex-col p-6 overflow-y-auto">
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h2 class="text-3xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">G-1.6.3</h2>
-                <span class="text-xs font-mono text-gray-500">TASK MASTER UPDATE</span>
-            </div>
-            <button onclick="ui.togglePatchModal()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-
-        <div class="grid gap-4 max-w-2xl mx-auto w-full">
-            <div class="p-5 bg-white/5 rounded-xl border-l-4 border-cyan-500 hover:bg-white/10 transition">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fa-solid fa-list-check text-cyan-500 text-xl"></i>
-                    <h3 class="text-lg font-bold text-white">ÇOKLU GÖREV SİSTEMİ</h3>
-                </div>
-                <p class="text-sm text-gray-400 leading-relaxed">Artık sınırsız sayıda görev ekleyebilirsiniz. Görevler için link ve isim girilir. Otomatik logo tanıma sistemi eklendi (Youtube, Discord vb.).</p>
-            </div>
-            
-            <div class="p-5 bg-white/5 rounded-xl border-l-4 border-yellow-500 hover:bg-white/10 transition">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fa-solid fa-stopwatch text-yellow-500 text-xl"></i>
-                    <h3 class="text-lg font-bold text-white">20 SANİYE KURALI</h3>
-                </div>
-                <p class="text-sm text-gray-400 leading-relaxed">Her göreve tıklandıktan sonra 20 saniyelik zorunlu bekleme süresi eklendi. Tüm görevler tamamlanmadan ana link açılmaz.</p>
-            </div>
-
-            <div class="p-5 bg-white/5 rounded-xl border-l-4 border-green-500 hover:bg-white/10 transition">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fa-solid fa-compress text-green-500 text-xl"></i>
-                    <h3 class="text-lg font-bold text-white">AKILLI SIKIŞTIRMA</h3>
-                </div>
-                <p class="text-sm text-gray-400 leading-relaxed">Profil ve kapak fotoğrafları (500kb+) otomatik sıkıştırılarak yüklenir. Link paylaşım hatası giderildi.</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalEditProfile" class="fixed inset-0 z-[9050] bg-black/90 hidden flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-sm p-6 rounded-xl relative">
-            <h3 class="text-lg font-black mb-4 text-center">PROFİL FOTOĞRAFI</h3>
-            
-            <div class="text-center mb-6 cursor-pointer group" onclick="document.getElementById('profilePicIn').click()">
-                <div class="w-24 h-24 rounded-full bg-white/5 mx-auto flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-600 group-hover:border-cyan-500 transition relative">
-                    <img id="editPrev" class="w-full h-full object-cover hidden">
-                    <i class="fa-solid fa-camera text-2xl text-gray-500 group-hover:text-cyan-400 z-10"></i>
-                </div>
-                <div class="text-[9px] text-cyan-500 mt-3 font-bold uppercase tracking-widest">DEĞİŞTİRMEK İÇİN DOKUN</div>
-                <input type="file" id="profilePicIn" class="hidden" accept="image/*" onchange="imgEngine.process(this, 'editPrev', 'profile')">
-            </div>
-
-            <button onclick="app.saveProfile()" class="w-full neon-btn py-3 rounded-xl text-sm font-bold">KAYDET VE ÇIK</button>
-            <button onclick="ui.closeModals()" class="w-full mt-2 text-xs text-gray-500 py-2">VAZGEÇ</button>
-        </div>
-    </div>
-
-    <div id="modalAdmin" class="fixed inset-0 z-[9300] bg-black/90 hidden flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-sm p-6 rounded-xl border border-yellow-500/50">
-            <h3 class="text-xl font-black text-yellow-500 mb-4 flex items-center gap-2"><i class="fa-solid fa-crown"></i> GOD MODE</h3>
-            
-            <label class="text-[9px] font-bold text-gray-500 uppercase">KULLANICI DOĞRULAMA</label>
-            <input id="verifyUid" placeholder="UID Giriniz..." class="input-cyber mb-2 text-xs rounded mt-1">
-            <button onclick="admin.verifyUser()" class="w-full bg-blue-900/50 text-blue-200 py-2 rounded mb-6 text-xs font-bold border border-blue-500/30 hover:bg-blue-800">DOĞRULA / KALDIR</button>
-            
-            <div class="grid grid-cols-2 gap-2">
-                <button onclick="admin.nuke()" class="bg-red-900/30 text-red-400 py-3 rounded text-[10px] font-bold border border-red-500/30 hover:bg-red-900/50">NUKE LINK</button>
-                <button onclick="location.reload()" class="bg-white/5 text-gray-300 py-3 rounded text-[10px] font-bold hover:bg-white/10">YENİLE</button>
-            </div>
-            <button onclick="ui.closeModals()" class="w-full mt-4 text-xs text-gray-500 font-bold">KAPAT</button>
+            <div id="gateTasks" class="space-y-3 mb-6"></div>
+            <button id="btnUnlock" class="w-full bg-zinc-800 text-gray-500 py-3 rounded font-bold cursor-not-allowed" disabled>KİLİTLİ</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, deleteDoc, doc, updateDoc, increment, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, deleteDoc, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // FIREBASE CONFIG
         const appFB = initializeApp({ apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0", authDomain: "nvo-link.firebaseapp.com", projectId: "nvo-link", storageBucket: "nvo-link.firebasestorage.app" });
         const auth = getAuth(appFB);
         const db = getFirestore(appFB);
         const provider = new GoogleAuthProvider();
 
-        const ADMIN_EMAIL = "necron.offical@gmail.com";
-        const CATS = ["Hepsi", "Script", "Config", "Tool", "Oyun", "Method", "Premium"];
-        
         let currentUser = null;
-        let tempImgMain = null;
-        let tempImgProfile = null;
-        let currentLinkID = null;
-        let ratingTemp = 0;
-        let tempTasks = []; // Store tasks during creation
+        let tempImg = null;
+        let createTasks = [];
+        const CATS = ["Hepsi", "Script", "Config", "Method", "Oyun"];
+
+        // --- LOADER CONTROL ---
+        const hideLoader = () => {
+            const l = document.getElementById('loader');
+            if(l && !l.classList.contains('loader-hidden')){
+                l.style.opacity = '0';
+                setTimeout(() => l.classList.add('loader-hidden'), 800);
+            }
+        };
+
+        // SAFETY: Force hide loader after 3.5s max (prevents getting stuck)
+        window.onload = () => setTimeout(hideLoader, 3500);
 
         // --- ICON HELPER ---
-        const getIconClass = (url) => {
+        const getIcon = (url) => {
             const u = url.toLowerCase();
-            if(u.includes('youtube') || u.includes('youtu.be')) return 'fa-brands fa-youtube text-red-600';
+            if(u.includes('youtube')) return 'fa-brands fa-youtube text-red-500';
+            if(u.includes('discord')) return 'fa-brands fa-discord text-indigo-400';
             if(u.includes('instagram')) return 'fa-brands fa-instagram text-pink-500';
-            if(u.includes('discord')) return 'fa-brands fa-discord text-indigo-500';
-            if(u.includes('tiktok')) return 'fa-brands fa-tiktok text-white';
             if(u.includes('twitter') || u.includes('x.com')) return 'fa-brands fa-x-twitter text-white';
-            if(u.includes('telegram')) return 'fa-brands fa-telegram text-blue-400';
             return 'fa-solid fa-link text-gray-400';
         };
 
-        // --- IMAGE ENGINE ---
         window.imgEngine = {
-            process: (input, previewId, type) => {
-                const file = input.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_W = 800; 
-                        const scale = MAX_W / img.width;
-                        canvas.width = MAX_W;
-                        canvas.height = img.height * scale;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        const dUrl = canvas.toDataURL('image/jpeg', 0.6); // Compress
-                        document.getElementById(previewId).src = dUrl;
-                        document.getElementById(previewId).classList.remove('hidden');
-                        if(type==='main') tempImgMain = dUrl;
-                        if(type==='profile') tempImgProfile = dUrl;
-                    }
-                }
+            process: (input) => {
+                const f = input.files[0];
+                if(!f) return;
+                const r = new FileReader();
+                r.onload = (e) => {
+                    tempImg = e.target.result;
+                    document.getElementById('prevImg').src = tempImg;
+                    document.getElementById('prevImg').classList.remove('hidden');
+                };
+                r.readAsDataURL(f);
             }
         };
 
-        // --- QR ENGINE ---
-        let qrData = null;
-        window.qrEngine = {
-            generate: (url) => {
-                const qr = qrcode(0, 'M');
-                qr.addData(url);
-                qr.make();
-                const box = document.getElementById('qr-container');
-                const html = qr.createImgTag(5);
-                box.innerHTML = `<div class="qr-frame relative">${html}<div class="qr-logo-overlay"><i class="fa-solid fa-bolt text-cyan-500 text-xs"></i></div></div>`;
-                qrData = box.querySelector('img').src;
-            },
-            download: () => {
-                if(!qrData) return;
-                const a = document.createElement('a'); a.href = qrData; a.download = 'nvolink-qr.png'; a.click();
-            },
-            toggleTheme: () => {
-                const img = document.querySelector('.qr-frame img');
-                if(img) img.style.filter = img.style.filter ? '' : 'invert(1) hue-rotate(180deg)';
-            }
-        };
-
-        // --- APP ---
         window.app = {
             init: () => {
-                const s = document.getElementById('cat-scroll');
-                const sel = document.getElementById('inCat');
-                s.innerHTML=''; sel.innerHTML='';
-                CATS.forEach(c => {
-                    s.innerHTML += `<button onclick="app.loadFeed('${c}')" class="px-4 py-1.5 bg-white/5 border border-white/10 rounded text-[10px] font-bold uppercase hover:bg-cyan-500/20 hover:text-cyan-400 whitespace-nowrap transition">${c}</button>`;
-                    if(c!=='Hepsi') sel.innerHTML += `<option value="${c}">${c}</option>`;
+                const c = document.getElementById('cat-scroll');
+                const s = document.getElementById('inCat');
+                CATS.forEach(x => {
+                    c.innerHTML += `<button onclick="app.loadFeed('${x}')" class="px-3 py-1 bg-white/5 rounded text-[10px] uppercase hover:bg-cyan-500 hover:text-black transition whitespace-nowrap border border-white/10">${x}</button>`;
+                    if(x!=='Hepsi') s.innerHTML += `<option value="${x}">${x}</option>`;
                 });
+                
+                // Check URL for Shared ID
                 const p = new URLSearchParams(location.search);
                 if(p.get('id')) app.openGate(p.get('id'));
-                
-                // Pending rating check
-                window.onfocus = () => {
-                    const pid = sessionStorage.getItem('pendingRating');
-                    if(pid) { currentLinkID = pid; sessionStorage.removeItem('pendingRating'); ui.toggleModal('modalRate'); }
-                }
             },
 
             nav: (t, uid) => {
-                if((t==='create'||t==='profile') && !currentUser && !uid) return ui.toast('Giriş Yapmalısın!', 'error');
-                document.querySelectorAll('.tab-view').forEach(e=>e.classList.remove('active'));
+                if(t!=='feed' && !currentUser) return ui.toast('Giriş Yapmalısın!');
+                document.querySelectorAll('.tab-view').forEach(e => e.classList.remove('active'));
                 document.getElementById('tab-'+t).classList.add('active');
-                
-                document.getElementById('nav-feed').className = t==='feed'?'text-cyan-400 text-xl':'text-gray-500 text-xl';
-                document.getElementById('nav-profile').className = t==='profile'?'text-cyan-400 text-xl':'text-gray-500 text-xl';
-
                 if(t==='feed') app.loadFeed();
                 if(t==='profile') app.loadProfile(uid);
             },
 
-            // --- TASK BUILDER ---
-            addTaskToList: () => {
-                const name = document.getElementById('taskNameIn').value;
-                let url = document.getElementById('taskLinkIn').value;
+            // --- TASK LOGIC ---
+            addTask: () => {
+                const name = document.getElementById('tName').value;
+                let url = document.getElementById('tLink').value;
+                if(!name || !url) return;
                 
-                if(!name || !url) return ui.toast('Görev adı ve linki girin', 'error');
-                
-                // Smart Link Logic
-                if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+                // Auto HTTPS
+                if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
-                tempTasks.push({ name, url });
-                
-                // Clear inputs
-                document.getElementById('taskNameIn').value = '';
-                document.getElementById('taskLinkIn').value = '';
-                
+                createTasks.push({ name, url });
+                document.getElementById('tName').value = ''; 
+                document.getElementById('tLink').value = '';
                 app.renderTaskPreview();
             },
-            
             renderTaskPreview: () => {
-                const con = document.getElementById('task-preview-list');
-                con.innerHTML = '';
-                tempTasks.forEach((t, idx) => {
-                    const icon = getIconClass(t.url);
-                    con.innerHTML += `
-                    <div class="flex items-center justify-between bg-white/5 p-2 rounded border border-white/5">
-                        <div class="flex items-center gap-2 overflow-hidden">
-                            <div class="w-6 h-6 bg-black rounded flex items-center justify-center shrink-0"><i class="${icon} text-xs"></i></div>
-                            <div class="flex flex-col">
-                                <span class="text-xs font-bold text-white truncate w-32">${t.name}</span>
-                                <span class="text-[9px] text-gray-500 truncate w-32">${t.url}</span>
+                const d = document.getElementById('taskListPreview');
+                d.innerHTML = '';
+                createTasks.forEach((t, i) => {
+                    const icon = getIcon(t.url);
+                    d.innerHTML += `
+                        <div class="flex items-center justify-between bg-white/5 p-2 rounded border border-white/5">
+                            <div class="flex items-center gap-2">
+                                <i class="${icon}"></i>
+                                <span class="text-xs text-gray-300 truncate w-32">${t.name}</span>
                             </div>
-                        </div>
-                        <button onclick="app.removeTask(${idx})" class="text-red-500 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
-                    </div>`;
+                            <button onclick="app.delTask(${i})" class="text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>`;
                 });
             },
-            
-            removeTask: (idx) => {
-                tempTasks.splice(idx, 1);
-                app.renderTaskPreview();
-            },
+            delTask: (i) => { createTasks.splice(i,1); app.renderTaskPreview(); },
 
-            // --- UPLOAD ---
             upload: async () => {
-                if(!currentUser) return;
-                
-                // Check Limits
-                const qL = query(collection(db, 'links'), where('uid','==',currentUser.uid));
-                const sL = await getDocs(qL);
-                let max = 10;
-                if(currentUser.email === ADMIN_EMAIL) max = 9999;
-                else {
-                    const uDoc = await getDoc(doc(db, 'users', currentUser.uid));
-                    if(uDoc.exists() && uDoc.data().isVerified) max = 20;
-                }
-                
-                if(sL.size >= max) return ui.toast(`Limit Doldu (${max})`, 'error');
-
+                if(!currentUser || !tempImg) return ui.toast('Resim ve giriş gerekli');
                 const t = document.getElementById('inTitle').value;
                 let l = document.getElementById('inLink').value;
-                const c = document.getElementById('inCat').value;
+                if(!/^https?:\/\//i.test(l)) l = 'https://' + l;
                 
-                if(!t || !l || !tempImgMain) return ui.toast('Eksik Bilgi!', 'error');
-                if (!/^https?:\/\//i.test(l)) l = 'https://' + l;
-
                 try {
-                    const uDoc = await getDoc(doc(db, 'users', currentUser.uid));
-                    const isVer = uDoc.exists() ? uDoc.data().isVerified : false;
-
-                    await addDoc(collection(db, 'links'), {
-                        title: t, target: l, category: c, 
-                        tasks: tempTasks, // New Array Structure
-                        image: tempImgMain,
-                        uid: currentUser.uid, uName: currentUser.displayName, uAvatar: currentUser.photoURL, uEmail: currentUser.email,
-                        views: 0, ratingTotal: 0, ratingCount: 0,
-                        createdAt: serverTimestamp(),
-                        isVerified: isVer
+                    await addDoc(collection(db,'links'), {
+                        title: t, target: l, category: document.getElementById('inCat').value,
+                        tasks: createTasks, image: tempImg,
+                        uid: currentUser.uid, uName: currentUser.displayName, uAvatar: currentUser.photoURL,
+                        views: 0, createdAt: serverTimestamp()
                     });
-                    
-                    ui.toast('YAYINLANDI!', 'success');
-                    confetti();
-                    // Reset
-                    document.getElementById('inTitle').value = '';
-                    document.getElementById('inLink').value = '';
-                    tempImgMain = null; tempTasks = [];
-                    document.getElementById('task-preview-list').innerHTML = '';
-                    document.getElementById('prevImg').classList.add('hidden');
+                    ui.toast('Başarılı!');
+                    createTasks = []; tempImg = null;
                     app.nav('feed');
-                } catch(e) { ui.toast(e.message, 'error'); }
+                } catch(e) { ui.toast('Hata!'); }
             },
 
-            // --- FEED ---
-            loadFeed: async (cat='Hepsi', search='') => {
-                const list = document.getElementById('feed-list');
-                list.innerHTML = '<div class="text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-cyan-500 text-2xl"></i></div>';
-                const q = query(collection(db, 'links'), orderBy('createdAt', 'desc'));
+            loadFeed: async (cat='Hepsi', s='') => {
+                const div = document.getElementById('feed-list');
+                const q = query(collection(db,'links'), orderBy('createdAt','desc'));
                 const snap = await getDocs(q);
-                list.innerHTML = '';
-                
-                snap.forEach(docSnap => {
-                    const d = docSnap.data();
+                div.innerHTML = '';
+                snap.forEach(doc => {
+                    const d = doc.data();
                     if(cat!=='Hepsi' && d.category!==cat) return;
-                    if(search && !d.title.toLowerCase().includes(search.toLowerCase())) return;
+                    if(s && !d.title.toLowerCase().includes(s.toLowerCase())) return;
 
-                    let rating = d.ratingCount > 0 ? (d.ratingTotal/d.ratingCount).toFixed(1) : "Yeni";
-                    let badge = '';
-                    if(d.uEmail === ADMIN_EMAIL) badge = '<i class="fa-solid fa-crown text-yellow-500 ml-1 text-[10px]"></i>';
-                    else if(d.isVerified) badge = '<i class="fa-solid fa-circle-check text-blue-500 ml-1 text-[10px]"></i>';
-
-                    const div = document.createElement('div');
-                    div.className = "glass-panel rounded-xl overflow-hidden group relative hover:border-cyan-500/50 transition";
-                    div.innerHTML = `
-                        <div class="h-48 relative cursor-pointer overflow-hidden" onclick="app.openGate('${docSnap.id}')">
-                            <img src="${d.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                            <div class="absolute bottom-3 left-3 right-3 flex justify-between items-end">
-                                <div>
-                                    <span class="bg-cyan-500 text-black px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider">${d.category}</span>
-                                    <h3 class="text-white font-bold mt-1 shadow-black drop-shadow-md">${d.title}</h3>
+                    div.innerHTML += `
+                        <div class="glass-panel rounded-xl overflow-hidden group">
+                            <div class="relative h-40 cursor-pointer overflow-hidden" onclick="app.openGate('${doc.id}')">
+                                <img src="${d.image}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black p-3">
+                                    <span class="text-[9px] bg-cyan-500 text-black px-1 rounded font-bold">${d.category}</span>
+                                    <h3 class="text-white font-bold text-lg leading-tight shadow-black drop-shadow-md">${d.title}</h3>
                                 </div>
-                                <div class="text-yellow-400 font-bold text-xs bg-black/60 px-2 py-1 rounded backdrop-blur-sm"><i class="fa-solid fa-star mr-1"></i>${rating}</div>
                             </div>
-                        </div>
-                        <div class="p-3 bg-[#0a0a0a] flex items-center justify-between border-t border-white/5">
-                            <div class="flex items-center gap-2 cursor-pointer" onclick="app.nav('profile','${d.uid}')">
-                                <img src="${d.uAvatar}" class="w-6 h-6 rounded-full border border-gray-800 object-cover">
-                                <span class="text-[10px] text-gray-400 font-bold hover:text-white">${d.uName} ${badge}</span>
+                            <div class="p-3 flex justify-between items-center bg-[#0d0d0d]">
+                                <div class="flex items-center gap-2 cursor-pointer" onclick="app.nav('profile','${d.uid}')">
+                                    <img src="${d.uAvatar}" class="w-5 h-5 rounded-full">
+                                    <span class="text-[10px] text-gray-400 font-bold">${d.uName}</span>
+                                </div>
+                                <div class="text-[10px] text-gray-600"><i class="fa-solid fa-eye mr-1"></i>${d.views}</div>
                             </div>
-                            <div class="text-[10px] text-gray-600 font-bold"><i class="fa-solid fa-eye mr-1"></i>${d.views}</div>
-                        </div>
-                    `;
-                    // Admin Delete
-                    if(currentUser && (currentUser.email === ADMIN_EMAIL || currentUser.uid === d.uid)){
-                        const btn = document.createElement('button');
-                        btn.className = "absolute top-2 right-2 z-20 text-red-500 bg-black/50 p-2 rounded hover:bg-red-500 hover:text-white transition";
-                        btn.innerHTML = '<i class="fa-solid fa-trash text-xs"></i>';
-                        btn.onclick = (e) => { e.stopPropagation(); app.deleteLink(docSnap.id); };
-                        div.appendChild(btn);
-                    }
-                    VanillaTilt.init(div,{max:5,speed:400});
-                    list.appendChild(div);
+                        </div>`;
                 });
             },
             filterFeed: () => app.loadFeed('Hepsi', document.getElementById('searchInput').value),
 
-            // --- GATEWAY & TIMER ---
             openGate: async (id) => {
-                currentLinkID = id;
-                ui.toggleModal('modalGate');
-                const snap = await getDoc(doc(db, 'links', id));
-                if(!snap.exists()) return ui.toast('Silinmiş!', 'error');
-                const d = snap.data();
+                ui.toggle('modalGate');
+                const d = (await getDoc(doc(db,'links',id))).data();
+                await updateDoc(doc(db,'links',id), { views: increment(1) });
                 
-                await updateDoc(doc(db, 'links', id), { views: increment(1) });
-                qrEngine.generate(d.target);
-
-                const list = document.getElementById('gateTaskList');
-                list.innerHTML = '';
-                const btnGo = document.getElementById('btnGateGo');
+                const box = document.getElementById('gateTasks');
+                box.innerHTML = '';
+                const btn = document.getElementById('btnUnlock');
                 
-                // Tasks Logic
-                const tasks = d.tasks || []; // Array of objects or strings
-                let completedCount = 0;
+                // Tasks
+                let done = 0;
+                const tasks = d.tasks || [];
                 
-                // Reset Main Button
-                btnGo.disabled = true;
-                btnGo.classList.add('bg-zinc-800', 'text-gray-500', 'cursor-not-allowed');
-                btnGo.classList.remove('bg-cyan-600', 'hover:bg-cyan-500', 'text-white', 'shadow-lg');
-                btnGo.innerHTML = `<i class="fa-solid fa-lock mr-2"></i> KİLİTLİ (${tasks.length} GÖREV)`;
-
-                if(tasks.length === 0) {
-                    // No tasks -> Unlock immediately
-                    app.unlockMainButton(d.target);
-                } else {
-                    // Render Tasks
-                    tasks.forEach((t, idx) => {
-                        // Compatibility check (old string tasks vs new object tasks)
-                        const tName = t.name || t;
-                        const tUrl = t.url || '#';
-                        const icon = getIconClass(tUrl);
-
-                        const row = document.createElement('div');
-                        row.className = "task-row";
-                        row.id = `task-row-${idx}`;
-                        row.innerHTML = `
-                            <div class="flex items-center">
-                                <div class="task-icon"><i class="${icon}"></i></div>
-                                <span class="text-xs font-bold text-gray-300">${tName}</span>
-                            </div>
-                            <button id="btn-task-${idx}" class="text-[10px] bg-cyan-900/30 text-cyan-400 border border-cyan-500/30 px-3 py-1.5 rounded font-bold hover:bg-cyan-500 hover:text-black transition">
-                                YAP
-                            </button>
-                        `;
-                        
-                        // Click Event
-                        const btn = row.querySelector('button');
-                        btn.onclick = () => {
-                            window.open(tUrl, '_blank');
-                            
-                            // Timer Logic
-                            let timeLeft = 20;
-                            btn.disabled = true;
-                            const timer = setInterval(() => {
-                                btn.innerText = `BEKLE ${timeLeft}s`;
-                                timeLeft--;
-                                if(timeLeft < 0) {
-                                    clearInterval(timer);
-                                    btn.innerText = "TAMAMLANDI";
-                                    btn.className = "text-[10px] bg-green-500/20 text-green-400 border border-green-500/50 px-3 py-1.5 rounded font-bold cursor-default";
-                                    row.classList.add('completed');
-                                    completedCount++;
-                                    
-                                    // Check if all done
-                                    if(completedCount >= tasks.length) {
-                                        app.unlockMainButton(d.target);
-                                    } else {
-                                        document.getElementById('btnGateGo').innerText = `KİLİTLİ (${tasks.length - completedCount} KALDI)`;
-                                    }
-                                }
-                            }, 1000);
-                        };
-                        list.appendChild(row);
-                    });
-                }
-            },
-
-            unlockMainButton: (url) => {
-                const btn = document.getElementById('btnGateGo');
-                btn.disabled = false;
-                btn.className = "w-full bg-cyan-600 hover:bg-cyan-500 text-white py-4 rounded-xl font-black text-sm transition shadow-lg shadow-cyan-500/20 cursor-pointer";
-                btn.innerHTML = `BAĞLANTIYA GİT <i class="fa-solid fa-arrow-right ml-2"></i>`;
-                btn.onclick = () => {
-                    sessionStorage.setItem('pendingRating', currentLinkID);
-                    window.open(url, '_blank');
-                    ui.closeModals();
+                const checkDone = () => {
+                    if(done >= tasks.length) {
+                        btn.disabled = false;
+                        btn.className = "w-full bg-cyan-500 text-black py-3 rounded font-bold shadow-[0_0_20px_rgba(0,243,255,0.4)] animate-pulse";
+                        btn.innerText = "LİNKE GİT";
+                        btn.onclick = () => { window.open(d.target,'_blank'); ui.closeModals(); };
+                    }
                 };
+
+                if(tasks.length === 0) checkDone();
+
+                tasks.forEach((t, i) => {
+                    const row = document.createElement('div');
+                    row.className = 'task-row';
+                    row.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <i class="${getIcon(t.url)}"></i>
+                            <span class="text-xs font-bold text-gray-300">${t.name}</span>
+                        </div>
+                        <button class="text-[9px] border border-cyan-500 text-cyan-500 px-3 py-1 rounded hover:bg-cyan-500 hover:text-black transition">YAP</button>
+                    `;
+                    const b = row.querySelector('button');
+                    b.onclick = () => {
+                        window.open(t.url, '_blank');
+                        b.disabled = true;
+                        let sec = 20;
+                        const tm = setInterval(()=>{
+                            b.innerText = sec + 's';
+                            sec--;
+                            if(sec<0){
+                                clearInterval(tm);
+                                b.innerText = "OK";
+                                b.className = "text-[9px] bg-green-500 text-black px-3 py-1 rounded font-bold";
+                                row.style.borderColor = "#00ff9d";
+                                done++;
+                                checkDone();
+                            }
+                        },1000);
+                    };
+                    box.appendChild(row);
+                });
             },
 
-            // --- PROFILE ---
-            saveProfile: async () => {
-                if(!currentUser || !tempImgProfile) return;
-                try {
-                    await updateProfile(currentUser, { photoURL: tempImgProfile });
-                    await setDoc(doc(db, 'users', currentUser.uid), { avatar: tempImgProfile, email: currentUser.email }, { merge: true });
-                    ui.toast('Profil Güncellendi', 'success');
-                    location.reload();
-                } catch(e) { ui.toast(e.message, 'error'); }
-            },
             loadProfile: async (uid) => {
                 const target = uid || currentUser?.uid;
                 if(!target) return;
-                if(currentUser && target === currentUser.uid) document.getElementById('btnEditProfile').classList.remove('hidden');
-                else document.getElementById('btnEditProfile').classList.add('hidden');
-
-                const uDoc = await getDoc(doc(db, 'users', target));
-                const q = query(collection(db, 'links'), where('uid','==',target));
-                const snap = await getDocs(q);
-
-                let uName = "User", uAvatar="", isAdmin=false, isVer=false;
-                if(uDoc.exists()) { isVer = uDoc.data().isVerified; }
+                const snap = await getDocs(query(collection(db,'links'), where('uid','==',target)));
+                let views=0, count=0, name="User", ava="";
                 
-                // Fallback data
-                if(snap.size > 0) { const d = snap.docs[0].data(); uName = d.uName; uAvatar = d.uAvatar; if(d.uEmail === ADMIN_EMAIL) isAdmin = true; }
-                else if(currentUser && target === currentUser.uid) { uName = currentUser.displayName; uAvatar = currentUser.photoURL; if(currentUser.email===ADMIN_EMAIL) isAdmin=true; }
-
-                // Frame
-                const fr = document.getElementById('pFrame'); const bdg = document.getElementById('pBadges');
-                fr.className = "absolute -inset-1.5 rounded-full pointer-events-none"; bdg.innerHTML = "";
-                
-                if(isAdmin) { fr.classList.add('frame-admin'); bdg.innerHTML += `<span class="bg-yellow-500 text-black text-[9px] font-bold px-2 rounded">NECRON</span>`; }
-                else if(isVer) { fr.classList.add('frame-verified'); bdg.innerHTML += `<span class="bg-blue-500 text-white text-[9px] font-bold px-2 rounded">ONAYLI</span>`; }
-
-                document.getElementById('pName').innerText = uName;
-                document.getElementById('pAvatar').src = uAvatar || "https://via.placeholder.com/150";
-
-                // Stats
-                let views = 0, stars = 0, count = 0;
                 const list = document.getElementById('profile-feed'); list.innerHTML='';
-                snap.forEach(doc => {
-                    const x = doc.data();
-                    views += x.views; stars += (x.ratingCount>0 ? x.ratingTotal/x.ratingCount : 0); count++;
-                    list.innerHTML += `
-                    <div class="flex items-center justify-between p-3 bg-white/5 rounded border border-white/5">
-                        <div class="flex items-center gap-3">
-                            <img src="${x.image}" class="w-10 h-10 rounded object-cover">
-                            <div>
-                                <div class="text-xs font-bold text-white">${x.title}</div>
-                                <div class="text-[9px] text-gray-500">${x.views} View</div>
-                            </div>
-                        </div>
-                        <button onclick="navigator.clipboard.writeText('${location.origin}?id=${doc.id}')" class="text-xs text-gray-500"><i class="fa-solid fa-share"></i></button>
-                    </div>`;
+                snap.forEach(d => {
+                    const x = d.data();
+                    views+=x.views; count++; name=x.uName; ava=x.uAvatar;
+                    list.innerHTML += `<div class="bg-white/5 p-2 rounded flex justify-between items-center text-xs border border-white/5"><span>${x.title}</span><span class="text-gray-500">${x.views} view</span></div>`;
                 });
                 
-                document.getElementById('stFiles').innerText = count;
+                document.getElementById('pName').innerText = name;
+                document.getElementById('pAvatar').src = ava || "https://via.placeholder.com/100";
+                document.getElementById('stCount').innerText = count;
                 document.getElementById('stViews').innerText = views;
-                document.getElementById('stRating').innerText = count>0 ? (stars/count).toFixed(1) : "0.0";
-                
-                let limitTxt = "10 LIMIT";
-                if(isAdmin) limitTxt = "SINIRSIZ"; else if(isVer) limitTxt = "20 LIMIT";
-                document.getElementById('pLimitBadge').innerText = limitTxt;
-            },
-
-            // --- ADMIN ---
-            verifyUser: async () => {
-                const id = document.getElementById('verifyUid').value;
-                if(!id) return;
-                const ref = doc(db,'users',id);
-                const s = await getDoc(ref);
-                await setDoc(ref, { isVerified: !(s.exists()&&s.data().isVerified) }, { merge:true });
-                ui.toast('Durum Değiştirildi', 'success');
-            },
-            deleteLink: async (id) => { if(confirm('Sil?')) { await deleteDoc(doc(db,'links',id)); ui.toast('Silindi','info'); app.nav('feed'); } },
-            
-            // --- RATINGS ---
-            setRating: (n) => { ratingTemp = n; document.querySelectorAll('#starContainer i').forEach((e,i) => i<n ? e.classList.add('text-yellow-500') : e.classList.remove('text-yellow-500')); },
-            submitRating: async () => {
-                if(currentLinkID && ratingTemp>0) {
-                    await updateDoc(doc(db,'links',currentLinkID), { ratingTotal: increment(ratingTemp), ratingCount: increment(1) });
-                    ui.toast('Teşekkürler!','success'); ui.closeModals();
-                }
             }
         };
 
-        // --- AUTH & INIT ---
-        window.auth = { login: () => signInWithPopup(auth, provider) };
-        window.admin = window.app; // shortcuts
-
-        // --- UI ---
-        window.ui = {
-            toast: (m,t) => {
-                const d = document.createElement('div');
-                d.className = `fixed top-20 right-5 bg-[#111] border-l-4 ${t==='error'?'border-red-500 text-red-400':'border-cyan-500 text-cyan-400'} p-3 rounded shadow-xl text-xs font-bold z-[10000] animate-[slideInRight_0.3s]`;
-                d.innerHTML = m; document.body.appendChild(d); setTimeout(()=>d.remove(),3000);
-            },
-            toggleModal: (id) => document.getElementById(id).classList.remove('hidden'),
-            closeModals: () => document.querySelectorAll('[id^="modal"]').forEach(e=>e.classList.add('hidden')),
-            togglePatchModal: () => document.getElementById('modalPatch').classList.toggle('hidden')
+        window.auth = {
+            login: () => signInWithPopup(auth, provider),
+            logout: () => { signOut(auth); location.reload(); }
         };
 
-        onAuthStateChanged(auth, async u => {
-            document.getElementById('loader').style.display = 'none';
+        window.ui = {
+            toast: (m) => {
+                const d = document.createElement('div');
+                d.className = "fixed top-20 right-4 bg-zinc-900 border-l-4 border-cyan-500 text-white p-3 rounded z-[9999]";
+                d.innerText = m; document.body.appendChild(d); setTimeout(()=>d.remove(),3000);
+            },
+            toggle: (id) => document.getElementById(id).classList.remove('hidden'),
+            closeModals: () => document.querySelectorAll('[id^="modal"]').forEach(e=>e.classList.add('hidden'))
+        };
+
+        onAuthStateChanged(auth, u => {
+            // FIREBASE LOADED -> HIDE SPINNER
+            hideLoader(); 
+            
             if(u) {
                 currentUser = u;
                 document.getElementById('authBtn').classList.add('hidden');
-                document.getElementById('userBadge').classList.remove('hidden');
                 document.getElementById('headerAvatar').src = u.photoURL;
-                
-                // Admin Check
-                if(u.email === ADMIN_EMAIL) {
-                    document.getElementById('adminPanelBtn').classList.remove('hidden');
-                    const ref = doc(db,'users',u.uid);
-                    await setDoc(ref, { email: u.email, isAdmin: true }, { merge: true });
-                }
+                document.getElementById('headerAvatar').classList.remove('hidden');
+            }
+            app.init();
+            app.loadFeed();
+        });
+
+    </script>
+</body>
+</html>
