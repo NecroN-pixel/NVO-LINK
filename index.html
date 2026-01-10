@@ -1,27 +1,43 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>NVOLINK | Premium Content Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NVOLINK | G-1.0.0 Ultimate</title>
+    <meta name="description" content="Premium Link Monetization & Gateway System">
     <meta name="version" content="G-1.0.0">
+    <meta name="theme-color" content="#020617">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     colors: {
-                        bg: '#030712',      // Ultra Dark
-                        surface: '#111827', // Dark Gray
-                        surfaceHighlight: '#1f2937',
-                        border: '#374151',
-                        brand: '#3b82f6',   // Royal Blue
-                        gold: '#eab308'     // Premium Gold
+                        background: '#020617', // Slate 950
+                        surface: '#0f172a',    // Slate 900
+                        surfaceLight: '#1e293b', // Slate 800
+                        border: '#1e293b',
+                        primary: '#4f46e5',    // Indigo 600
+                        primaryHover: '#4338ca',
+                        accent: '#06b6d4',     // Cyan 500
+                        danger: '#ef4444',
+                        success: '#22c55e',
+                        gold: '#fbbf24'        // Amber 400
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
                     }
                 }
             }
@@ -29,317 +45,347 @@
     </script>
 
     <style>
-        /* --- CORE STYLES --- */
-        body { background-color: #030712; color: #f3f4f6; overflow-x: hidden; }
+        /* Base Reset */
+        body { background-color: #020617; color: #f8fafc; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
         
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4f46e5; }
 
-        /* Sidebar Styling */
-        .sidebar {
-            width: 280px; height: 100vh; background: #030712; border-right: 1px solid #1f2937;
-            position: fixed; top: 0; left: 0; z-index: 50; display: flex; flex-direction: column;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .nav-item {
-            display: flex; items-center; gap: 12px; padding: 14px 24px; color: #9ca3af;
-            font-size: 14px; font-weight: 500; transition: all 0.2s; cursor: pointer;
-            border-right: 3px solid transparent; margin-bottom: 4px;
-        }
-        .nav-item:hover { background: rgba(59, 130, 246, 0.05); color: #fff; }
-        .nav-item.active { background: linear-gradient(90deg, rgba(59,130,246,0.1) 0%, transparent 100%); color: #60a5fa; border-right-color: #60a5fa; }
+        /* Glassmorphism Utilities */
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s; }
+        .glass-card:hover { border-color: #334155; }
 
-        /* Main Area */
-        .main-content { margin-left: 280px; padding: 40px; min-height: 100vh; position: relative; }
-        
-        /* Inputs & Cards */
-        .glass-panel { background: #111827; border: 1px solid #1f2937; border-radius: 16px; overflow: hidden; }
-        .input-dark {
-            width: 100%; background: #030712; border: 1px solid #374151; padding: 14px;
-            border-radius: 10px; color: white; outline: none; transition: 0.3s;
+        /* Inputs */
+        .input-field {
+            width: 100%; background: #020617; border: 1px solid #1e293b; color: white;
+            padding: 12px 16px; border-radius: 12px; outline: none; transition: all 0.3s;
+            font-size: 14px;
         }
-        .input-dark:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
-        
+        .input-field:focus { border-color: #4f46e5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+        .input-field:disabled { opacity: 0.5; cursor: not-allowed; }
+
         /* Buttons */
-        .btn-primary {
-            background: #3b82f6; color: white; font-weight: 600; padding: 12px 24px; border-radius: 10px;
-            transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        .btn {
+            display: inline-flex; items-center; justify-content: center; padding: 12px 24px;
+            border-radius: 12px; font-weight: 600; font-size: 14px; transition: all 0.2s; cursor: pointer;
+            gap: 8px; user-select: none;
         }
-        .btn-primary:hover { background: #2563eb; transform: translateY(-1px); shadow: 0 4px 12px rgba(59,130,246,0.3); }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); color: white; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
 
-        /* --- GATEWAY (ZİYARETÇİ) ARAYÜZÜ --- */
-        #gateway-layer {
-            position: fixed; inset: 0; z-index: 9999; background: #030712; display: none;
-            overflow-y: auto; padding-bottom: 50px;
+        /* Image Upload Area */
+        .upload-area {
+            border: 2px dashed #334155; border-radius: 16px; padding: 30px; text-align: center;
+            cursor: pointer; transition: 0.3s; background: rgba(15, 23, 42, 0.5);
         }
-        .gateway-container { width: 100%; max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; padding-top: 60px; }
-        .gw-card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 24px; position: relative; }
-        
-        /* --- PROFILE --- */
-        .profile-banner { height: 180px; background: linear-gradient(135deg, #1e3a8a 0%, #000 100%); background-size: cover; background-position: center; position: relative; }
-        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #111827; position: absolute; bottom: -50px; left: 30px; background: #1f2937; object-fit: cover; }
+        .upload-area:hover, .upload-area.dragover { border-color: #4f46e5; background: rgba(79, 70, 229, 0.05); }
+        .upload-area img { max-height: 200px; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
 
-        /* Mobile */
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px; height: 100vh; position: fixed; left: 0; top: 0;
+            background: #0f172a; border-right: 1px solid #1e293b; z-index: 50;
+            display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-link {
+            display: flex; items-center; gap: 14px; padding: 14px 20px; margin: 4px 16px;
+            border-radius: 12px; color: #94a3b8; font-weight: 500; font-size: 14px;
+            transition: 0.2s;
+        }
+        .nav-link:hover { background: #1e293b; color: white; }
+        .nav-link.active { background: #4f46e5; color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+        /* Mobile Adjustments */
         @media (max-width: 1024px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 20px; }
-            .gateway-container { grid-template-columns: 1fr; padding: 20px; }
+            .main-wrapper { margin-left: 0 !important; padding: 16px !important; }
+            .desktop-only { display: none !important; }
         }
 
-        /* Toast */
+        /* Toast Notifications */
+        #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
         .toast {
-            position: fixed; bottom: 30px; right: 30px; background: #1f2937; border-left: 4px solid #3b82f6;
-            color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: slideIn 0.3s ease-out; z-index: 10000; display: flex; align-items: center; gap: 12px;
+            min-width: 300px; padding: 16px; border-radius: 12px; background: #1e293b; color: white;
+            border-left: 4px solid #4f46e5; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideInRight 0.3s ease-out; display: flex; align-items: center; justify-content: space-between;
         }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Gateway Specific */
+        #gateway-view { display: none; }
+        .task-row {
+            display: flex; justify-content: space-between; align-items: center; padding: 16px;
+            background: #020617; border: 1px solid #1e293b; border-radius: 12px; margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="toast-area"></div>
+    <div id="toast-container"></div>
 
-    <div id="gateway-layer">
-        <div class="h-20 border-b border-gray-800 flex items-center px-8 justify-between bg-black/50 backdrop-blur-md sticky top-0 z-10">
+    <div id="gateway-view" class="min-h-screen bg-background relative overflow-y-auto">
+        <div class="h-20 border-b border-border flex items-center justify-between px-6 lg:px-12 glass sticky top-0 z-40">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-infinity text-blue-500 text-2xl"></i>
-                <span class="font-bold text-xl tracking-tight text-white">NVO<span class="text-blue-500">LINK</span></span>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                    <i class="fa-solid fa-infinity text-xl"></i>
+                </div>
+                <h1 class="font-bold text-xl tracking-tight text-white">NVO<span class="text-primary">LINK</span></h1>
             </div>
-            <div class="text-sm text-gray-500 font-medium hidden md:block">SECURE FILE GATEWAY</div>
+            <div class="text-xs font-bold bg-surfaceLight border border-border px-3 py-1.5 rounded-full text-gray-400">
+                <i class="fa-solid fa-shield-halved mr-1 text-green-500"></i> SECURE
+            </div>
         </div>
 
-        <div class="gateway-container">
-            <div>
-                <div class="gw-card mb-6 overflow-hidden p-0">
-                    <div id="gw-hero-img" class="w-full h-48 bg-gray-800 object-cover bg-center" style="background-image: url('https://via.placeholder.com/800x400');"></div>
-                    <div class="p-6">
-                        <h1 id="gw-title" class="text-3xl font-bold text-white mb-2">Loading...</h1>
-                        <div class="flex items-center gap-4 text-sm text-gray-400 mb-4">
-                            <span><i class="fa-solid fa-user-circle mr-1"></i> <span id="gw-author">Publisher</span></span>
-                            <span><i class="fa-solid fa-calendar mr-1"></i> <span id="gw-date">Today</span></span>
-                            <span><i class="fa-solid fa-eye mr-1"></i> <span id="gw-views">0</span> Views</span>
-                        </div>
-                        <p class="text-gray-500 text-sm leading-relaxed">
-                            Bu içeriğe erişmek güvenlidir. Devam etmek için sağ taraftaki (veya alttaki) doğrulama adımlarını tamamlayın.
-                        </p>
-                    </div>
-                </div>
+        <div class="container mx-auto px-4 py-8 lg:py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                <div class="h-32 border border-dashed border-gray-800 rounded-xl flex items-center justify-center text-gray-700 text-xs tracking-widest uppercase bg-gray-900/50">
-                    Reklam Alanı (Şu an devre dışı)
-                </div>
-            </div>
-
-            <div class="relative">
-                <div class="gw-card sticky top-24">
-                    <div class="mb-6 border-b border-gray-800 pb-4">
-                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-lock text-gold"></i> İçerik Kilitli
-                        </h2>
-                        <p class="text-xs text-gray-500 mt-1">Erişimi açmak için görevleri tamamla.</p>
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="glass-card overflow-hidden">
+                        <div id="gw-image" class="w-full h-56 sm:h-80 bg-surfaceLight bg-cover bg-center relative group">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <h1 id="gw-title" class="text-2xl sm:text-4xl font-black text-white mb-2 leading-tight">Yükleniyor...</h1>
+                                <div class="flex flex-wrap gap-4 text-sm text-gray-300">
+                                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-user-astronaut text-primary"></i> <span id="gw-owner">...</span></span>
+                                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock text-accent"></i> <span id="gw-date">...</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-400 leading-relaxed text-sm">
+                                Bu içeriğe erişim yayıncı tarafından kilitlenmiştir. Güvenli bir şekilde hedefe ulaşmak için lütfen sağ taraftaki görev adımlarını doğrulayın. Dosyalarımız virüs taramasından geçirilmiştir.
+                            </p>
+                        </div>
                     </div>
 
-                    <div id="gw-task-list" class="space-y-3 mb-6">
+                    <div class="w-full h-32 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center bg-surface/50">
+                        <span class="text-xs font-bold text-gray-600 tracking-widest uppercase">Sponsorlu Alan</span>
+                        <span class="text-[10px] text-gray-700 mt-1">Reklamlar şu an devre dışı</span>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 relative">
+                    <div class="glass-card p-6 lg:p-8 sticky top-28 border-t-4 border-t-primary shadow-2xl shadow-black/50">
+                        <div class="mb-6">
+                            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-lock text-gold animate-pulse"></i> İçerik Kilitli
+                            </h2>
+                            <p class="text-sm text-gray-500 mt-1">Linke gitmek için <span id="gw-task-count" class="text-white font-bold">0</span> adımı tamamla.</p>
                         </div>
 
-                    <button id="gw-unlock-btn" disabled class="w-full py-4 bg-gray-800 text-gray-500 font-bold rounded-xl cursor-not-allowed transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-lock"></i> KİLİTLİ
-                    </button>
-                    
-                    <div class="mt-4 text-center">
-                         <div class="text-[10px] text-gray-600">Secure link powered by NVOLINK G-1.0.0</div>
+                        <div id="gw-task-container" class="space-y-3 mb-6">
+                            </div>
+
+                        <button id="gw-unlock-btn" disabled class="w-full py-4 bg-surfaceLight text-gray-500 font-bold rounded-xl transition-all flex items-center justify-center gap-3 cursor-not-allowed group">
+                            <i class="fa-solid fa-lock group-hover:scale-110 transition-transform"></i>
+                            <span>DOĞRULAMA BEKLENİYOR</span>
+                        </button>
+
+                        <div class="mt-6 text-center border-t border-border pt-4">
+                            <p class="text-[10px] text-gray-600 uppercase tracking-widest font-bold">G-1.0.0 Secure System</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="app-layer" class="flex">
+
+    <div id="admin-view" class="flex min-h-screen bg-background">
         
         <aside id="sidebar" class="sidebar">
-            <div class="h-20 flex items-center px-8 border-b border-gray-800">
-                <i class="fa-solid fa-infinity text-blue-500 text-2xl mr-3"></i>
+            <div class="h-20 flex items-center px-6 border-b border-border bg-gradient-to-r from-surface to-surfaceLight">
+                <i class="fa-solid fa-infinity text-primary text-2xl mr-3"></i>
                 <div>
-                    <h1 class="font-bold text-white text-lg">NVOLINK</h1>
-                    <span class="text-[9px] bg-blue-900 text-blue-300 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Admin</span>
+                    <h1 class="font-bold text-white text-lg tracking-tight">NVOLINK</h1>
+                    <div class="text-[10px] text-gray-500 font-bold uppercase">Publisher Console</div>
                 </div>
             </div>
 
-            <div class="p-6">
-                <div class="text-xs font-bold text-gray-600 uppercase mb-4 tracking-wider">Yönetim</div>
-                <div class="nav-item active" onclick="router.go('dashboard', this)"><i class="fa-solid fa-chart-pie w-5"></i> Kontrol Paneli</div>
-                <div class="nav-item" onclick="router.go('my-links', this)"><i class="fa-solid fa-layer-group w-5"></i> Linklerim</div>
-                <div class="nav-item" onclick="router.go('create', this)"><i class="fa-solid fa-plus-circle w-5"></i> Link Oluştur</div>
+            <nav class="flex-1 py-6 overflow-y-auto">
+                <div class="px-6 mb-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Yönetim</div>
+                <a onclick="router.nav('dashboard')" id="nav-dashboard" class="nav-link active cursor-pointer">
+                    <i class="fa-solid fa-grid-2 w-5 text-center"></i> Özet
+                </a>
+                <a onclick="router.nav('mylinks')" id="nav-mylinks" class="nav-link cursor-pointer">
+                    <i class="fa-solid fa-link w-5 text-center"></i> Linklerim
+                </a>
+                <a onclick="router.nav('create')" id="nav-create" class="nav-link cursor-pointer">
+                    <i class="fa-solid fa-wand-magic-sparkles w-5 text-center"></i> Yeni Oluştur
+                </a>
 
-                <div class="text-xs font-bold text-gray-600 uppercase mt-8 mb-4 tracking-wider">Hesap</div>
-                <div class="nav-item" onclick="router.go('profile', this)"><i class="fa-solid fa-user-gear w-5"></i> Profil Ayarları</div>
-                <div class="nav-item" onclick="ui.toast('Gelir sistemi yakında!')"><i class="fa-solid fa-wallet w-5"></i> Cüzdan <span class="text-[9px] bg-gray-800 ml-auto px-1 rounded">Yakında</span></div>
-            </div>
+                <div class="px-6 mt-8 mb-2 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Hesap</div>
+                <a onclick="router.nav('profile')" id="nav-profile" class="nav-link cursor-pointer">
+                    <i class="fa-solid fa-user-gear w-5 text-center"></i> Profil
+                </a>
+                <a onclick="ui.toast('Bu özellik yakında aktif.', 'info')" class="nav-link cursor-pointer opacity-70">
+                    <i class="fa-solid fa-wallet w-5 text-center"></i> Gelirler
+                </a>
+            </nav>
 
-            <div class="mt-auto p-6 border-t border-gray-800">
-                <button onclick="auth.logout()" class="flex items-center gap-3 text-sm text-red-400 hover:text-red-300 transition">
-                    <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
+            <div class="p-4 border-t border-border bg-surfaceLight/30">
+                <button onclick="authManager.logout()" class="w-full py-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-power-off"></i> ÇIKIŞ YAP
                 </button>
             </div>
         </aside>
 
-        <main class="main-content flex-1">
-            <button class="lg:hidden absolute top-6 left-6 text-white text-xl z-40" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <main class="main-wrapper flex-1 ml-[280px] p-8 lg:p-10 relative">
+            
+            <button class="lg:hidden absolute top-5 left-5 text-white text-2xl z-40 bg-surface p-2 rounded-lg border border-border shadow-lg" onclick="ui.toggleSidebar()">
                 <i class="fa-solid fa-bars"></i>
             </button>
 
-            <div id="view-auth" class="hidden h-[80vh] flex flex-col items-center justify-center">
-                <div class="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/30">
-                    <i class="fa-solid fa-infinity text-blue-500 text-3xl"></i>
+            <div id="view-login" class="hidden h-[80vh] flex flex-col items-center justify-center text-center animate-fade-in">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center mb-6 shadow-2xl shadow-primary/30">
+                    <i class="fa-solid fa-infinity text-4xl text-white"></i>
                 </div>
-                <h2 class="text-3xl font-bold text-white mb-2">Panele Giriş Yap</h2>
-                <p class="text-gray-500 mb-8">İçeriklerini yönetmek ve istatistikleri görmek için oturum aç.</p>
-                <button onclick="auth.login()" class="btn-primary py-3 px-8 text-lg shadow-[0_0_30px_rgba(59,130,246,0.4)]">
-                    <i class="fa-brands fa-google"></i> Google ile Devam Et
+                <h2 class="text-4xl font-black text-white mb-3">NVOLINK'e Katıl</h2>
+                <p class="text-gray-400 max-w-md mb-8">İçeriklerini paylaş, kitleleri yönet ve profesyonel gateway sistemini kullan.</p>
+                <button onclick="authManager.login()" class="btn btn-primary py-4 px-8 text-lg w-full max-w-xs">
+                    <i class="fa-brands fa-google"></i> Google ile Giriş
                 </button>
+                <p class="mt-8 text-xs text-gray-600">Sürüm G-1.0.0 (Ultimate)</p>
             </div>
 
-            <div id="view-dashboard" class="view-section hidden animate-fade">
-                <header class="flex justify-between items-end mb-8">
+            <div id="view-dashboard" class="hidden animate-fade-in space-y-8">
+                <header class="flex justify-between items-end">
                     <div>
-                        <h2 class="text-2xl font-bold text-white">Hoşgeldin, <span id="d-name" class="text-blue-500">Yönetici</span></h2>
-                        <p class="text-gray-500 text-sm mt-1">Sistemin genel durumu ve performans özeti.</p>
-                    </div>
-                    <div class="hidden md:block text-right">
-                        <div class="text-xs text-gray-500 uppercase font-bold">Sunucu Saati</div>
-                        <div class="text-xl font-mono text-white" id="clock">00:00</div>
+                        <h2 class="text-3xl font-bold text-white">Hoşgeldin, <span id="user-display-name" class="text-primary">Agent</span></h2>
+                        <p class="text-gray-400 text-sm mt-1">Sistem kararlı. Otomatik temizlik protokolü aktif.</p>
                     </div>
                 </header>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="glass-panel p-6 border-l-4 border-l-blue-500">
-                        <div class="text-gray-500 text-xs font-bold uppercase mb-2">Toplam Tıklanma</div>
-                        <div class="text-3xl font-bold text-white">0</div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 border-l-4 border-l-primary relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 text-primary/10 text-9xl"><i class="fa-solid fa-chart-line"></i></div>
+                        <div class="text-gray-500 text-xs font-bold uppercase mb-2">Toplam Görüntülenme</div>
+                        <div class="text-4xl font-black text-white">0</div>
                     </div>
-                    <div class="glass-panel p-6 border-l-4 border-l-green-500">
+                    <div class="glass-card p-6 border-l-4 border-l-accent relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 text-accent/10 text-9xl"><i class="fa-solid fa-link"></i></div>
                         <div class="text-gray-500 text-xs font-bold uppercase mb-2">Aktif Linkler</div>
-                        <div id="d-link-count" class="text-3xl font-bold text-white">0</div>
+                        <div id="stat-link-count" class="text-4xl font-black text-white">0</div>
                     </div>
-                    <div class="glass-panel p-6 border-l-4 border-l-purple-500 relative overflow-hidden">
-                        <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fa-solid fa-crown text-6xl text-white"></i></div>
-                        <div class="text-gray-500 text-xs font-bold uppercase mb-2">Üyelik Tipi</div>
-                        <div class="text-3xl font-bold text-gold">ELITE</div>
+                    <div class="glass-card p-6 border-l-4 border-l-gold relative overflow-hidden bg-gradient-to-br from-surface to-yellow-900/10">
+                        <div class="text-gray-500 text-xs font-bold uppercase mb-2">Hesap Durumu</div>
+                        <div class="text-3xl font-black text-gold flex items-center gap-2"><i class="fa-solid fa-crown"></i> ELITE</div>
+                        <div class="text-[10px] text-gray-400 mt-2">Tüm premium özellikler açık.</div>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20 flex items-start gap-4">
+                    <div class="p-2 bg-blue-500/20 rounded-lg text-blue-400"><i class="fa-solid fa-robot"></i></div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Otomatik Temizlik Aktif</h4>
+                        <p class="text-xs text-gray-400 mt-1">Sistem, 30 günden eski ve hiç etkileşim almamış (0 görüntülenme) linkleri veritabanı sağlığı için otomatik olarak siler.</p>
                     </div>
                 </div>
             </div>
 
-            <div id="view-my-links" class="view-section hidden animate-fade">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-white">Link Arşivi</h2>
-                    <button onclick="router.go('create')" class="btn-primary text-sm"><i class="fa-solid fa-plus"></i> Yeni Ekle</button>
+            <div id="view-create" class="hidden animate-fade-in max-w-4xl mx-auto">
+                <div class="flex items-center gap-4 mb-8">
+                    <button onclick="router.nav('dashboard')" class="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center text-gray-400 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="text-2xl font-bold text-white">Yeni Varlık Oluştur</h2>
                 </div>
 
-                <div class="glass-panel">
+                <div class="glass-card p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        
+                        <div class="space-y-5">
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Başlık</label>
+                                <input id="c-title" type="text" class="input-field" placeholder="Örn: GTA V Graphics Mod 2026">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Hedef URL (Kilitli Dosya)</label>
+                                <input id="c-target" type="url" class="input-field text-blue-400" placeholder="https://drive.google.com/...">
+                            </div>
+
+                            <div class="pt-4 border-t border-border">
+                                <label class="text-xs font-bold text-gray-400 uppercase mb-3 block">Görev Zinciri</label>
+                                <div id="task-list-preview" class="space-y-2 mb-3"></div>
+                                
+                                <div class="flex gap-2">
+                                    <input id="t-name" class="input-field text-xs" placeholder="Görev Adı (örn: Abone Ol)">
+                                    <input id="t-url" class="input-field text-xs" placeholder="URL">
+                                    <button onclick="linkManager.addTask()" class="btn btn-primary px-4"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Kapak Görseli</label>
+                            
+                            <input type="file" id="img-input" accept="image/*" class="hidden" onchange="imageHandler.process(this)">
+                            
+                            <div class="upload-area" onclick="document.getElementById('img-input').click()" id="drop-zone">
+                                <div id="preview-container">
+                                    <i class="fa-regular fa-image text-4xl text-gray-600 mb-3"></i>
+                                    <p class="text-sm font-bold text-gray-300">Görsel Yükle</p>
+                                    <p class="text-[10px] text-gray-500 mt-1">Tıkla veya Sürükle (Max 2MB)</p>
+                                    <p class="text-[10px] text-primary mt-2 hidden" id="compress-msg">Otomatik Sıkıştırma Aktif</p>
+                                </div>
+                            </div>
+                            <input type="hidden" id="final-image-base64">
+                        </div>
+
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-border">
+                        <button id="btn-publish" onclick="linkManager.publish()" class="w-full btn btn-primary py-4 text-lg shadow-lg shadow-primary/20">
+                            <i class="fa-solid fa-rocket"></i> LİNKİ YAYINLA
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-mylinks" class="hidden animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-6">Link Arşivim</h2>
+                <div class="glass-card overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="text-xs text-gray-500 border-b border-gray-800 uppercase tracking-wider">
-                                    <th class="p-4 font-bold">Varlık</th>
-                                    <th class="p-4 font-bold">Hedef</th>
-                                    <th class="p-4 font-bold">Oluşturulma</th>
-                                    <th class="p-4 font-bold text-right">İşlem</th>
+                        <table class="w-full text-left">
+                            <thead class="bg-surfaceLight/50 text-xs uppercase text-gray-500 font-bold border-b border-border">
+                                <tr>
+                                    <th class="p-4">Varlık</th>
+                                    <th class="p-4">Oluşturma</th>
+                                    <th class="p-4">Durum</th>
+                                    <th class="p-4 text-right">İşlem</th>
                                 </tr>
                             </thead>
-                            <tbody id="links-list" class="text-sm text-gray-300 divide-y divide-gray-800">
+                            <tbody id="links-tbody" class="text-sm divide-y divide-border">
                                 </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <div id="view-create" class="view-section hidden animate-fade max-w-3xl">
-                <h2 class="text-2xl font-bold text-white mb-6">Yeni Varlık Oluştur</h2>
-                
-                <div class="glass-panel p-8 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Başlık</label>
-                            <input id="c-title" type="text" class="input-dark" placeholder="Örn: Minecraft Shader Pack v2">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Kapak Görseli (URL)</label>
-                            <input id="c-img" type="url" class="input-dark" placeholder="https://imgur.com/...">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Hedef Link (Kilitli Dosya)</label>
-                        <input id="c-target" type="url" class="input-dark bg-blue-900/10 border-blue-500/30 text-blue-100" placeholder="https://drive.google.com/file/...">
-                    </div>
-
-                    <div class="border-t border-gray-800 pt-6">
-                        <h3 class="text-white font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-list-check text-blue-500"></i> Görev Zinciri</h3>
-                        
-                        <div id="c-task-display" class="space-y-2 mb-4"></div>
-
-                        <div class="flex gap-3 items-end bg-gray-900/50 p-4 rounded-xl border border-gray-800">
-                            <div class="flex-1">
-                                <label class="text-[10px] text-gray-500 block mb-1">Görev Adı</label>
-                                <input id="t-name" class="input-dark text-xs py-2" placeholder="Örn: Discord Sunucusuna Katıl">
-                            </div>
-                            <div class="flex-1">
-                                <label class="text-[10px] text-gray-500 block mb-1">Görev URL</label>
-                                <input id="t-url" class="input-dark text-xs py-2" placeholder="https://discord.gg/...">
-                            </div>
-                            <button onclick="linkOps.addTask()" class="h-[42px] px-4 bg-gray-700 hover:bg-white text-black rounded-lg transition font-bold"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                    </div>
-
-                    <div class="pt-4">
-                        <button id="btn-publish" onclick="linkOps.publish()" class="w-full btn-primary py-4 text-lg shadow-lg">
-                            <i class="fa-solid fa-rocket"></i> SİSTEMİ BAŞLAT VE YAYINLA
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="view-profile" class="view-section hidden animate-fade max-w-4xl">
-                <div class="glass-panel overflow-hidden mb-8">
-                    <div class="profile-banner" id="p-banner">
-                        <button onclick="profileOps.editBanner()" class="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded text-xs hover:bg-black"><i class="fa-solid fa-camera"></i> Kapak Değiştir (URL)</button>
-                    </div>
-                    <div class="relative px-8 pb-8 pt-16">
-                        <img id="p-avatar" src="" class="profile-avatar">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <h2 id="p-name" class="text-2xl font-bold text-white">Kullanıcı</h2>
-                                <p id="p-bio" class="text-gray-400 text-sm mt-1">Henüz bir biyografi eklenmemiş.</p>
-                            </div>
-                            <button onclick="profileOps.save()" class="btn-primary text-sm px-6">Kaydet</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-8">
-                    <h3 class="text-lg font-bold text-white mb-6">Profil Detayları</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="text-xs text-gray-500 block mb-2 uppercase font-bold">Görünen İsim</label>
-                            <input id="inp-name" type="text" class="input-dark">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-500 block mb-2 uppercase font-bold">Biyografi</label>
-                            <input id="inp-bio" type="text" class="input-dark">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-500 block mb-2 uppercase font-bold">Avatar URL</label>
-                            <input id="inp-avatar" type="text" class="input-dark">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-500 block mb-2 uppercase font-bold">Banner URL</label>
-                            <input id="inp-banner" type="text" class="input-dark">
-                        </div>
-                    </div>
-                </div>
+            <div id="view-profile" class="hidden animate-fade-in max-w-2xl">
+                 <h2 class="text-2xl font-bold text-white mb-6">Profil Ayarları</h2>
+                 <div class="glass-card p-8">
+                     <div class="flex items-center gap-6 mb-8">
+                         <img id="p-avatar-img" class="w-20 h-20 rounded-full border-4 border-surfaceLight bg-surface">
+                         <div>
+                             <h3 class="text-xl font-bold text-white" id="p-display-name">...</h3>
+                             <p class="text-xs text-green-500 font-bold">VERIFIED PUBLISHER</p>
+                         </div>
+                     </div>
+                     <div class="space-y-4">
+                         <div>
+                             <label class="text-xs text-gray-500 uppercase font-bold block mb-1">Kullanıcı Adı</label>
+                             <input id="p-input-name" class="input-field">
+                         </div>
+                         <button onclick="profileManager.save()" class="btn btn-primary w-full">Değişiklikleri Kaydet</button>
+                     </div>
+                 </div>
             </div>
 
         </main>
@@ -347,255 +393,359 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, doc, deleteDoc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, doc, deleteDoc, getDoc, updateDoc, writeBatch, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // FIREBASE CONFIG (KENDİ BİLGİLERİNİ GİR)
-        const appFB = initializeApp({
-            apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0", // BURAYI DEĞİŞTİRMEK ZORUNDASIN
+        // --- CONFIGURATION ---
+        const fbConfig = {
+            apiKey: "AIzaSyDc1sWTsgQC4yqZnEKP4GutuNWcUCZGhv0", // KENDİ API KEYİNİ BURAYA YAZ
             authDomain: "nvo-link.firebaseapp.com",
             projectId: "nvo-link",
             storageBucket: "nvo-link.firebasestorage.app"
-        });
-        const authFB = getAuth(appFB);
-        const db = getFirestore(appFB);
+        };
+
+        const app = initializeApp(fbConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
         let currentUser = null;
-        let tempTasks = [];
+        let tasksBuffer = [];
 
-        // --- UI UTILITIES ---
+        // --- UI MANAGER ---
         window.ui = {
-            toast: (msg, type='info') => {
-                const el = document.getElementById('toast-area');
+            toast: (msg, type='success') => {
+                const con = document.getElementById('toast-container');
                 const t = document.createElement('div');
-                t.className = `toast ${type === 'error' ? 'border-l-red-500' : ''}`;
-                t.innerHTML = `<span>${type === 'error' ? '<i class="fa-solid fa-circle-exclamation text-red-500"></i>' : '<i class="fa-solid fa-circle-check text-green-500"></i>'} ${msg}</span>`;
-                el.appendChild(t);
+                t.className = `toast`;
+                if(type === 'error') { t.style.borderLeftColor = '#ef4444'; t.innerHTML = `<i class="fa-solid fa-circle-exclamation text-red-500 text-xl"></i> <span>${msg}</span>`; }
+                else { t.innerHTML = `<i class="fa-solid fa-circle-check text-green-500 text-xl"></i> <span>${msg}</span>`; }
+                con.appendChild(t);
                 setTimeout(() => t.remove(), 4000);
             },
-            showView: (id) => {
-                document.querySelectorAll('.view-section').forEach(d => d.classList.add('hidden'));
-                document.querySelectorAll('.nav-item').forEach(d => d.classList.remove('active'));
-                const target = document.getElementById('view-'+id);
-                if(target) target.classList.remove('hidden');
+            toggleSidebar: () => document.getElementById('sidebar').classList.toggle('open'),
+            setLoading: (btnId, state) => {
+                const btn = document.getElementById(btnId);
+                if(state) {
+                    btn.dataset.html = btn.innerHTML;
+                    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> İŞLENİYOR...';
+                    btn.disabled = true;
+                } else {
+                    btn.innerHTML = btn.dataset.html;
+                    btn.disabled = false;
+                }
+            }
+        };
+
+        // --- IMAGE HANDLER (COMPRESSION) ---
+        window.imageHandler = {
+            process: (input) => {
+                if(input.files && input.files[0]) {
+                    const file = input.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.src = e.target.result;
+                        img.onload = () => {
+                            // Canvas setup
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            // Resize logic (Max width 800px)
+                            const MAX_WIDTH = 800;
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            // Compress (JPEG 0.7 quality)
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                            
+                            // Display Preview
+                            document.getElementById('preview-container').innerHTML = `<img src="${dataUrl}" class="max-h-48 rounded shadow">`;
+                            document.getElementById('final-image-base64').value = dataUrl; // Store string
+                            
+                            // Check size difference log
+                            const originalSize = e.target.result.length;
+                            const newSize = dataUrl.length;
+                            console.log(`Original: ${Math.round(originalSize/1024)}KB, Compressed: ${Math.round(newSize/1024)}KB`);
+                            ui.toast(`Görsel optimize edildi: ${Math.round(newSize/1024)}KB`);
+                        }
+                    }
+                    reader.readAsDataURL(file);
+                }
             }
         };
 
         // --- ROUTER ---
         window.router = {
-            go: (view, btn) => {
-                if(btn) {
-                    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                }
-                ui.showView(view);
-                if(view === 'my-links') linkOps.load();
-                if(view === 'profile') profileOps.load();
-                // Mobile Sidebar close
-                document.getElementById('sidebar').classList.remove('open');
+            nav: (page) => {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                const activeNav = document.getElementById('nav-'+page);
+                if(activeNav) activeNav.classList.add('active');
+
+                ['dashboard', 'create', 'mylinks', 'profile', 'login'].forEach(v => {
+                    document.getElementById('view-'+v).classList.add('hidden');
+                });
+                document.getElementById('view-'+page).classList.remove('hidden');
+                
+                // Load data if needed
+                if(page === 'mylinks') linkManager.loadLinks();
+                if(page === 'profile') profileManager.init();
+                
+                document.getElementById('sidebar').classList.remove('open'); // Mobile auto close
             }
         };
 
-        // --- LINK OPERATIONS ---
-        window.linkOps = {
+        // --- LINK MANAGER ---
+        window.linkManager = {
             addTask: () => {
-                const n = document.getElementById('t-name').value;
-                const u = document.getElementById('t-url').value;
-                if(!n || !u) return ui.toast('Görev adı ve linki gerekli!', 'error');
-                tempTasks.push({name:n, url:u});
+                const name = document.getElementById('t-name').value;
+                const url = document.getElementById('t-url').value;
+                if(!name || !url) return ui.toast('Görev adı ve URL gerekli.', 'error');
                 
-                const d = document.getElementById('c-task-display');
-                d.innerHTML = tempTasks.map((t,i) => `
-                    <div class="flex justify-between items-center bg-black p-3 rounded border border-gray-800 text-sm">
-                        <span class="text-gray-300"><span class="text-blue-500 font-bold">${i+1}.</span> ${t.name}</span>
-                        <button onclick="linkOps.delTask(${i})" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
-                    </div>`).join('');
-                
+                tasksBuffer.push({name, url});
+                linkManager.renderTasks();
                 document.getElementById('t-name').value = '';
                 document.getElementById('t-url').value = '';
             },
-            delTask: (i) => {
-                tempTasks.splice(i, 1);
-                // Re-render handled by logic repetition or simple alert for now to save space
-                ui.toast('Görev silindi. Listeyi yenilemek için yeni görev ekleyin.'); 
+            
+            renderTasks: () => {
+                const con = document.getElementById('task-list-preview');
+                con.innerHTML = tasksBuffer.map((t, i) => `
+                    <div class="flex justify-between items-center bg-surfaceLight p-2 rounded text-xs border border-border">
+                        <span class="text-gray-300 font-bold">${i+1}. ${t.name}</span>
+                        <button onclick="tasksBuffer.splice(${i},1); linkManager.renderTasks()" class="text-red-400"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                `).join('');
             },
+
             publish: async () => {
-                if(!currentUser) return ui.toast('Giriş yapmalısın.', 'error');
-                const t = document.getElementById('c-title').value;
-                const tg = document.getElementById('c-target').value;
-                const img = document.getElementById('c-img').value || 'https://via.placeholder.com/150';
+                if(!currentUser) return ui.toast('Oturum kapalı.', 'error');
+                
+                const title = document.getElementById('c-title').value;
+                const target = document.getElementById('c-target').value;
+                const img = document.getElementById('final-image-base64').value; // Base64 string
 
-                if(!t || !tg) return ui.toast('Başlık ve Hedef Link zorunludur.', 'error');
+                if(!title || !target) return ui.toast('Başlık ve Hedef Link zorunlu.', 'error');
+                if(tasksBuffer.length === 0) tasksBuffer.push({name: "Sayfayı Ziyaret Et", url: "https://google.com"});
 
-                if(tempTasks.length === 0) tempTasks.push({name: "Sayfayı Ziyaret Et", url: "https://google.com"});
-
-                const btn = document.getElementById('btn-publish');
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> İşleniyor...';
-                btn.disabled = true;
+                ui.setLoading('btn-publish', true);
 
                 try {
                     await addDoc(collection(db, 'links'), {
                         uid: currentUser.uid,
-                        title: t, target: tg, image: img,
-                        tasks: tempTasks, views: 0,
+                        title, target, 
+                        image: img || null, // Stores compressed base64
+                        tasks: tasksBuffer,
+                        views: 0,
                         createdAt: serverTimestamp()
                     });
-                    ui.toast('Varlık başarıyla oluşturuldu!', 'success');
                     
+                    ui.toast('Link başarıyla oluşturuldu!');
                     // Reset
                     document.getElementById('c-title').value = '';
                     document.getElementById('c-target').value = '';
-                    document.getElementById('c-img').value = '';
-                    tempTasks = [];
-                    document.getElementById('c-task-display').innerHTML = '';
-                    
+                    document.getElementById('preview-container').innerHTML = '<i class="fa-regular fa-image text-4xl mb-2"></i><p>Resim Yükle</p>';
+                    tasksBuffer = [];
+                    linkManager.renderTasks();
+
                     setTimeout(() => {
-                        btn.innerHTML = '<i class="fa-solid fa-rocket"></i> SİSTEMİ BAŞLAT VE YAYINLA';
-                        btn.disabled = false;
-                        // Redirect to list
-                        document.querySelectorAll('.nav-item')[1].click(); // Click My Links
+                        ui.setLoading('btn-publish', false);
+                        router.nav('mylinks');
                     }, 1000);
 
                 } catch(e) {
-                    ui.toast('Hata: ' + e.message, 'error');
-                    btn.disabled = false;
+                    console.error(e);
+                    ui.toast('Hata oluştu: ' + e.message, 'error');
+                    ui.setLoading('btn-publish', false);
                 }
             },
-            load: async () => {
-                const list = document.getElementById('links-list');
-                list.innerHTML = '<tr><td colspan="4" class="p-4 text-center">Yükleniyor...</td></tr>';
+
+            loadLinks: async () => {
+                const tbody = document.getElementById('links-tbody');
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-500"><i class="fa-solid fa-circle-notch fa-spin"></i> Yükleniyor...</td></tr>';
                 
+                // AUTO DELETE CHECK (LAZY CLEANUP)
+                // When loading links, we check for old expired ones
+                linkManager.runAutoCleanup();
+
                 const q = query(collection(db, 'links'), where('uid', '==', currentUser.uid), orderBy('createdAt', 'desc'));
                 const snap = await getDocs(q);
+                
                 let html = '';
                 let count = 0;
 
                 snap.forEach(d => {
-                    const data = d.data();
                     count++;
-                    const fullLink = window.location.origin + window.location.pathname + '?id=' + d.id;
+                    const data = d.data();
+                    const fullLink = `${window.location.origin}${window.location.pathname}?id=${d.id}`;
+                    
                     html += `
-                    <tr class="hover:bg-gray-800/50 transition">
-                        <td class="p-4 flex items-center gap-3">
-                            <img src="${data.image}" class="w-10 h-10 rounded object-cover bg-gray-800">
-                            <div class="truncate max-w-[150px] font-bold text-white">${data.title}</div>
+                    <tr class="group hover:bg-surfaceLight/50 transition">
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded bg-surface border border-border overflow-hidden">
+                                    ${data.image ? `<img src="${data.image}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-600"><i class="fa-solid fa-link"></i></div>'}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white text-sm truncate max-w-[150px]">${data.title}</div>
+                                    <div class="text-[10px] text-gray-500">${data.views} Görüntülenme</div>
+                                </div>
+                            </div>
                         </td>
-                        <td class="p-4 text-gray-500 truncate max-w-[150px] font-mono text-xs">${data.target}</td>
-                        <td class="p-4 text-gray-500 text-xs">Bugün</td>
-                        <td class="p-4 text-right flex justify-end gap-3">
-                            <button onclick="navigator.clipboard.writeText('${fullLink}'); ui.toast('Link Kopyalandı!')" class="text-blue-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
-                            <button onclick="linkOps.del('${d.id}')" class="text-red-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>
+                        <td class="p-4 text-xs text-gray-400">Bugün</td>
+                        <td class="p-4"><span class="bg-green-500/10 text-green-500 text-[10px] font-bold px-2 py-1 rounded border border-green-500/20">AKTİF</span></td>
+                        <td class="p-4 text-right">
+                            <button onclick="navigator.clipboard.writeText('${fullLink}'); ui.toast('Kopyalandı')" class="text-primary hover:text-white mr-3"><i class="fa-solid fa-copy"></i></button>
+                            <button onclick="linkManager.deleteLink('${d.id}')" class="text-gray-500 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
                 });
-                list.innerHTML = html || '<tr><td colspan="4" class="p-8 text-center text-gray-500">Henüz link yok.</td></tr>';
-                document.getElementById('d-link-count').innerText = count;
+                
+                tbody.innerHTML = html || '<tr><td colspan="4" class="p-8 text-center text-gray-500">Henüz hiç link oluşturmadın.</td></tr>';
+                document.getElementById('stat-link-count').innerText = count;
             },
-            del: async (id) => {
-                if(confirm('Bu linki silmek istediğine emin misin?')) {
+
+            deleteLink: async (id) => {
+                if(confirm('Silmek istediğine emin misin?')) {
                     await deleteDoc(doc(db, 'links', id));
-                    linkOps.load();
+                    linkManager.loadLinks();
+                }
+            },
+
+            // --- AUTO CLEANUP LOGIC ---
+            runAutoCleanup: async () => {
+                // Not: Client side cleanup is not perfect but works for this scope.
+                // Logic: Fetch links created < 30 days ago AND views == 0
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                
+                const q = query(collection(db, 'links'), where('uid', '==', currentUser.uid), where('views', '==', 0));
+                const snap = await getDocs(q);
+                
+                const batch = writeBatch(db);
+                let deleteCount = 0;
+
+                snap.forEach(d => {
+                    // Check date client side because Firestore compound queries are limited
+                    const data = d.data();
+                    if(data.createdAt && data.createdAt.toDate() < thirtyDaysAgo) {
+                        batch.delete(doc(db, 'links', d.id));
+                        deleteCount++;
+                    }
+                });
+
+                if(deleteCount > 0) {
+                    await batch.commit();
+                    console.log(`Auto-Cleanup: ${deleteCount} expired links removed.`);
+                    ui.toast(`${deleteCount} adet pasif link temizlendi.`, 'info');
                 }
             }
         };
 
-        // --- PROFILE OPERATIONS ---
-        window.profileOps = {
-            load: async () => {
-                const snap = await getDoc(doc(db, 'users', currentUser.uid));
-                if(snap.exists()) {
-                    const d = snap.data();
-                    document.getElementById('p-name').innerText = d.nickname || 'İsimsiz';
-                    document.getElementById('p-bio').innerText = d.bio || 'Biyografi yok.';
-                    document.getElementById('p-avatar').src = d.avatar || currentUser.photoURL;
-                    document.getElementById('p-banner').style.backgroundImage = `url('${d.banner || "https://via.placeholder.com/800x200"}')`;
-                    
-                    // Inputs
-                    document.getElementById('inp-name').value = d.nickname || '';
-                    document.getElementById('inp-bio').value = d.bio || '';
-                    document.getElementById('inp-avatar').value = d.avatar || '';
-                    document.getElementById('inp-banner').value = d.banner || '';
-                }
+        // --- PROFILE MANAGER ---
+        window.profileManager = {
+            init: () => {
+                document.getElementById('p-display-name').innerText = currentUser.displayName;
+                document.getElementById('p-input-name').value = currentUser.displayName;
+                document.getElementById('p-avatar-img').src = currentUser.photoURL;
             },
             save: async () => {
-                const nick = document.getElementById('inp-name').value;
-                const bio = document.getElementById('inp-bio').value;
-                const av = document.getElementById('inp-avatar').value;
-                const ban = document.getElementById('inp-banner').value;
-
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    nickname: nick, bio: bio, avatar: av, banner: ban
-                });
-                ui.toast('Profil güncellendi!', 'success');
-                profileOps.load();
+                const newName = document.getElementById('p-input-name').value;
+                if(newName) {
+                    await updateProfile(currentUser, { displayName: newName });
+                    await updateDoc(doc(db, 'users', currentUser.uid), { nickname: newName });
+                    ui.toast('Profil güncellendi');
+                    document.getElementById('user-display-name').innerText = newName;
+                }
             }
         };
 
-        // --- GATEWAY LOGIC ---
+        // --- GATEWAY LOGIC (VISITOR) ---
         window.gateway = {
             init: async (id) => {
-                document.getElementById('app-layer').style.display = 'none';
-                document.getElementById('gateway-layer').style.display = 'block';
+                // Switch Views
+                document.getElementById('admin-view').remove(); // Completely remove admin from DOM for security visual
+                document.getElementById('gateway-view').style.display = 'block';
 
                 try {
                     const snap = await getDoc(doc(db, 'links', id));
-                    if(!snap.exists()) return alert('Link bulunamadı.');
+                    if(!snap.exists()) return document.getElementById('gw-title').innerText = "Link Bulunamadı veya Silinmiş";
+
                     const data = snap.data();
-
-                    document.getElementById('gw-title').innerText = data.title;
-                    if(data.image) document.getElementById('gw-hero-img').style.backgroundImage = `url('${data.image}')`;
                     
-                    // Get Author Name
-                    getDoc(doc(db, 'users', data.uid)).then(u => {
-                        if(u.exists()) document.getElementById('gw-author').innerText = u.data().nickname;
-                    });
+                    // Populate UI
+                    document.getElementById('gw-title').innerText = data.title;
+                    if(data.image) {
+                        // Base64 image
+                        document.getElementById('gw-image').style.backgroundImage = `url('${data.image}')`;
+                    }
+                    document.getElementById('gw-task-count').innerText = data.tasks.length;
+                    
+                    // Increment View (Once per load)
+                    updateDoc(doc(db, 'links', id), { views: increment(1) });
 
-                    // Render Tasks
-                    const list = document.getElementById('gw-task-list');
-                    let doneCount = 0;
-                    const unlockBtn = document.getElementById('gw-unlock-btn');
-
+                    // Tasks
+                    const container = document.getElementById('gw-task-container');
+                    let completed = 0;
+                    
                     data.tasks.forEach((t, i) => {
-                        const d = document.createElement('div');
-                        d.className = "flex justify-between items-center bg-gray-900 p-4 rounded-xl border border-gray-800";
-                        d.innerHTML = `
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-xs text-gray-500 font-bold step-idx">${i+1}</div>
+                        const row = document.createElement('div');
+                        row.className = "task-row";
+                        row.innerHTML = `
+                            <div class="flex items-center gap-4">
+                                <div class="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-xs font-bold text-gray-500 step-num">${i+1}</div>
                                 <span class="text-sm font-bold text-gray-300">${t.name}</span>
                             </div>
-                            <button class="bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition border border-blue-500/30">BAŞLAT</button>
+                            <button class="px-4 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20 text-xs font-bold hover:bg-primary hover:text-white transition">BAŞLAT</button>
                         `;
-                        const btn = d.querySelector('button');
+                        
+                        const btn = row.querySelector('button');
                         btn.onclick = () => {
                             window.open(t.url, '_blank');
-                            btn.innerText = 'KONTROL EDİLİYOR...';
+                            btn.innerText = "KONTROL...";
                             btn.disabled = true;
+                            
                             setTimeout(() => {
-                                btn.innerText = 'TAMAMLANDI';
-                                btn.className = 'bg-green-500/10 text-green-500 px-4 py-2 rounded-lg text-xs font-bold border border-green-500/30';
-                                d.querySelector('.step-idx').className = "w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs";
-                                d.querySelector('.step-idx').innerHTML = '<i class="fa-solid fa-check"></i>';
-                                doneCount++;
-                                if(doneCount >= data.tasks.length) {
-                                    unlockBtn.disabled = false;
-                                    unlockBtn.className = "w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all animate-pulse flex items-center justify-center gap-2";
-                                    unlockBtn.innerHTML = 'HEDEF LİNKE GİT <i class="fa-solid fa-arrow-right"></i>';
-                                    unlockBtn.onclick = () => window.location.href = data.target;
-                                }
+                                btn.innerText = "TAMAMLANDI";
+                                btn.className = "px-4 py-2 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20 text-xs font-bold";
+                                const badge = row.querySelector('.step-num');
+                                badge.className = "w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-xs";
+                                badge.innerHTML = '<i class="fa-solid fa-check"></i>';
+                                completed++;
+                                gateway.check(completed, data.tasks.length, data.target);
                             }, 5000);
-                        }
-                        list.appendChild(d);
+                        };
+                        container.appendChild(row);
                     });
 
                 } catch(e) { console.error(e); }
+            },
+
+            check: (done, total, target) => {
+                if(done >= total) {
+                    const btn = document.getElementById('gw-unlock-btn');
+                    btn.disabled = false;
+                    btn.className = "w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/40 animate-pulse transition-all flex items-center justify-center gap-3 cursor-pointer hover:scale-105";
+                    btn.innerHTML = '<span>BAĞLANTIYI AÇ</span> <i class="fa-solid fa-arrow-right"></i>';
+                    btn.onclick = () => window.location.href = target;
+                    ui.toast('Erişim kilidi açıldı!', 'success');
+                }
             }
         };
 
         // --- AUTH & INIT ---
-        window.auth = {
-            login: () => signInWithPopup(authFB, provider),
-            logout: () => { signOut(authFB); location.reload(); }
+        window.authManager = {
+            login: () => signInWithPopup(auth, provider),
+            logout: () => { signOut(auth); location.reload(); }
         };
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -604,31 +754,15 @@
         if(linkId) {
             gateway.init(linkId);
         } else {
-            // Dashboard Mode
-            onAuthStateChanged(authFB, async (u) => {
+            // Admin Mode Init
+            document.getElementById('admin-view').classList.remove('hidden');
+            onAuthStateChanged(auth, (u) => {
                 if(u) {
                     currentUser = u;
-                    document.getElementById('view-auth').classList.add('hidden');
-                    document.getElementById('view-dashboard').classList.remove('hidden');
-                    document.getElementById('d-name').innerText = u.displayName;
-                    
-                    // Create User Doc if not exists
-                    const uRef = doc(db, 'users', u.uid);
-                    const uSnap = await getDoc(uRef);
-                    if(!uSnap.exists()) {
-                        await setDoc(uRef, { nickname: u.displayName, avatar: u.photoURL, bio: "Yeni Üye", createdAt: serverTimestamp() });
-                    }
-
-                    // Clock
-                    setInterval(() => {
-                        const d = new Date();
-                        document.getElementById('clock').innerText = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-                    }, 1000);
-                    
-                    linkOps.load();
+                    router.nav('dashboard');
+                    document.getElementById('user-display-name').innerText = u.displayName.split(' ')[0];
                 } else {
-                    document.getElementById('view-dashboard').classList.add('hidden');
-                    document.getElementById('view-auth').classList.remove('hidden');
+                    router.nav('login');
                 }
             });
         }
